@@ -25,7 +25,7 @@ const apiEndpoint = 'http://localhost:3000/api/eUsers/login?access_token=14BGn34
 
 
 
- class Home extends Component| {
+ class Home extends Component {
    constructor(){
    super()
    this.state = {
