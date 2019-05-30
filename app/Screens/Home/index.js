@@ -37,15 +37,7 @@ static navigationOptions = {
   header: null
 }
 checkLogin() {
- const {username, passsword} = this.state
 
- if(username == 'admin' && passsword == 'admin'){
-   this.props.navigation.navigate('Dashboard')
- }else {
-   Alert.alert('Error','Username/Password mismatch',[{
-     text: 'Okay'
-   }])
- }
 }
 render() {
 return (
