@@ -9,8 +9,8 @@
 import React, {Component} from 'react';
 //import {Platform, StyleSheesssst, Text, View, Button} from 'react-native';
 import { createStackNavigator, createAppContainer } from "react-navigation";
-import Home from './app/Components/Home';
-import Dashboard from './app/Components/Dashboard';
+import Home from './app/Screens/Home';
+import Dashboard from './app/Screens/Dashboard';
 
 const AppNavigator = createStackNavigator({
   Home: Home,
