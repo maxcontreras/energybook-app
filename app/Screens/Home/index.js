@@ -19,207 +19,147 @@ import {
   StatusBar,
   Platform
 } from "react-native";
-import logo from "../../Assets/Images/logo.jpg";
-import fondoLogin from "../../Assets/Images/fondoLogin.png";
+import axios from 'axios';
+import Logotip from "../../Assets/Images/Logotip.png";
+import LoginFondo from "../../Assets/Images/LoginFondo.jpg";
+
 
 class Home extends Component {
   constructor() {
     super();
     this.state = {
       username: "",
-      passsword: "",
-      posts: []
+      password: "",
+      statusCode: "",
     };
   }
-<<<<<<< HEAD
-}
 static navigationOptions = {
-  header: null
-}
-checkLogin() {
-
-}
-render() {
-return (
-<ScrollView style={styles.scroll}  keyboardShouldPersistTaps='never'>
-<SafeAreaView>
-<KeyboardAvoidingView enabled >
-  <ImageBackground style={styles.imageBack} source={fondoLogin}>
-  <View style={styles.todo}>
-    <View style={styles.container}>
-      <View style={styles.loginTopV}>
-        <View style={styles.loginBottomV}>
-          <Image style={styles.logo} source={logo} />
-          <Text style={styles.slogan}>
-          MONITOREA, ANALIZA Y AHORRA {"\n"} ENERGIA</Text>
-        </View>
-        <View style={styles.loginPart}>
-          <Text style={styles.welcomeText}>
-          ¡Bienvenido! Ingresa a tu cuenta</Text>
-          <TextInput style={styles.input}
-            placeholder="Usuario"
-            onChangeText={text => this.setState({username: text})}
-            autoCapitalize= 'none'/>
-          <TextInput style={styles.input}
-            placeholder="Contraseña"
-            secureTextEntry={true}
-            onChangeText={text => this.setState({passsword: text})}
-            autoCapitalize= 'none'/>
-        </View>
-        <View style={styles.loginBottomV}>
-          <TouchableOpacity
-            onPress={() => this.checkLogin()} style = {styles.btn}>
-            <Text style={styles.btnTxt}>Iniciar Sesión</Text>
-          </TouchableOpacity>
-        </View>
-        <View style = {styles.newAccountView}>
-            <Text style= {styles.accountTxt}>
-            No tienes cuenta?</Text>
-          <TouchableOpacity
-            onPress={() => this.checkLogin()} style = {styles.btn}>
-            <Text style={styles.btnTxt}>Regístrate</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  </View>
-  </ImageBackground>
-</KeyboardAvoidingView>
-</SafeAreaView>
-</ScrollView>
-  );
-}
-=======
-
-  static navigationOptions = {
     header: null
-  };
-
-  checkLogin() {
-    const { username, passsword } = this.state;
-    if (username == "admin" && passsword == "admin") {
-      this.props.navigation.navigate("Dashboard");
-    } else {
-      Alert.alert("Error", "Username/Password mismatch", [
-        {
-          text: "Okay"
-        }
-      ]);
-    }
+};
+  Registrar(){
+    this.props.navigation.navigate("Dashboard");
   }
-
   postLogin() {
-    fetch("http://localhost:3000/api/eUsers/login", {
+    fetch("http://192.168.1.69:3000/api/eUsers/login", {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        email: "admin@ecgenergia.com",
-        password: "Password123"
+        email: this.state.username,
+        password: this.state.password
       })
     })
-      .then(res => {
-        return res.json();
+    .then(res => {
+      this.state.statusCode = res.status;
+      const data =  res.json();
+      return Promise.all([this.state.statusCode,data])
       })
-      .then(json => {
-        console.log(json);
-      })
-      .catch(err => {
-        console.error("Error", err);
-      });
+    .then(json => {
+      console.log(json);
+      if(this.state.statusCode == 200){
+          this.props.navigation.navigate("Dashboard");
+      }else{
+        Alert.alert("Error", "Usuario o Contraseña incorrectos.", [
+      {
+        text: "Okay"
+      }
+      ]);
+       AlertIOS.alert('Error', 'Usuario o Contraseña incorrectos',
+      [
+     {
+      text: 'Reintentar',
+      style: 'cancel',
+    },
+  ],
+);
+    }
+})
+  .catch(err => {
+    console.error("Error", err);
+  });
   }
-
   render() {
     return (
       <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
         <SafeAreaView>
           <KeyboardAvoidingView enabled>
-            <ImageBackground style={styles.imageBack} source={fondoLogin}>
-              <View style={styles.todo}>
+            <ImageBackground style={styles.imageBack} source={LoginFondo}>
                 <View style={styles.container}>
-                  <View style={styles.loginTopV}>
-                    <View style={styles.loginBottomV}>
-                      <Image style={styles.logo} source={logo} />
-                      <Text style={styles.slogan}>
-                        MONITOREA, ANALIZA Y AHORRA {"\n"} ENERGIA
-                      </Text>
+                    <View style={styles.logoV}>
+                      <Image style={styles.logo} source={Logotip} />
                     </View>
                     <View style={styles.loginPart}>
-                      <Text style={styles.welcomeText}>
-                        ¡Bienvenido! Ingresa a tu cuenta
-                      </Text>
+                    <Text style={styles.usPassText}>USUARIO</Text>
+                    <TextInput
+                    style={styles.input}
+                    onChangeText={text => this.setState({ username: text })}
+                    underlineColorAndroid= '#889093'
+                    autoCapitalize="none"
+                    returnKeyType='done'
+                    />
+                      <Text style={styles.usPassText}>CONTRASEÑA</Text>
                       <TextInput
-                        style={styles.input}
-                        placeholder="Usuario"
-                        onChangeText={text => this.setState({ username: text })}
-                        autoCapitalize="none"
+                      underlineColorAndroid= '#889093'
+                      secureTextEntry
+                      returnKeyType='go'
+                      style={styles.input}
+                      onChangeText={text => this.setState({ password: text })}
+                      autoCapitalize='none'
                       />
-                      <TextInput
-                        style={styles.input}
-                        placeholder="Contraseña"
-                        secureTextEntry={true}
-                        onChangeText={text =>
-                          this.setState({ passsword: text })
-                        }
-                        autoCapitalize="none"
-                      />
-                    </View>
-                    <View style={styles.loginBottomV}>
+                      <View style={styles.btnInicV}>
                       <TouchableOpacity
                         onPress={() => this.postLogin()}
-                        style={styles.btn}
-                      >
+                        style={styles.btn}>
                         <Text style={styles.btnTxt}>Iniciar Sesión</Text>
                       </TouchableOpacity>
-                    </View>
+                      </View>
+                      </View>
                     <View style={styles.newAccountView}>
-                      <Text style={styles.accountTxt}>No tienes cuenta?</Text>
-                      <TouchableOpacity
-                        onPress={() => this.checkLogin()}
-                        style={styles.btn}
-                      >
-                        <Text style={styles.btnTxt}>Regístrate</Text>
-                      </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => this.Registrar()}
+                      style={styles.btn2}>
+                      <Text style={styles.btnTxt2}>¡Regístrate, es gratis!</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => this.postLogin()}
+                      style={styles.btn2}>
+                      <Text style={styles.btnTxt2}>¿Olvidaste tu contraseña?</Text>
+                    </TouchableOpacity>
                     </View>
-                  </View>
                 </View>
-              </View>
             </ImageBackground>
           </KeyboardAvoidingView>
         </SafeAreaView>
       </ScrollView>
     );
   }
->>>>>>> 56fc362b5584a2656981b14bc73cdda0471dc77b
 }
+const screenHeight = Math.round(Dimensions.get('window').height);
+const screenWidth = Math.round(Dimensions.get('window').width);
 const styles = StyleSheet.create({
   scroll: {
     flex: 1
   },
   imageBack: {
-    width: "100%",
-    height: "100%"
+    width: screenWidth,
+    height: screenHeight,
   },
   logo: {
     width: 250,
-    height: 100
-  },
-  slogan: {
-    fontSize: 16,
-    textAlign: "center",
-    fontWeight: "bold"
+    height: 100,
+    resizeMode: 'contain',
   },
   loginPart: {
-    paddingTop: 30
+    paddingTop: 60,
+    paddingLeft: 60,
+    paddingRight: 60,
   },
-  input: {
-    borderRadius: 10,
-    marginBottom: 5,
-    height: 40,
-    backgroundColor: "#EFEFEF",
-    paddingLeft: 10
+  btnInicV:{
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 30,
   },
   btn: {
     height: 40,
@@ -227,83 +167,58 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: 150,
-    backgroundColor: "#313544",
-    elevation: 10,
-    ...Platform.select({
-      ios: {
-        shadowRadius: 10,
-        shadowColor: "black",
-        shadowOffset: { width: 20, height: 20 },
-        shadowOpacity: 0.2
-      }
-    })
+    backgroundColor: "#586365",
+  },
+  btn2: {
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    width: 150,
   },
   btnTxt: {
-    color: "white",
+    color: "#A9F71B",
     fontSize: 15
   },
-  accountTxt: {
-    color: "#A19C9C",
-    paddingBottom: 20
+  btnTxt2: {
+    color: "#FFFFFF",
+    fontSize: 13
   },
-  loginBottomV: {
-    //el de abajo
-    flex: 1,
+  logoV: {
+    flex: 2,
     paddingBottom: 50,
     alignItems: "center",
-    backgroundColor: "#ffffff",
-    paddingTop: 20,
-    borderRadius: 10
+    backgroundColor: "transparent",
+    paddingTop: 50,
   },
   container: {
     flex: 1,
-    justifyContent: "center",
-    backgroundColor: "#ffffff",
+    justifyContent: "space-between",
+    backgroundColor: "transparent",
     borderRadius: 10,
-    elevation: 15,
-    ...Platform.select({
-      ios: {
-        shadowRadius: 10,
-        shadowColor: "black",
-        shadowOffset: { width: 20, height: 20 },
-        shadowOpacity: 0.2
-      }
-    })
-  },
-  todo: {
-    flex: 1,
-    borderRadius: 20,
-    flexDirection: "column",
-    padding: 30,
-    justifyContent: "center",
-    paddingBottom: 100,
-    paddingTop: 60
-  },
-
-  welcomeText: {
-    fontSize: 15,
-    color: "#000000",
-    justifyContent: "center",
-    textAlign: "center",
-    paddingTop: 10,
-    paddingBottom: 20
-  },
-  loginTopV: {
-    flex: 1,
-    paddingBottom: 30,
-    backgroundColor: "#ffffff",
-    padding: 20,
-    borderRadius: 10
-  },
+    paddingTop: 30,
+    },
   newAccountView: {
     flex: 1,
-    paddingBottom: 30,
+    flexDirection: 'row',
     alignItems: "center",
-    backgroundColor: "#ffffff",
-    paddingTop: 20,
-    borderTopColor: "#BAB1B1",
-    borderTopWidth: 1
-  }
+    justifyContent: 'center',
+    backgroundColor: "transparent",
+    paddingTop: 40,
+    paddingLeft: 30,
+    paddingRight: 30,
+  },
+  usPassText: {
+    color: '#A9F71B',
+    fontSize: 15,
+    textAlign: 'center'
+  },
+  input: {
+    borderRadius: 10,
+    marginBottom: 5,
+    height: 40,
+    backgroundColor: "#586365",
+    paddingLeft: 10,
+    color: '#889093'
+  },
 });
-
-export default Home;
+export default Home
