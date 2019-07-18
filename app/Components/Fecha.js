@@ -1,17 +1,11 @@
 /* @flow */
 
-import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-} from 'react-native';
-
+import React, { Component } from "react";
+import { View, Text, StyleSheet } from "react-native";
 export default class Fecha extends Component {
   render() {
-    var date = new Date().getDate(); //Current Date
-    var month = new Date().getMonth() + 1; //Current Month
-    //var year = new Date().getFullYear(); //Current Year
+    var date = new Date().getDate();
+    var month = new Date().getMonth() + 1;
     var d = new Date();
     var weekday = new Array(7);
     weekday[0] = "Domingo";
@@ -21,9 +15,7 @@ export default class Fecha extends Component {
     weekday[4] = "Jueves";
     weekday[5] = "Viernes";
     weekday[6] = "Sábado";
-
     var n = weekday[d.getDay()];
-
     var d = new Date();
     var month = new Array();
     month[0] = "Enero";
@@ -40,15 +32,25 @@ export default class Fecha extends Component {
     month[11] = "Deciembre";
     var mes = month[d.getMonth()];
     return (
-        <Text styles={styles.fecha}>{n} {date} de {mes}</Text>
+      <Text style={styles.fecha}>
+        {n} {date} de {mes}
+      </Text>
     );
   }
 }
-
 const styles = StyleSheet.create({
-  fecha:{
-    textAlign: 'right',
-    justifyContent: 'center',
+  fecha: {
+    textAlign: "right",
+    justifyContent: "center",
+    paddingRight: 20,
+    paddingBottom: 5,
+    fontSize: 12
   }
-
 });
+/*
+var today = new Date();
+var dd = String(today.getDate()).padStart(2, '0');
+var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+var yyyy = today.getFullYear();
+
+export default Today = mm + '/' + dd + '/' + yyyy;*/

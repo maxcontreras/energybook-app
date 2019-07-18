@@ -6,98 +6,102 @@
  * @flow
  */
 
-import React, {Component} from 'react';
-import { createStackNavigator,
-        createAppContainer,
-        createBottomTabNavigator } from "react-navigation";
-import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
-import {StyleSheet} from 'react-native';
-import {Image} from "react-native";
-import Home from './app/Screens/Home';
-import Register from './app/Screens/Register';
-import Gráficas from './app/Screens/Gráficas';
-import Costos from './app/Screens/Costos';
-import Codigos from './app/Screens/Codigos';
-import Historial from './app/Screens/Historial';
-import Huella from './app/Screens/Huella';
-import Generación from './app/Screens/Generación';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Graph from './app/Assets/Images/grafica.png';
-import HuellaC from './app/Assets/Images/huella.png';
-import Hist from './app/Assets/Images/hist.png';
-import Gene from './app/Assets/Images/gene.png';
-import Codi from './app/Assets/Images/codigo.png';
-import Cost from './app/Assets/Images/costo.png';
+import React, { Component } from "react";
+import {
+  createStackNavigator,
+  createAppContainer,
+  createBottomTabNavigator
+} from "react-navigation";
+import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
+import { StyleSheet } from "react-native";
+import Info from "./app/Screens/Info";
+import Notifications from "./app/Screens/Notifications";
+import Profile from "./app/Screens/Profile";
+import Home from "./app/Screens/Home";
+import Register from "./app/Screens/Register";
 
+import Charts from "./app/Screens/Charts";
+import Costs from "./app/Screens/Costs";
+import NetworkC from "./app/Screens/NetworkC";
+import Record from "./app/Screens/Record";
+import CarbonF from "./app/Screens/CarbonF";
+import Generation from "./app/Screens/Generation";
+import PrincipalScreen from "./app/Screens/PrincipalScreen";
 
-const styles=StyleSheet.create({
-icon: {
+import InfoSvg from "./app/Assets/Svg/Info.svg";
+import ProfileSvg from "./app/Assets/Svg/Perfil.svg";
+import NotificationSvg from "./app/Assets/Svg/Noti.svg";
+import DashSvg from "./app/Assets/Svg/Dash.svg";
+
+const styles = StyleSheet.create({
+  icon: {
     height: 24,
     width: 24
   }
-  });
+});
 
-const BottomNavigation =  createMaterialBottomTabNavigator({
-  Gráficas:{screen: Gráficas,
-  navigationOptions:{
-  tabBarIcon: ({tintColor})=>(
-    <Image source={Graph} style={styles.icon}/>
-    )
+const PrincipalScreen1 = createStackNavigator({
+  PrincipalScreen: PrincipalScreen,
+  Charts: Charts,
+  Costs: Costs,
+  NetworkC: NetworkC,
+  Record: Record,
+  CarbonF: CarbonF,
+  Generation: Generation
+});
+
+const BottomNavigation = createMaterialBottomTabNavigator(
+  {
+    Dashboard: {
+      screen: PrincipalScreen1,
+      navigationOptions: {
+        tabBarLabel: "Dashboard",
+        tabBarIcon: ({ tintColor }) => <DashSvg style={styles.icon} />
+      }
+    },
+    Notifications: {
+      screen: Notifications,
+      navigationOptions: {
+        tabBarLabel: "Notificaciones",
+        tabBarIcon: ({ tintColor }) => <NotificationSvg style={styles.icon} />
+      }
+    },
+    Information: {
+      screen: Info,
+      navigationOptions: {
+        tabBarLabel: "Informacion",
+        tabBarIcon: ({ tintColor }) => <InfoSvg style={styles.icon} />
+      }
+    },
+    Profile: {
+      screen: Profile,
+      navigationOptions: {
+        tabBarLabel: "Perfil",
+        tabBarIcon: ({ tintColor }) => <ProfileSvg style={styles.icon} />
+      }
     }
-    },
-  Costos:{screen:Costos,
-    navigationOptions:{
-    tabBarIcon: ({tintColor})=>(
-    <Image source={Cost} style={styles.icon}/>
-      ),
-      }
-    },
-  Codigos:{screen: Codigos,
-    navigationOptions:{
-      tabBarLabel: 'Codigo de red',
-    tabBarIcon: ({tintColor})=>(
-      <Image source={Codi} style={styles.icon}/>
-      )
-      }
-    },
-  Historial:{screen:Historial,
-    navigationOptions:{
-    tabBarIcon: ({tintColor})=>(
-    <Image source={Hist} style={styles.icon}/>
-      )
-      }
-    },
-  Huella:{screen: Huella,
-    navigationOptions:{
-    tabBarLabel: 'Huella de carbono',
-    tabBarIcon: ({tintColor})=>(
-      <Image source={HuellaC} style={styles.icon}/>
-      )
-      }
-    },
-  Generación:{screen: Generación,
-    navigationOptions:{
-    tabBarIcon: ({tintColor})=>(
-        <Image source={Gene} style={styles.icon}/>
-      )
-      }
-    },
-  },{
-    initialRouteIcon: 'Gráficas',
-    shifting: false,
+  },
+  {
+    initialRouteName: "Dashboard",
+    shifting: true,
     showIcon: true,
-    headerMode: 'none',
-    activeColor: '#B8BABF',
-    inactiveColor: '#000000',
-    barStyle:{ backgroundColor: 'white'},
-    })
-const AppNavigator = createStackNavigator({
-  Home: Home,
-  Register: Register,
-  Dashboard: BottomNavigation,
-},{
-  header: null,
-  headerMode: 'none',
+    headerMode: "none",
+    activeColor: "#B8BABF",
+    inactiveColor: "#000000",
+    barStyle: { backgroundColor: "white" },
+    lazy: false
   }
 );
+const AppNavigator = createStackNavigator(
+  {
+    Home: Home,
+    Register: Register,
+    BottomTab: BottomNavigation
+  },
+  {
+    header: null,
+    headerMode: "none"
+  }
+);
+
 export default createAppContainer(AppNavigator);
