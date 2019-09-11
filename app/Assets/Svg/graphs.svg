@@ -1,1 +1,19 @@
-<svg id="Capa_1" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><style>.cls-1,.cls-2{fill:#525252;stroke:#8f8f8f;stroke-miterlimit:10;}.cls-1{stroke-width:0.5px;}</style></defs><title>Graficas Selec</title><path class="cls-1" d="M14,35.75l13.11,8.52-1.55,2.38L12.43,38.13Z"/><path class="cls-1" d="M54.78,25.76l12.14,3.94L66,32.41,53.9,28.47Z"/><path class="cls-1" d="M86.82,14.56l2,2L74.64,30.4l-2-2Z"/><path class="cls-1" d="M46.28,28l2.09,1.93L33.88,45.6,31.8,43.68Z"/><path class="cls-2" d="M3.5,52.5h11v42H3.5v-42Z"/><path class="cls-2" d="M23.5,66.5h11v28h-11v-28Z"/><path class="cls-2" d="M45.5,43.5h11v51h-11v-51Z"/><path class="cls-2" d="M65.5,50.5h11v44h-11v-44Z"/><path class="cls-2" d="M85.5,31.5h11v63h-11v-63Z"/><path class="cls-1" d="M15.32,34.59A5.72,5.72,0,1,1,9.6,28.87,5.72,5.72,0,0,1,15.32,34.59Z"/><path class="cls-1" d="M96.62,12.57a5.72,5.72,0,1,1-5.72-5.72A5.72,5.72,0,0,1,96.62,12.57Z"/><path class="cls-1" d="M76.29,32.39a5.72,5.72,0,1,1-5.72-5.72A5.72,5.72,0,0,1,76.29,32.39Z"/><path class="cls-1" d="M56,25.78a5.72,5.72,0,1,1-5.72-5.72A5.72,5.72,0,0,1,56,25.78Z"/><path class="cls-1" d="M35.65,47.8a5.72,5.72,0,1,1-5.72-5.72A5.72,5.72,0,0,1,35.65,47.8Z"/></svg>
+<svg id="Capa_1" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path fill="#525252" stroke="#8f8f8f" stroke-miterlimit="10" stroke-width="0.5px" d="M14,35.75l13.11,8.52-1.55,2.38L12.43,38.13Z"/>
+  <path fill="#525252" stroke="#8f8f8f" stroke-miterlimit="10" stroke-width="0.5px" d="M54.78,25.76l12.14,3.94L66,32.41,53.9,28.47Z"/>
+  <path fill="#525252" stroke="#8f8f8f" stroke-miterlimit="10" stroke-width="0.5px" d="M86.82,14.56l2,2L74.64,30.4l-2-2Z"/>
+  <path fill="#525252" stroke="#8f8f8f" stroke-miterlimit="10" stroke-width="0.5px" d="M46.28,28l2.09,1.93L33.88,45.6,31.8,43.68Z"/>
+
+
+  <path fill="#525252" stroke="#8f8f8f" stroke-miterlimit="10" d="M3.5,52.5h11v42H3.5v-42Z"/>
+  <path fill="#525252" stroke="#8f8f8f" stroke-miterlimit="10" d="M23.5,66.5h11v28h-11v-28Z"/>
+  <path fill="#525252" stroke="#8f8f8f" stroke-miterlimit="10" d="M45.5,43.5h11v51h-11v-51Z"/>
+  <path fill="#525252" stroke="#8f8f8f" stroke-miterlimit="10" d="M65.5,50.5h11v44h-11v-44Z"/>
+  <path fill="#525252" stroke="#8f8f8f" stroke-miterlimit="10" d="M85.5,31.5h11v63h-11v-63Z"/>
+
+
+  <path fill="#525252" stroke="#8f8f8f" stroke-miterlimit="10" stroke-width="0.5px" d="M15.32,34.59A5.72,5.72,0,1,1,9.6,28.87,5.72,5.72,0,0,1,15.32,34.59Z"/>
+  <path fill="#525252" stroke="#8f8f8f" stroke-miterlimit="10" stroke-width="0.5px" d="M96.62,12.57a5.72,5.72,0,1,1-5.72-5.72A5.72,5.72,0,0,1,96.62,12.57Z"/>
+  <path fill="#525252" stroke="#8f8f8f" stroke-miterlimit="10" stroke-width="0.5px" d="M76.29,32.39a5.72,5.72,0,1,1-5.72-5.72A5.72,5.72,0,0,1,76.29,32.39Z"/>
+  <path fill="#525252" stroke="#8f8f8f" stroke-miterlimit="10" stroke-width="0.5px" d="M56,25.78a5.72,5.72,0,1,1-5.72-5.72A5.72,5.72,0,0,1,56,25.78Z"/>
+  <path fill="#525252" stroke="#8f8f8f" stroke-miterlimit="10" stroke-width="0.5px" d="M35.65,47.8a5.72,5.72,0,1,1-5.72-5.72A5.72,5.72,0,0,1,35.65,47.8Z"/></svg>

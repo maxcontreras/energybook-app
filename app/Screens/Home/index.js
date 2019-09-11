@@ -15,12 +15,26 @@ import {
   SafeAreaView,
   FlatList,
   StatusBar,
-  Platform
+  Platform,
+  AsyncStorage
 } from "react-native";
 import axios from "axios";
 import Logotip from "../../Assets/Images/Logotip.png";
 import LoginFondo from "../../Assets/Images/LoginFondo.jpg";
+import LoginFondoLS from "../../Assets/Images/LoginFondoLS.jpg";
 import Orientation from "react-native-orientation";
+import { connect } from "react-redux";
+import {
+  getUserInfo,
+  getCompanyData,
+  getCompanyId,
+  isAsync
+} from "../../../Actions/Actions.js";
+const mapStateToProps = state => ({
+  userData: state.initialValues[0],
+  companyData: state.initialValues[1],
+  companyInfo: state.initialValues[2]
+});
 
 class Home extends Component {
   constructor(props) {
@@ -29,14 +43,7 @@ class Home extends Component {
       username: "",
       password: "",
       statusCode: "",
-      id: "",
-      userId: "",
-      datos: [],
-      data2: [],
-      company: "",
-      companyName: "",
-      city: "",
-      portrait: false,
+      portrait: true,
       landscape: false
     };
   }
@@ -44,25 +51,13 @@ class Home extends Component {
     header: null
   };
   componentWillMount() {
-    const initial = Orientation.getInitialOrientation();
-    if (initial === "PORTRAIT") {
-      this.setState({
-        portrait: true,
-        landscape: false
-      });
-    } else {
-      this.setState({
-        portrait: false,
-        landscape: true
-      });
-    }
+    Orientation.unlockAllOrientations();
   }
   componentDidMount() {
     Orientation.addOrientationListener(this._orientationDidChange);
   }
   _orientationDidChange = orientation => {
     if (orientation === "LANDSCAPE") {
-      console.log("LANDSCAPE");
       this.setState({
         portrait: false,
         landscape: true
@@ -72,7 +67,6 @@ class Home extends Component {
         portrait: true,
         landscape: false
       });
-      console.log("PORTRAIT");
     }
   };
   componentWillUnmount() {
@@ -84,6 +78,11 @@ class Home extends Component {
   Registrar() {
     this.props.navigation.navigate("Register");
   }
+
+  _signInAsync = async () => {
+    await AsyncStorage.setItem("userToken", "abc");
+  };
+
   postLogin() {
     fetch("http://api.ienergybook.com/api/eUsers/login", {
       method: "POST",
@@ -102,10 +101,7 @@ class Home extends Component {
         return Promise.all([this.state.statusCode, data]);
       })
       .then(json => {
-        this.setState({
-          id: json[1].id,
-          userId: json[1].userId
-        });
+        this.props.dispatch(getUserInfo(json));
         if (this.state.statusCode == 200) {
           this.getCompany();
         } else {
@@ -125,8 +121,9 @@ class Home extends Component {
       .catch(err => {});
   }
   getCompany() {
+    console.log(this.props);
     fetch(
-      `http://api.ienergybook.com/api/eUsers/?filter={"where":{"id":"${this.state.userId}"}}&access_token=${this.state.id}`,
+      `http://api.ienergybook.com/api/eUsers/?filter={"where":{"id":"${this.props.userData.userId}"}}&access_token=${this.props.userData.accesToken}`,
       {
         method: "GET",
         headers: {
@@ -141,21 +138,7 @@ class Home extends Component {
         return Promise.all([this.state.statusCode, data]);
       })
       .then(json => {
-        this.setState({
-          datos: json[1]
-        });
-        this.setState({
-          companyId: this.state.datos[0].company_id
-        });
-        if (!this.state.companyId) {
-          this.setState({
-            companyId: "5c2e7d9d51e9f51b9e5de809"
-          });
-        } else {
-          this.setState({
-            companyId: this.state.companyId
-          });
-        }
+        this.props.dispatch(getCompanyId(json));
         this.getCompanyData();
       })
       .catch(err => {
@@ -164,7 +147,7 @@ class Home extends Component {
   }
   getCompanyData() {
     fetch(
-      `http://api.ienergybook.com/api/Companies/?filter={"where":{"id":"${this.state.companyId}"}}&access_token=${this.state.id}`,
+      `http://api.ienergybook.com/api/Companies/?filter={"where":{"id":"${this.props.companyData.companyId}"}}&access_token=${this.props.userData.accesToken}`,
       {
         method: "GET",
         headers: {
@@ -179,29 +162,39 @@ class Home extends Component {
         return Promise.all([this.state.statusCode, data2]);
       })
       .then(json => {
-        //console.log(json);
-        this.setState({
-          datos2: json[1]
-        });
-        this.setState({
-          companyName: this.state.datos2[0].company_name,
-          city: this.state.datos2[0].city
-        });
-        //console.log(this.state.city, this.state.companyName);
+        this.props.dispatch(getCompanyData(json));
         this.Navigate();
       })
       .catch(err => {
         console.log("no se pudo");
       });
   }
+
+  _storeData = async () => {
+    let datos = {
+      accesToken: this.props.userData.accesToken,
+      userId: this.props.userData.userId,
+      company: this.props.companyInfo.company,
+      city: this.props.companyInfo.city,
+      tipoTarifa: this.props.companyInfo.tipoTarifa,
+      companyId: this.props.companyData.companyId
+    };
+    try {
+      await AsyncStorage.setItem(
+        "@MySuperStore:key",
+        JSON.stringify(datos),
+        () => {
+          console.log(datos);
+        }
+      );
+    } catch (error) {
+      // Error saving data
+    }
+  };
   Navigate() {
     if (this.state.statusCode == 200) {
-      this.props.navigation.navigate("PrincipalScreen", {
-        prevScreenTitlle: this.state.id,
-        company: this.state.companyId,
-        city: this.state.city,
-        companyName: this.state.companyName
-      });
+      this._storeData();
+      this.props.navigation.navigate("PrincipalScreen");
     } else {
       Alert.alert("Error", "Usuario o Contraseña incorrectos.", [
         {
@@ -219,75 +212,74 @@ class Home extends Component {
   render() {
     return (
       <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
-        <SafeAreaView>
-          <KeyboardAvoidingView enabled>
-            <ImageBackground
-              style={
-                this.state.portrait
-                  ? styles.imageBack
-                  : styles.imageBackLandscape
-              }
-              source={LoginFondo}
+        <ImageBackground
+          style={
+            this.state.portrait ? styles.imageBack : styles.imageBackLandscape
+          }
+          source={this.state.portrait ? LoginFondo : LoginFondoLS}
+        >
+          <View style={styles.container}>
+            <View
+              style={[
+                this.state.portrait ? styles.logoV : styles.logoLandscape
+              ]}
             >
-              <View style={styles.container}>
-                <View
-                  style={[
-                    this.state.portrait ? styles.logoV : styles.logoLandscape
-                  ]}
+              <Image style={styles.logo} source={Logotip} />
+            </View>
+            <View
+              style={[
+                this.state.portrait ? styles.loginPart : styles.loginPartLS
+              ]}
+            >
+              <Text style={styles.usPassText}>USUARIO</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={text => this.setState({ username: text })}
+                underlineColorAndroid="#889093"
+                autoCapitalize="none"
+                returnKeyType="done"
+              />
+              <Text style={styles.usPassText}>CONTRASEÑA</Text>
+              <TextInput
+                underlineColorAndroid="#889093"
+                secureTextEntry
+                returnKeyType="go"
+                style={styles.input}
+                onChangeText={text => this.setState({ password: text })}
+                autoCapitalize="none"
+              />
+              <View style={styles.btnInicV}>
+                <TouchableOpacity
+                  onPress={() => this.postLogin()}
+                  style={styles.btn}
                 >
-                  <Image style={styles.logo} source={Logotip} />
-                </View>
-                <View style={styles.loginPart}>
-                  <Text style={styles.usPassText}>USUARIO</Text>
-                  <TextInput
-                    style={styles.input}
-                    onChangeText={text => this.setState({ username: text })}
-                    underlineColorAndroid="#889093"
-                    autoCapitalize="none"
-                    returnKeyType="done"
-                  />
-                  <Text style={styles.usPassText}>CONTRASEÑA</Text>
-                  <TextInput
-                    underlineColorAndroid="#889093"
-                    secureTextEntry
-                    returnKeyType="go"
-                    style={styles.input}
-                    onChangeText={text => this.setState({ password: text })}
-                    autoCapitalize="none"
-                  />
-                  <View style={styles.btnInicV}>
-                    <TouchableOpacity
-                      onPress={() => this.postLogin()}
-                      style={styles.btn}
-                    >
-                      <Text style={styles.btnTxt}>Iniciar Sesión</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <View style={styles.newAccountView}>
-                  <TouchableOpacity
-                    onPress={() => this.Registrar()}
-                    style={styles.btn2}
-                  >
-                    <Text style={styles.btnTxt2}>¡Regístrate, es gratis!</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => this.postLogin()}
-                    style={styles.btn2}
-                  >
-                    <Text style={styles.btnTxt2}>
-                      ¿Olvidaste tu contraseña?
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                  <Text style={styles.btnTxt}>Iniciar Sesión</Text>
+                </TouchableOpacity>
               </View>
-            </ImageBackground>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
+            </View>
+            <View style={styles.newAccountView}>
+              <TouchableOpacity
+                onPress={() => this.Registrar()}
+                style={styles.btn2}
+              >
+                <Text style={styles.btnTxt2}>¡Regístrate, es gratis!</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => this.postLogin()}
+                style={styles.btn2}
+              >
+                <Text style={styles.btnTxt2}>¿Olvidaste tu contraseña?</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ImageBackground>
       </ScrollView>
     );
   }
 }
+
+export default connect(mapStateToProps)(Home);
+
 var screenHeight = Math.round(Dimensions.get("window").height);
 var screenWidth = Math.round(Dimensions.get("window").width);
 const styles = StyleSheet.create({
@@ -300,7 +292,8 @@ const styles = StyleSheet.create({
   },
   imageBackLandscape: {
     width: screenHeight,
-    height: screenHeight
+    height: screenHeight - 100,
+    resizeMode: "contain"
   },
   logo: {
     width: 250,
@@ -314,13 +307,18 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   logoLandscape: {
-    flex: 1,
+    flex: 2,
     alignItems: "center",
     backgroundColor: "transparent",
-    justifyContent: "flex-start"
+    justifyContent: "center"
   },
   loginPart: {
     paddingTop: 60,
+    paddingLeft: 60,
+    paddingRight: 60
+  },
+  loginPartLS: {
+    paddingTop: 120,
     paddingLeft: 60,
     paddingRight: 60
   },
@@ -381,4 +379,3 @@ const styles = StyleSheet.create({
     color: "#889093"
   }
 });
-export default Home;

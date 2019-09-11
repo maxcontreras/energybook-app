@@ -3,6 +3,8 @@ package com.ienergybook;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.geolocation.GeolocationPackage;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.github.yamill.orientation.OrientationPackage;
 import com.github.reactnativecommunity.location.RNLocationPackage;
 import com.horcrux.svg.SvgPackage;
@@ -28,6 +30,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new GeolocationPackage(),
+            new RNCWebViewPackage(),
             new OrientationPackage(),
             new RNLocationPackage(),
             new SvgPackage(),

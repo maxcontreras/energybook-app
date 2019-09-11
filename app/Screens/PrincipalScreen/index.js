@@ -11,7 +11,8 @@ import {
   Button,
   TouchableOpacity,
   RefreshControl,
-  Platform
+  Platform,
+  AsyncStorage
 } from "react-native";
 import Daily from "../../Components/Daily.js";
 import LogoObs from "../../Assets/Images/LogoObs.png";
@@ -23,26 +24,53 @@ import Histo from "../../Assets/Svg/Histo.svg";
 import Generation from "../../Assets/Svg/Gene.svg";
 import SemiCircleProgress from "../../Components/DashboardChart.js";
 import Fecha from "../../Components/Fecha.js";
-import Weather from "../../Components/Weather.js";
 import Data from "../../Components/Monthly.js";
 import Menu from "../../Components/Menu.js";
+import PrecioCFE from "../../Components/PrecioCFEPeriodo.js";
 import Orientation from "react-native-orientation";
-export default class PrincipalScreen extends Component {
+import {
+  Container,
+  Header,
+  Content,
+  Card,
+  CardItem,
+  Thumbnail,
+  Left,
+  Body,
+  Icon,
+  Right
+} from "native-base";
+import { connect } from "react-redux";
+import {
+  getUserInfo,
+  getDailyConsumptionPrices,
+  getMonthlyConsumptionPrices
+} from "../../../Actions/Actions.js";
+
+const mapStateToProps = state => ({
+  userData: state.initialValues[0],
+  //companyId
+  companyData: state.initialValues[1],
+  //city and stuff
+  companyInfo: state.initialValues[2],
+  prices: state.costReducer[1],
+  readings: state.dailyReducer[0]
+});
+
+class PrincipalScreen extends Component {
   _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
-      prevScreenTitlle: this.props.navigation.state.params.prevScreenTitlle,
-      companyID: this.props.navigation.state.params.company,
-      city: this.props.navigation.state.params.city,
-      companyName: this.props.navigation.state.params.companyName,
       portrait: false,
-      landscape: false
+      landscape: false,
+      values: []
     };
   }
   static navigationOptions = {
     header: null
   };
+
   componentWillMount() {
     const initial = Orientation.getInitialOrientation();
     if (initial === "PORTRAIT") {
@@ -57,6 +85,7 @@ export default class PrincipalScreen extends Component {
       });
     }
   }
+
   componentDidMount() {
     Orientation.addOrientationListener(this._orientationDidChange);
   }
@@ -87,12 +116,11 @@ export default class PrincipalScreen extends Component {
         <SafeAreaView>
           <KeyboardAvoidingView enabled>
             <View style={styles.container}>
-              <View style={styles.menu}>
-                <Menu
-                  userCity={this.state.city}
-                  userCompanyName={this.state.companyName}
-                />
-              </View>
+              {this.props.readings && (
+                <View style={styles.menu}>
+                  <Menu />
+                </View>
+              )}
               <View
                 style={[
                   this.state.portrait
@@ -100,29 +128,27 @@ export default class PrincipalScreen extends Component {
                     : styles.containerLandscape
                 ]}
               >
-                <View
-                  style={[
-                    this.state.portrait ? styles.daily : styles.dailyLandscape
-                  ]}
-                >
-                  <Daily
-                    accessToken={this.state.prevScreenTitlle}
-                    companyID={this.state.companyID}
-                  />
-
-                  <Data
-                    accessToken={this.state.prevScreenTitlle}
-                    companyID={this.state.companyID}
-                  />
+                <View style={styles.daily}>
+                  <Daily />
+                  {this.props.readings && <Data />}
                 </View>
-                <View style={styles.charts}>
-                  <SemiCircleProgress
-                    progressColor={"green"}
-                    companyID={this.state.companyID}
+                {this.props.readings && (
+                  <View
+                    style={[
+                      this.state.portrait ? styles.charts : styles.chartsLS
+                    ]}
                   >
-                    <Text style={{ fontSize: 10 }}>kW</Text>
-                  </SemiCircleProgress>
-                </View>
+                    <SemiCircleProgress
+                      progressColor={"green"}
+                      dp={this.props.readings.dp}
+                      maxVal={this.props.readings.maxVal}
+                      minVal={this.props.readings.minVal}
+                    >
+                      <Text style={{ fontSize: 10 }}>kW</Text>
+                    </SemiCircleProgress>
+                    <PrecioCFE />
+                  </View>
+                )}
               </View>
             </View>
           </KeyboardAvoidingView>
@@ -131,6 +157,9 @@ export default class PrincipalScreen extends Component {
     );
   }
 }
+
+export default connect(mapStateToProps)(PrincipalScreen);
+
 const screenHeight = Math.round(Dimensions.get("window").height);
 const screenWidth = Math.round(Dimensions.get("window").width);
 const styles = StyleSheet.create({
@@ -141,7 +170,14 @@ const styles = StyleSheet.create({
   },
   charts: {
     flex: 1,
-    paddingTop: 30,
+    paddingTop: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+    paddingBottom: 10
+  },
+  chartsLS: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "white"
@@ -172,13 +208,7 @@ const styles = StyleSheet.create({
     width: "auto"
   },
   daily: {
-    paddingTop: 10,
     justifyContent: "center",
     width: screenWidth
-  },
-  dailyLandscape: {
-    paddingTop: 10,
-    justifyContent: "center",
-    width: screenWidth + 20
   }
 });

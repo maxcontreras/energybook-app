@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   RefreshControl
 } from "react-native";
-import Menu from "../../Components/Menu.js";
 
 export default class Info extends Component {
   constructor(props) {
@@ -24,9 +23,7 @@ export default class Info extends Component {
       <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
         <SafeAreaView>
           <KeyboardAvoidingView enabled>
-            <View>
-              <Menu />
-            </View>
+            <View></View>
           </KeyboardAvoidingView>
         </SafeAreaView>
       </ScrollView>

@@ -7,12 +7,25 @@ import {
   StyleSheet,
   ViewPropTypes,
   Text,
-  Dimensions
+  Dimensions,
+  Platform
 } from "react-native";
 import PropTypes from "prop-types";
 import Orientation from "react-native-orientation";
+import { Card } from "react-native-elements";
+import { connect } from "react-redux";
 
-export default class SemiCircleProgress extends Component {
+const mapStateToProps = state => ({
+  userData: state.initialValues[0],
+  //companyId
+  companyData: state.initialValues[1],
+  //city and stuff
+  companyInfo: state.initialValues[2],
+  prices: state.costReducer[1],
+  readings: state.dailyReducer[0]
+});
+
+class SemiCircleProgress extends Component {
   static propTypes = {
     progressShadowColor: PropTypes.string,
     progressColor: PropTypes.string,
@@ -43,9 +56,9 @@ export default class SemiCircleProgress extends Component {
     this.state = {
       rotationAnimation: new Animated.Value(props.initialPercentage),
       datos: [],
-      maxVal: "",
-      minVal: "",
-      dp: [],
+      maxVal: this.props.maxVal,
+      minVal: this.props.minVal,
+      dp: this.props.dp,
       iD: this.props.companyID,
       portrait: false,
       landscape: false
@@ -64,33 +77,6 @@ export default class SemiCircleProgress extends Component {
         landscape: true
       });
     }
-    fetch(
-      `http://api.ienergybook.com/api/DesignatedMeters/?filter={"include":["services"],"where":{"company_id":"${this.state.iD}"}}`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        }
-      }
-    )
-      .then(res => {
-        this.state.statusCode = res.status;
-        const data = res.json();
-        return Promise.all([this.state.statusCode, data]);
-      })
-      .then(json => {
-        this.setState({
-          datos: json[1]
-        }),
-          this.setState({
-            maxVal: this.state.datos[0].max_value,
-            minVal: this.state.datos[0].min_value,
-            dp: this.state.datos[0].services[0].dp
-          });
-        //console.log(this.state.datos);
-      })
-      .catch(err => {});
   }
   componentDidMount() {
     this.animate();
@@ -194,56 +180,82 @@ export default class SemiCircleProgress extends Component {
     const styles = this.getStyles();
     return (
       <View
-        style={[this.state.portrait ? defaultStyles.view : defaultStyles.view2]}
+        style={[
+          defaultStyles.exteriorV,
+          [this.state.portrait ? null : defaultStyles.exteriorLS]
+        ]}
       >
-        <View>
-          <Text style={defaultStyles.demanda}>Demanda</Text>
-        </View>
-        <View
-          style={[
-            defaultStyles.exteriorCircle,
-            styles.exteriorCircle,
-            this.props.exteriorCircleStyle
-          ]}
-        >
-          <View
-            style={[
-              defaultStyles.rotatingCircleWrap,
-              styles.rotatingCircleWrap
-            ]}
-          >
-            <Animated.View
-              style={[defaultStyles.rotatingCircle, styles.rotatingCircle]}
-            />
-          </View>
+        <Card containerStyle={defaultStyles.cardStyle}>
+          <View style={defaultStyles.view}>
+            <View>
+              <Text
+                style={
+                  (defaultStyles.demanda,
+                  [this.state.portrait ? null : defaultStyles.cardLS])
+                }
+              >
+                Demanda
+              </Text>
+            </View>
+            <View
+              style={[
+                defaultStyles.exteriorCircle,
+                styles.exteriorCircle,
+                this.props.exteriorCircleStyle
+              ]}
+            >
+              <View
+                style={[
+                  defaultStyles.rotatingCircleWrap,
+                  styles.rotatingCircleWrap
+                ]}
+              >
+                <Animated.View
+                  style={[defaultStyles.rotatingCircle, styles.rotatingCircle]}
+                />
+              </View>
 
-          <View
-            style={[
-              defaultStyles.interiorCircle,
-              styles.interiorCircle,
-              this.props.interiorCircleStyle
-            ]}
-          >
-            <Text style={defaultStyles.dato}>{this.state.dp}</Text>
-            {this.props.children}
+              <View
+                style={[
+                  defaultStyles.interiorCircle,
+                  styles.interiorCircle,
+                  this.props.interiorCircleStyle
+                ]}
+              >
+                {this.props.readings && (
+                  <Text style={defaultStyles.dato}>
+                    {this.props.readings.dp}
+                  </Text>
+                )}
+                {this.props.children}
+              </View>
+            </View>
+            {this.props.readings && (
+              <View
+                style={[
+                  this.state.portrait
+                    ? defaultStyles.maxMin
+                    : defaultStyles.maxMinLandscape
+                ]}
+              >
+                <Text style={{ fontSize: 10 }}>
+                  {this.props.readings.minVal}
+                </Text>
+                <Text style={{ fontSize: 10 }}>
+                  {this.props.readings.maxVal}
+                </Text>
+              </View>
+            )}
           </View>
-        </View>
-        <View
-          style={[
-            this.state.portrait
-              ? defaultStyles.maxMin
-              : defaultStyles.maxMinLandscape
-          ]}
-        >
-          <Text style={{ fontSize: 10 }}>{this.state.minVal}</Text>
-          <Text style={{ fontSize: 10 }}>{this.state.maxVal}</Text>
-        </View>
+        </Card>
       </View>
     );
   }
 }
 var screenHeight = Math.round(Dimensions.get("window").height);
 var screenWidth = Math.round(Dimensions.get("window").width);
+
+export default connect(mapStateToProps)(SemiCircleProgress);
 
 const defaultStyles = StyleSheet.create({
   exteriorCircle: {
@@ -282,7 +294,8 @@ const defaultStyles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "white"
+    backgroundColor: "white",
+    width: 300
   },
   maxMinLandscape: {
     flex: 0.2,
@@ -294,18 +307,40 @@ const defaultStyles = StyleSheet.create({
   },
   view: {
     flex: 1,
-    paddingBottom: 20,
+    padding: 10,
     height: "auto",
-    width: "auto",
-    backgroundColor: "white"
-  },
-  view2: {
-    flex: 1,
-    paddingBottom: 20,
-    height: 200,
-    width: screenWidth,
-    alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "white"
+    alignItems: "center",
+    backgroundColor: "white",
+    borderRadius: 10
+  },
+  cardStyle: {
+    padding: 0,
+    borderRadius: 10,
+    width: screenWidth - 30,
+    ...Platform.select({
+      ios: {
+        shadowRadius: 5,
+        shadowColor: "black",
+        shadowOffset: { width: 5, height: 5 },
+        shadowOpacity: 0.2
+      },
+      android: {
+        elevation: 5
+      }
+    })
+  },
+  cardLS: {
+    height: 50
+  },
+  exteriorV: {
+    flex: 1,
+    alignItems: "center",
+    width: screenWidth,
+    backgroundColor: "white",
+    paddingBottom: 10
+  },
+  exteriorLS: {
+    padding: 10
   }
 });

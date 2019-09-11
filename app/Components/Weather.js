@@ -9,7 +9,8 @@ import {
   View,
   Animated,
   FlatList,
-  Dimensions
+  Dimensions,
+  AsyncStorage
 } from "react-native";
 import RNLocation from "react-native-location";
 const repoUrl = "https://github.com/timfpark/react-native-location";
@@ -27,8 +28,22 @@ import Snowy4 from "../Assets/WeatherSvg/Snowy4.svg";
 import Snowy6 from "../Assets/WeatherSvg/Snowy6.svg";
 import SnowySun3 from "../Assets/WeatherSvg/SnowySun3.svg";
 import Thunder from "../Assets/WeatherSvg/Thunder.svg";
+import {
+  getUserInfo,
+  getCompanyData,
+  getCompanyId,
+  getDailyReadings,
+  getPrices,
+  getWeather
+} from "../../Actions/Actions.js";
 
-export default class Weather extends Component {
+import { connect } from "react-redux";
+
+const mapStateToProps = state => ({
+  datosClima: state.weatherReducer[0]
+});
+
+class Weather extends Component {
   _isMounted = false;
   constructor(props) {
     super(props);
@@ -37,46 +52,32 @@ export default class Weather extends Component {
       lugar: "",
       datos: [],
       clima: [],
-      icon: "",
-      userCity: this.props.userCity,
-      userCompanyName: this.props.userCompanyName,
+      values: [],
+      icon: ""
     };
   }
-  Weather() {
-    this._isMounted = true;
-    fetch(`http://api.ienergybook.com/api/DesignatedMeters/getWeather`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        lat: this.state.location.latitude,
-        lon: this.state.location.longitude
-      })
-    })
-      .then(res => {
-        this.state.statusCode = res.status;
-        const data = res.json();
-        return Promise.all([this.state.statusCode, data]);
-      })
-      .then(json => {
-        if (this._isMounted) {
-          this.setState({
-            datos: json[1].results.main,
-            lugar: json[1].results.name,
-            clima: json[1].results.weather[0].description,
-            icon: json[1].results.weather[0].icon
-          });
-        }
-      })
-      .catch(err => {});
-  }
+
+  _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@MySuperStore:key");
+      if (value !== null) {
+        this.setState({
+          values: JSON.parse(value)
+        });
+        console.log(this.state.values);
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+  };
+
   componentWillUnmount() {
     this._isMounted = false;
+    this._stopUpdatingLocation();
   }
   componentWillMount() {
-        this._isMounted = true;
+    this._isMounted = true;
+    this._retrieveData();
     RNLocation.configure({
       distanceFilter: 5.0
     });
@@ -101,8 +102,28 @@ export default class Weather extends Component {
     this.locationSubscription = RNLocation.subscribeToLocationUpdates(
       locations => {
         this.setState({ location: locations[0] });
-        //console.log(this.state.location);
-        this.Weather();
+        fetch(`http://api.ienergybook.com/api/DesignatedMeters/getWeather`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            lat: this.state.location.latitude,
+            lon: this.state.location.longitude
+          })
+        })
+          .then(res => {
+            this.state.statusCode = res.status;
+            const data = res.json();
+            return Promise.all([this.state.statusCode, data]);
+          })
+          .then(json => {
+            if (this._isMounted) {
+              this.props.dispatch(getWeather(json));
+            }
+          })
+          .catch(err => {});
       }
     );
   };
@@ -120,81 +141,98 @@ export default class Weather extends Component {
     const { location } = this.state;
     return (
       <View style={styles.container}>
-        {location && (
+        {location && this.props.datosClima && (
           <View style={styles.weather}>
-            <View style={{ flexDirection: "row", flex: 1, backgroundColor: "white"}}>
-            <View style={styles.icon}>
-              {this.state.icon == "03d" && (
-                <Cloudy width={70} height={70} />
-              )}
-              {this.state.icon == "03n" && (
-                <Cloudy width={70} height={70} />
-              )}
-              {this.state.icon == "04n" && (
-                <Cloudy width={70} height={70} />
-              )}
-              {this.state.icon == "04d" && (
-                <Cloudy width={70} height={70} />
-              )}
-              {this.state.icon == "02d" && (
-                <CloudyDay1 width={70} height={70} />
-              )}
-              {this.state.icon == "02n" && (
-                <CloudyNight1 width={70} height={70} />
-              )}
-              {this.state.icon == "01d" && (
-                <Day width={70} height={70} />
-              )}
-              {this.state.icon == "01n" && (
-                <Night width={70} height={70} />
-              )}
-              {this.state.icon == "10n" && (
-                <Rainy5 width={70} height={70} />
-              )}
-              {this.state.icon == "09d" &&(
-                <Rainy6 width={70} height={70} />
-              )}
-              {this.state.icon == "09n"  &&(
-                <Rainy6 width={70} height={70} />
-              )}
-              {this.state.icon == "50d" && (
-                <Rainy7 width={70} height={70} />
-              )}
-              {this.state.icon == "50n" && (
-                <Rainy7 width={70} height={70} />
-              )}
-              {this.state.icon == "10d" && (
-                <RainySun2 width={70} height={70} />
-              )}
-              {this.state.icon == "13n" && (
-                <Snowy6 width={70} height={70} />
-              )}
-              {this.state.icon == "13d" && (
-                <SnowySun3 width={70} height={70} />
-              )}
-              {this.state.icon == "11d" && (
-                <Thunder width={70} height={70} />
-              )}
-              {this.state.icon == "11n" && (
-                <Thunder width={70} height={70} />
-              )}
+            <View
+              style={{
+                flexDirection: "row",
+                flex: 1,
+                backgroundColor: "white"
+              }}
+            >
+              <View style={styles.icon}>
+                {this.props.datosClima.icon == "03d" && (
+                  <Cloudy width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "03n" && (
+                  <Cloudy width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "04n" && (
+                  <Cloudy width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "04d" && (
+                  <Cloudy width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "02d" && (
+                  <CloudyDay1 width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "02n" && (
+                  <CloudyNight1 width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "01d" && (
+                  <Day width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "01n" && (
+                  <Night width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "10n" && (
+                  <Rainy5 width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "09d" && (
+                  <Rainy6 width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "09n" && (
+                  <Rainy6 width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "50d" && (
+                  <Rainy7 width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "50n" && (
+                  <Rainy7 width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "10d" && (
+                  <RainySun2 width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "13n" && (
+                  <Snowy6 width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "13d" && (
+                  <SnowySun3 width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "11d" && (
+                  <Thunder width={70} height={70} />
+                )}
+                {this.props.datosClima.icon == "11n" && (
+                  <Thunder width={70} height={70} />
+                )}
               </View>
-              <Text style={styles.degrees}>{this.state.datos.temp}º C</Text>
+              <Text style={styles.degrees}>
+                {this.props.datosClima.datos.temp}º C
+              </Text>
             </View>
-            <Text style={styles.description}>{this.state.clima}</Text>
-            <Text style={[styles.description,styles.description2]}>{this.state.userCompanyName}</Text>
-            <Text style={styles.description}>{this.state.userCity}</Text>
+            <Text style={styles.description}>
+              {this.props.datosClima.clima}
+            </Text>
+            <Text style={[styles.description, styles.description2]}>
+              {this.state.values.company}
+            </Text>
+            <Text style={styles.description}>
+              {this.props.datosClima.lugar}
+            </Text>
           </View>
         )}
       </View>
     );
   }
 }
+
+export default connect(mapStateToProps)(Weather);
+
 const screenWidth = Math.round(Dimensions.get("window").width);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 5,
+    paddingBottom: 5
   },
   weather: {
     flex: 1,
@@ -215,9 +253,9 @@ const styles = StyleSheet.create({
     paddingLeft: 20
   },
   icon: {
-    justifyContent: "flex-end",
+    justifyContent: "flex-end"
   },
-  description2:{
-    paddingTop: 5,
+  description2: {
+    paddingTop: 5
   }
 });
