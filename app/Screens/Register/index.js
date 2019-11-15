@@ -1,31 +1,26 @@
 /* @flow */
 
 import React, { Component, PropTypes } from "react";
-import { Select, Option } from "react-native-chooser";
 import {
   View,
-  Button,
   Text,
   StyleSheet,
   TextInput,
-  Alert,
-  KeyboardAvoidingView,
   TouchableOpacity,
   ImageBackground,
   Image,
   ScrollView,
-  Dimensions,
-  SafeAreaView,
-  FlatList,
-  StatusBar,
-  Platform,
-  Picker
+  Dimensions
 } from "react-native";
+
 import { Formik } from "formik";
 import * as yup from "yup";
 import RegistroFondo from "../../Assets/Images/RegistroFondo.jpg";
+import RegistroFondo2 from "../../Assets/Images/RegistroFondoLS.jpg";
 import LogoCl from "../../Assets/Images/LogoCl.png";
-import { validationSchema } from "../../Components/ValidationSchema.js";
+import { validationSchema } from "../../Components/ValidationSchemas/ValidationSchema.js";
+import Orientation from "react-native-orientation";
+import RegisterPicker from "../../Components/Pickers/RegisterPicker";
 const StyledInput = ({
   label,
   formikProps,
@@ -53,195 +48,249 @@ const StyledInput = ({
 class Register extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    const isPortrait = () => {
+      const dim = Dimensions.get("screen");
+      return dim.height >= dim.width;
+    };
+
+    this.state = {
+      orientation: isPortrait() ? "portrait" : "landscape"
+    };
+    Dimensions.addEventListener("change", () => {
+      this.setState({
+        orientation: isPortrait() ? "portrait" : "landscape"
+      });
+    });
+  }
+  componentWillMount() {
+    Orientation.unlockAllOrientations();
+  }
+
+  componentWillUnmount() {
+    Dimensions.removeEventListener("change");
   }
   static navigationOptions = {
     header: null
   };
+
+  Registrarse(values) {
+    console.log(values);
+
+    var datos = {
+      name: values.name,
+      lastname: values.lastname,
+      email: values.email,
+      password: values.confirmPassword,
+      contact_data: {
+        full_name: `${values.name} ${values.lastname}`,
+        company_name: values.company,
+        business_line: values.businessR,
+        state: values.state,
+        size: values.size,
+        phone: values.phone
+      },
+      free_trial: true,
+      phone: values.phone
+    };
+    fetch("http://api.ienergybook.com/api/eUsers", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(datos)
+    })
+      .then(res => {
+        this.state.statusCode = res.status;
+        const data = res.json();
+        return Promise.all([this.state.statusCode, data]);
+      })
+      .then(json => {
+        if (this.state.statusCode == 200) {
+          Alert.alert("Registro completo!", [
+            {
+              text: "Okay",
+              onPress: () => this.props.navigation.navigate("Home")
+            }
+          ]);
+        } else {
+          Alert.alert("Lo sentimos, hubo un error.", [
+            {
+              text: "Okay"
+            }
+          ]);
+        }
+      })
+      .catch(err => {
+        console.log("no se pudo");
+      });
+  }
+
   Iniciar() {
     this.props.navigation.navigate("Home");
   }
+
   render() {
     return (
       <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
-        <SafeAreaView>
-          <KeyboardAvoidingView enabled>
-            <ImageBackground style={styles.imageBack} source={RegistroFondo}>
-              <View style={styles.container}>
-                <View style={styles.logoV}>
-                  <Image style={styles.logo} source={LogoCl} />
-                </View>
-                <View style={styles.dataPart}>
-                  <Text style={styles.data}>
-                    Llena este formulario para obtener una versión demo de
-                    nuestro Software de Gestión y Eficiencia Energética.
-                  </Text>
-                  <Formik
-                    initialValues={{
-                      name: "",
-                      lastname: "",
-                      email: "",
-                      password: "",
-                      confirmPassword: "",
-                      company: "",
-                      phone: "",
-                      state: "",
-                      businessR: ""
-                    }}
-                    onSubmit={values => {
-                      console.log(values);
-                      fetch("http://api.ienergybook.com/api/eUsers", {
-                        method: "POST",
-                        headers: {
-                          Accept: "application/json",
-                          "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ values })
-                      })
-                        .then(res => {
-                          this.state.statusCode = res.status;
-                          const data = res.json();
-                          return Promise.all([this.state.statusCode, data]);
-                        })
-                        .then(json => {
-                          //console.log(json);
-                        })
-                        .catch(err => {
-                          console.log("no se pudo");
-                        });
-                    }}
-                    validationSchema={validationSchema}
-                  >
-                    {formikProps => (
-                      <React.Fragment>
-                        <StyledInput
-                          label="Nombre"
-                          formikProps={formikProps}
-                          formikKey={"name"}
-                          placeholder="Nombre"
-                        />
+        <ImageBackground
+          style={[
+            styles.background,
+            this.state.orientation == "portrait"
+              ? {
+                  width: Math.min(screenWidth, screenHeight),
+                  height: "auto"
+                }
+              : {
+                  width: Math.max(screenWidth, screenHeight),
+                  height: "auto"
+                }
+          ]}
+          source={
+            this.state.orientation == "portrait"
+              ? RegistroFondo
+              : RegistroFondo2
+          }
+        >
+          <View style={styles.container}>
+            <View style={styles.logoV}>
+              <Image style={styles.logo} source={LogoCl} />
+            </View>
+            <View style={styles.dataPart}>
+              <Text style={styles.data}>
+                Llena este formulario para obtener una versión demo de nuestro
+                Software de Gestión y Eficiencia Energética.
+              </Text>
+              <Formik
+                initialValues={{
+                  name: "",
+                  lastname: "",
+                  email: "",
+                  password: "",
+                  confirmPassword: "",
+                  company: "",
+                  phone: "",
+                  state: "",
+                  businessR: "",
+                  size: ""
+                }}
+                onSubmit={values => {
+                  this.Registrarse(values);
+                }}
+                validationSchema={validationSchema}
+              >
+                {formikProps => (
+                  <React.Fragment>
+                    <StyledInput
+                      label="Nombre"
+                      formikProps={formikProps}
+                      formikKey={"name"}
+                      placeholder="Nombre"
+                    />
 
-                        <StyledInput
-                          label="Apellido"
-                          formikProps={formikProps}
-                          formikKey={"lastname"}
-                          placeholder="Apellido"
-                        />
-                        <StyledInput
-                          label="Email"
-                          formikProps={formikProps}
-                          formikKey={"email"}
-                          placeholder="Email"
-                        />
-                        <StyledInput
-                          label="Contraseña"
-                          formikProps={formikProps}
-                          formikKey={"password"}
-                          placeholder="Contraseña"
-                          secureTextEntry
-                        />
-                        <StyledInput
-                          label="Confirmacion"
-                          formikProps={formikProps}
-                          formikKey={"confirmPassword"}
-                          placeholder="Confirma tu contraseña"
-                          secureTextEntry
-                        />
-                        <StyledInput
-                          label="Compañia"
-                          formikProps={formikProps}
-                          formikKey={"company"}
-                          placeholder="Compañia"
-                        />
-                        <View style={styles.container2}>
-                          <Picker
-                            style={styles.input2}
-                            selectedValue={formikProps.values.businessR}
-                            onValueChange={formikProps.handleChange(
-                              "businessR"
-                            )}
-                          >
-                            <Picker.Item
-                              label="Manufactura"
-                              value={"Manufactura"}
-                            />
-                            <Picker.Item
-                              label="Automotriz"
-                              value={"Automotriz"}
-                            />
-                            <Picker.Item label="Textil" value={"Textil"} />
-                            <Picker.Item
-                              label="Metalurgica"
-                              value={"Metalurgica"}
-                            />
-                            <Picker.Item
-                              label="Sidelurgica"
-                              value={"Sidelurgica"}
-                            />
-                            <Picker.Item
-                              label="Petroquimica"
-                              value={"Petroquimica"}
-                            />
-                            <Picker.Item
-                              label="Electrica"
-                              value={"Electrica"}
-                            />
-                            <Picker.Item label="otro" value={"otro"} />
-                          </Picker>
-                          <Text style={styles.alert}>
-                            {formikProps.touched.businessR &&
-                              formikProps.errors.businessR}
-                          </Text>
-                        </View>
-                        <StyledInput
-                          label="Telefono"
-                          formikProps={formikProps}
-                          formikKey={"phone"}
-                          placeholder="Telefono"
-                          keyboardType="phone-pad"
-                        />
-                        <StyledInput
-                          label="Estado"
-                          formikProps={formikProps}
-                          formikKey={"state"}
-                          placeholder="Estado"
-                        />
-                        <View style={styles.btnRegV}>
-                          <TouchableOpacity
-                            onPress={formikProps.handleSubmit}
-                            style={styles.btn}
-                          >
-                            <Text style={styles.btnTxt}>Registrarse</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            onPress={() => this.Iniciar()}
-                            style={styles.btn2}
-                          >
-                            <Text style={styles.btnTxt2}>
-                              ¿Ya tienes cuenta? Inicia sesión
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                      </React.Fragment>
-                    )}
-                  </Formik>
-                </View>
-              </View>
-            </ImageBackground>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
+                    <StyledInput
+                      label="Apellido"
+                      formikProps={formikProps}
+                      formikKey={"lastname"}
+                      placeholder="Apellido"
+                    />
+                    <StyledInput
+                      label="Email"
+                      formikProps={formikProps}
+                      formikKey={"email"}
+                      placeholder="Email"
+                    />
+                    <StyledInput
+                      label="Contraseña"
+                      formikProps={formikProps}
+                      formikKey={"password"}
+                      placeholder="Contraseña"
+                      secureTextEntry
+                    />
+                    <StyledInput
+                      label="Confirmacion"
+                      formikProps={formikProps}
+                      formikKey={"confirmPassword"}
+                      placeholder="Confirma tu contraseña"
+                      secureTextEntry
+                    />
+                    <StyledInput
+                      label="Compañia"
+                      formikProps={formikProps}
+                      formikKey={"company"}
+                      placeholder="Compañia"
+                    />
+                    <StyledInput
+                      label="Telefono"
+                      formikProps={formikProps}
+                      formikKey={"phone"}
+                      placeholder="Telefono"
+                      keyboardType="phone-pad"
+                    />
+                    <StyledInput
+                      label="Estado"
+                      formikProps={formikProps}
+                      formikKey={"state"}
+                      placeholder="Estado"
+                    />
+                    <View style={styles.container2}>
+                      <Text style={{ padding: 10 }}>Giro de tu empresa</Text>
+                      <RegisterPicker
+                        tipo={"giro"}
+                        function={formikProps.handleChange}
+                        selectedValue={formikProps.values.businessR}
+                      />
+                      <Text style={styles.alert}>
+                        {formikProps.touched.businessR &&
+                          formikProps.errors.businessR}
+                      </Text>
+                      <Text style={{ padding: 10 }}>
+                        ¿Cuántas personas trabajan en tu empresa?
+                      </Text>
+                      <RegisterPicker
+                        tipo={"numPersonas"}
+                        function={formikProps.handleChange}
+                        selectedValue={formikProps.values.size}
+                      />
+                      <Text style={styles.alert}>
+                        {formikProps.touched.size && formikProps.errors.size}
+                      </Text>
+                    </View>
+                    <View style={styles.btnRegV}>
+                      <TouchableOpacity
+                        onPress={formikProps.handleSubmit}
+                        style={styles.btn}
+                      >
+                        <Text style={styles.btnTxt}>Registrarse</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => this.Iniciar()}
+                        style={styles.btn2}
+                      >
+                        <Text style={styles.btnTxt2}>
+                          ¿Ya tienes cuenta? Inicia sesión
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </React.Fragment>
+                )}
+              </Formik>
+            </View>
+          </View>
+        </ImageBackground>
       </ScrollView>
     );
   }
 }
+var screenHeight = Math.round(Dimensions.get("window").height);
+var screenWidth = Math.round(Dimensions.get("window").width);
 const styles = StyleSheet.create({
   scroll: {
-    flex: 0,
-    height: "auto"
+    flex: 1
   },
-  imageBack: {
-    width: "auto",
-    height: "auto"
+  background: {
+    height: "100%",
+    width: "100%"
   },
   input2: {
     borderRadius: 10,
@@ -251,14 +300,18 @@ const styles = StyleSheet.create({
     paddingLeft: 10
   },
   logo: {
-    width: 270,
-    height: 120,
-    resizeMode: "contain"
+    width: 150,
+    height: 150,
+    resizeMode: "contain",
+    backgroundColor: "transparent"
   },
   logoV: {
     flex: 1,
+    height: 180,
     alignItems: "flex-end",
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
+    paddingTop: 20,
+    paddingRight: 65
   },
   dataPart: {
     backgroundColor: "transparent",

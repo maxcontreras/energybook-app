@@ -1,43 +1,51 @@
 import React, { Component, PropTypes } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  KeyboardAvoidingView,
-  ScrollView,
-  SafeAreaView,
-  Dimensions,
-  Button,
-  TouchableOpacity,
-  RefreshControl
-} from "react-native";
-import Menu from "../../Components/Menu.js";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
+import HeaderMenu from "../../Components/HeaderMenu.js";
+import Orientation from "react-native-orientation";
 
 export default class Info extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    const isPortrait = () => {
+      const dim = Dimensions.get("screen");
+      return dim.height >= dim.width;
+    };
+
+    this.state = {
+      orientation: isPortrait() ? "portrait" : "landscape"
+    };
+    Dimensions.addEventListener("change", () => {
+      this.setState({
+        orientation: isPortrait() ? "portrait" : "landscape"
+      });
+    });
   }
+  componentWillMount() {
+    Orientation.unlockAllOrientations();
+  }
+
+  componentWillUnmount() {
+    Dimensions.removeEventListener("change");
+  }
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      header: (
+        <View style={styles.header}>
+          <HeaderMenu selected="record" />
+        </View>
+      )
+    };
+  };
+
   render() {
-    return (
-      <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
-        <SafeAreaView>
-          <KeyboardAvoidingView enabled>
-            <View>
-              <Menu />
-            </View>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
-      </ScrollView>
-    );
+    return <Text>I N F O R M A C I O N</Text>;
   }
 }
 
 const styles = StyleSheet.create({
-  scroll: {
-    flex: 0,
-    height: "auto",
-    flexGrow: 1
+  header: {
+    height: 60,
+    justifyContent: "center"
   }
 });

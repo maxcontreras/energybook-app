@@ -3,126 +3,100 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   KeyboardAvoidingView,
   ScrollView,
   SafeAreaView,
-  Dimensions,
-  Button,
-  TouchableOpacity,
-  RefreshControl,
-  Platform
+  Dimensions
 } from "react-native";
-import Daily from "../../Components/Daily.js";
-import LogoObs from "../../Assets/Images/LogoObs.png";
-import Charts from "../../Assets/Svg/Grafica.svg";
-import Costs from "../../Assets/Svg/Costo.svg";
-import Code from "../../Assets/Svg/Codigo.svg";
-import CarbonF from "../../Assets/Svg/HuellaCarbono.svg";
-import Histo from "../../Assets/Svg/Histo.svg";
-import Generation from "../../Assets/Svg/Gene.svg";
-import SemiCircleProgress from "../../Components/DashboardChart.js";
-import Fecha from "../../Components/Fecha.js";
-import Weather from "../../Components/Weather.js";
-import Data from "../../Components/Monthly.js";
-import Menu from "../../Components/Menu.js";
+import Daily from "../../Components/PrincipalScreenC/Daily.js";
+import SemiCircleProgress from "../../Components/PrincipalScreenC/DashboardChart.js";
+import Data from "../../Components/PrincipalScreenC/Monthly.js";
+import Menu from "../../Components/PrincipalScreenC/Menu.js";
+import PrecioCFE from "../../Components/PrincipalScreenC/PrecioCFEPeriodo.js";
 import Orientation from "react-native-orientation";
-export default class PrincipalScreen extends Component {
+import { connect } from "react-redux";
+
+const mapStateToProps = state => ({
+  readings: state.dailyReducer
+});
+
+class PrincipalScreen extends Component {
   _isMounted = false;
   constructor(props) {
     super(props);
-    this.state = {
-      prevScreenTitlle: this.props.navigation.state.params.prevScreenTitlle,
-      companyID: this.props.navigation.state.params.company,
-      city: this.props.navigation.state.params.city,
-      companyName: this.props.navigation.state.params.companyName,
-      portrait: false,
-      landscape: false
+    const isPortrait = () => {
+      const dim = Dimensions.get("screen");
+      return dim.height >= dim.width;
     };
+    this.state = {
+      orientation: isPortrait() ? "portrait" : "landscape",
+      values: []
+    };
+    Dimensions.addEventListener("change", () => {
+      this.setState({
+        orientation: isPortrait() ? "portrait" : "landscape"
+      });
+    });
   }
   static navigationOptions = {
     header: null
   };
-  componentWillMount() {
-    const initial = Orientation.getInitialOrientation();
-    if (initial === "PORTRAIT") {
-      this.setState({
-        portrait: true,
-        landscape: false
-      });
-    } else {
-      this.setState({
-        portrait: false,
-        landscape: true
-      });
-    }
-  }
+  componentWillMount() {}
+
   componentDidMount() {
-    Orientation.addOrientationListener(this._orientationDidChange);
+    Orientation.unlockAllOrientations();
   }
-  _orientationDidChange = orientation => {
-    if (orientation === "LANDSCAPE") {
-      console.log("LANDSCAPE");
-      this.setState({
-        portrait: false,
-        landscape: true
-      });
-    } else {
-      this.setState({
-        portrait: true,
-        landscape: false
-      });
-      console.log("PORTRAIT");
-    }
-  };
+
   componentWillUnmount() {
-    Orientation.getOrientation((err, orientation) => {
-      console.log(`Current Device Orientation: ${orientation}`);
-    });
-    Orientation.removeOrientationListener(this._orientationDidChange);
+    Dimensions.removeEventListener("change");
   }
+
   render() {
     return (
       <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
         <SafeAreaView>
           <KeyboardAvoidingView enabled>
             <View style={styles.container}>
-              <View style={styles.menu}>
-                <Menu
-                  userCity={this.state.city}
-                  userCompanyName={this.state.companyName}
-                />
-              </View>
+              {this.props.readings && (
+                <View style={styles.menu}>
+                  <Menu />
+                </View>
+              )}
               <View
                 style={[
-                  this.state.portrait
+                  this.state.orientation == "portrait"
                     ? styles.container2
                     : styles.containerLandscape
                 ]}
               >
                 <View
                   style={[
-                    this.state.portrait ? styles.daily : styles.dailyLandscape
+                    styles.daily,
+                    screenWidth < screenHeight ? styles.width : styles.height
                   ]}
                 >
-                  <Daily
-                    accessToken={this.state.prevScreenTitlle}
-                    companyID={this.state.companyID}
-                  />
-
-                  <Data
-                    accessToken={this.state.prevScreenTitlle}
-                    companyID={this.state.companyID}
-                  />
+                  <Daily />
+                  {this.props.readings && <Data />}
                 </View>
-                <View style={styles.charts}>
-                  <SemiCircleProgress
-                    progressColor={"green"}
-                    companyID={this.state.companyID}
+                {this.props.readings && (
+                  <View
+                    style={[
+                      this.state.orientation == "portrait"
+                        ? styles.charts
+                        : styles.chartsLS
+                    ]}
                   >
-                    <Text style={{ fontSize: 10 }}>kW</Text>
-                  </SemiCircleProgress>
-                </View>
+                    <SemiCircleProgress
+                      progressColor={"green"}
+                      dp={this.props.readings.dp}
+                      maxVal={this.props.readings.maxVal}
+                      minVal={this.props.readings.minVal}
+                    >
+                      <Text style={{ fontSize: 10 }}>kW</Text>
+                    </SemiCircleProgress>
+                    <PrecioCFE />
+                  </View>
+                )}
               </View>
             </View>
           </KeyboardAvoidingView>
@@ -131,6 +105,9 @@ export default class PrincipalScreen extends Component {
     );
   }
 }
+
+export default connect(mapStateToProps)(PrincipalScreen);
+
 const screenHeight = Math.round(Dimensions.get("window").height);
 const screenWidth = Math.round(Dimensions.get("window").width);
 const styles = StyleSheet.create({
@@ -141,10 +118,16 @@ const styles = StyleSheet.create({
   },
   charts: {
     flex: 1,
-    paddingTop: 30,
+    paddingTop: 10,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "white"
+    paddingBottom: 10
+  },
+  chartsLS: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: 10
   },
   container: {
     flex: 1,
@@ -172,13 +155,12 @@ const styles = StyleSheet.create({
     width: "auto"
   },
   daily: {
-    paddingTop: 10,
-    justifyContent: "center",
+    justifyContent: "center"
+  },
+  width: {
     width: screenWidth
   },
-  dailyLandscape: {
-    paddingTop: 10,
-    justifyContent: "center",
-    width: screenWidth + 20
+  height: {
+    width: screenHeight
   }
 });

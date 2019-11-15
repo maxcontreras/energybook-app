@@ -4,86 +4,74 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  Button,
   Alert,
-  KeyboardAvoidingView,
   TouchableOpacity,
   ImageBackground,
   Image,
   ScrollView,
-  Dimensions,
-  SafeAreaView,
-  FlatList,
-  StatusBar,
-  Platform
+  Dimensions
 } from "react-native";
 import axios from "axios";
+import AsyncStorage from "@react-native-community/async-storage";
 import Logotip from "../../Assets/Images/Logotip.png";
 import LoginFondo from "../../Assets/Images/LoginFondo.jpg";
+import LoginFondoLS from "../../Assets/Images/LoginFondoLS.jpg";
 import Orientation from "react-native-orientation";
+import { connect } from "react-redux";
+import {
+  getUserInfo,
+  getCompanyData,
+  getCompanyId
+} from "../../../Actions/Actions.js";
+
+const mapStateToProps = state => ({
+  homeData: state.initialValues
+});
 
 class Home extends Component {
   constructor(props) {
     super(props);
+    const isPortrait = () => {
+      const dim = Dimensions.get("screen");
+      return dim.height >= dim.width;
+    };
     this.state = {
       username: "",
       password: "",
       statusCode: "",
-      id: "",
-      userId: "",
-      datos: [],
-      data2: [],
-      company: "",
-      companyName: "",
-      city: "",
-      portrait: false,
-      landscape: false
+      orientation: isPortrait() ? "portrait" : "landscape"
     };
+    Dimensions.addEventListener("change", () => {
+      this.setState({
+        orientation: isPortrait() ? "portrait" : "landscape"
+      });
+    });
   }
   static navigationOptions = {
     header: null
   };
+
   componentWillMount() {
-    const initial = Orientation.getInitialOrientation();
-    if (initial === "PORTRAIT") {
-      this.setState({
-        portrait: true,
-        landscape: false
-      });
-    } else {
-      this.setState({
-        portrait: false,
-        landscape: true
-      });
-    }
+    Orientation.unlockAllOrientations();
   }
-  componentDidMount() {
-    Orientation.addOrientationListener(this._orientationDidChange);
-  }
-  _orientationDidChange = orientation => {
-    if (orientation === "LANDSCAPE") {
-      console.log("LANDSCAPE");
-      this.setState({
-        portrait: false,
-        landscape: true
-      });
-    } else {
-      this.setState({
-        portrait: true,
-        landscape: false
-      });
-      console.log("PORTRAIT");
-    }
+  _removeKey = async () => {
+    try {
+      await AsyncStorage.removeItem("inCaseKey");
+    } catch (exception) {}
   };
+
   componentWillUnmount() {
-    Orientation.getOrientation((err, orientation) => {
-      console.log(`Current Device Orientation: ${orientation}`);
-    });
-    Orientation.removeOrientationListener(this._orientationDidChange);
+    Dimensions.removeEventListener("change");
   }
+
   Registrar() {
     this.props.navigation.navigate("Register");
   }
+
+  PasswordChange() {
+    this.props.navigation.navigate("PasswordChange");
+  }
+
   postLogin() {
     fetch("http://api.ienergybook.com/api/eUsers/login", {
       method: "POST",
@@ -102,10 +90,7 @@ class Home extends Component {
         return Promise.all([this.state.statusCode, data]);
       })
       .then(json => {
-        this.setState({
-          id: json[1].id,
-          userId: json[1].userId
-        });
+        this.props.dispatch(getUserInfo(json));
         if (this.state.statusCode == 200) {
           this.getCompany();
         } else {
@@ -125,8 +110,9 @@ class Home extends Component {
       .catch(err => {});
   }
   getCompany() {
+    console.log(this.props);
     fetch(
-      `http://api.ienergybook.com/api/eUsers/?filter={"where":{"id":"${this.state.userId}"}}&access_token=${this.state.id}`,
+      `http://api.ienergybook.com/api/eUsers/?filter={"where":{"id":"${this.props.homeData.userId}"}}&access_token=${this.props.homeData.accesToken}`,
       {
         method: "GET",
         headers: {
@@ -141,30 +127,22 @@ class Home extends Component {
         return Promise.all([this.state.statusCode, data]);
       })
       .then(json => {
-        this.setState({
-          datos: json[1]
-        });
-        this.setState({
-          companyId: this.state.datos[0].company_id
-        });
-        if (!this.state.companyId) {
-          this.setState({
-            companyId: "5c2e7d9d51e9f51b9e5de809"
-          });
+        console.log(json);
+        this.props.dispatch(getCompanyId(json));
+        if (this.props.homeData.companyId) {
+          this.getCompanyData();
         } else {
-          this.setState({
-            companyId: this.state.companyId
-          });
+          this.Navigate();
         }
-        this.getCompanyData();
       })
       .catch(err => {
         console.log("no se pudo");
       });
   }
   getCompanyData() {
+    console.log(this.props.homeData.companyId);
     fetch(
-      `http://api.ienergybook.com/api/Companies/?filter={"where":{"id":"${this.state.companyId}"}}&access_token=${this.state.id}`,
+      `http://api.ienergybook.com/api/Companies/?filter={"where":{"id":"${this.props.homeData.companyId}"}}&access_token=${this.props.homeData.accesToken}`,
       {
         method: "GET",
         headers: {
@@ -179,29 +157,55 @@ class Home extends Component {
         return Promise.all([this.state.statusCode, data2]);
       })
       .then(json => {
-        //console.log(json);
-        this.setState({
-          datos2: json[1]
-        });
-        this.setState({
-          companyName: this.state.datos2[0].company_name,
-          city: this.state.datos2[0].city
-        });
-        //console.log(this.state.city, this.state.companyName);
-        this.Navigate();
+        console.log(json);
+        this.props.dispatch(getCompanyData(json));
+        console.log(this.props);
+        this._removeKey();
+        if (this.props.homeData.companyId) {
+          this.Navigate();
+        }
       })
       .catch(err => {
         console.log("no se pudo");
       });
   }
+
+  _storeData = async () => {
+    let datos = {
+      accesToken: this.props.homeData.accesToken,
+      userId: this.props.homeData.userId,
+      company: this.props.homeData.company,
+      city: this.props.homeData.city,
+      tipoTarifa: this.props.homeData.tipoTarifa,
+      companyId: this.props.homeData.companyId,
+      company_phone: this.props.homeData.company_phone,
+      size: this.props.homeData.size,
+      direccion: this.props.homeData.direccion,
+      puesto: this.props.homeData.puesto,
+      created_at: this.props.homeData.created_at,
+      lastLogin: this.props.homeData.lastLogin,
+      name: this.props.homeData.name,
+      lastname: this.props.homeData.lastname,
+      email: this.props.homeData.email,
+      location: this.props.homeData.location,
+      giro: this.props.homeData.giro
+    };
+    try {
+      await AsyncStorage.setItem(
+        "@MySuperStore:key",
+        JSON.stringify(datos),
+        () => {
+          console.log(datos);
+        }
+      );
+    } catch (error) {
+      // Error saving data
+    }
+  };
   Navigate() {
     if (this.state.statusCode == 200) {
-      this.props.navigation.navigate("PrincipalScreen", {
-        prevScreenTitlle: this.state.id,
-        company: this.state.companyId,
-        city: this.state.city,
-        companyName: this.state.companyName
-      });
+      this._storeData();
+      this.props.navigation.navigate("PrincipalScreen");
     } else {
       Alert.alert("Error", "Usuario o Contraseña incorrectos.", [
         {
@@ -217,91 +221,101 @@ class Home extends Component {
     }
   }
   render() {
+    console.log(this.state.orientation);
     return (
       <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
-        <SafeAreaView>
-          <KeyboardAvoidingView enabled>
-            <ImageBackground
-              style={
-                this.state.portrait
-                  ? styles.imageBack
-                  : styles.imageBackLandscape
-              }
-              source={LoginFondo}
+        <ImageBackground
+          style={[
+            styles.background,
+            screenWidth < screenHeight ? styles.width : styles.height
+          ]}
+          source={
+            this.state.orientation == "portrait" ? LoginFondo : LoginFondoLS
+          }
+        >
+          <View style={styles.container}>
+            <View
+              style={[
+                this.state.orientation == "portrait"
+                  ? styles.logoV
+                  : styles.logoLandscape
+              ]}
             >
-              <View style={styles.container}>
-                <View
-                  style={[
-                    this.state.portrait ? styles.logoV : styles.logoLandscape
-                  ]}
+              <Image style={styles.logo} source={Logotip} />
+            </View>
+            <View
+              style={[
+                this.state.orientation == "portrait"
+                  ? styles.loginPart
+                  : styles.loginPartLS
+              ]}
+            >
+              <Text style={styles.usPassText}>USUARIO</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={text => this.setState({ username: text })}
+                underlineColorAndroid="#889093"
+                autoCapitalize="none"
+                returnKeyType="done"
+              />
+              <Text style={styles.usPassText}>CONTRASEÑA</Text>
+              <TextInput
+                underlineColorAndroid="#889093"
+                secureTextEntry
+                returnKeyType="go"
+                style={styles.input}
+                onChangeText={text => this.setState({ password: text })}
+                autoCapitalize="none"
+              />
+              <View style={styles.btnInicV}>
+                <TouchableOpacity
+                  onPress={() => this.postLogin()}
+                  style={styles.btn}
                 >
-                  <Image style={styles.logo} source={Logotip} />
-                </View>
-                <View style={styles.loginPart}>
-                  <Text style={styles.usPassText}>USUARIO</Text>
-                  <TextInput
-                    style={styles.input}
-                    onChangeText={text => this.setState({ username: text })}
-                    underlineColorAndroid="#889093"
-                    autoCapitalize="none"
-                    returnKeyType="done"
-                  />
-                  <Text style={styles.usPassText}>CONTRASEÑA</Text>
-                  <TextInput
-                    underlineColorAndroid="#889093"
-                    secureTextEntry
-                    returnKeyType="go"
-                    style={styles.input}
-                    onChangeText={text => this.setState({ password: text })}
-                    autoCapitalize="none"
-                  />
-                  <View style={styles.btnInicV}>
-                    <TouchableOpacity
-                      onPress={() => this.postLogin()}
-                      style={styles.btn}
-                    >
-                      <Text style={styles.btnTxt}>Iniciar Sesión</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <View style={styles.newAccountView}>
-                  <TouchableOpacity
-                    onPress={() => this.Registrar()}
-                    style={styles.btn2}
-                  >
-                    <Text style={styles.btnTxt2}>¡Regístrate, es gratis!</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => this.postLogin()}
-                    style={styles.btn2}
-                  >
-                    <Text style={styles.btnTxt2}>
-                      ¿Olvidaste tu contraseña?
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                  <Text style={styles.btnTxt}>Iniciar Sesión</Text>
+                </TouchableOpacity>
               </View>
-            </ImageBackground>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
+            </View>
+            <View style={styles.newAccountView}>
+              <TouchableOpacity
+                onPress={() => this.Registrar()}
+                style={styles.btn2}
+              >
+                <Text style={styles.btnTxt2}>¡Regístrate, es gratis!</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => this.PasswordChange()}
+                style={styles.btn2}
+              >
+                <Text style={styles.btnTxt2}>¿Olvidaste tu contraseña?</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ImageBackground>
       </ScrollView>
     );
   }
 }
+
+export default connect(mapStateToProps)(Home);
+
 var screenHeight = Math.round(Dimensions.get("window").height);
 var screenWidth = Math.round(Dimensions.get("window").width);
 const styles = StyleSheet.create({
   scroll: {
     flex: 1
   },
-  imageBack: {
-    width: screenWidth,
+  background: {
+    height: "100%",
+    width: "100%"
+  },
+  width: {
     height: screenHeight
   },
-  imageBackLandscape: {
-    width: screenHeight,
-    height: screenHeight
+  height: {
+    height: screenWidth
   },
+
   logo: {
     width: 250,
     height: 100,
@@ -314,13 +328,18 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   logoLandscape: {
-    flex: 1,
+    flex: 2,
     alignItems: "center",
     backgroundColor: "transparent",
-    justifyContent: "flex-start"
+    justifyContent: "center"
   },
   loginPart: {
     paddingTop: 60,
+    paddingLeft: 60,
+    paddingRight: 60
+  },
+  loginPartLS: {
+    paddingTop: 120,
     paddingLeft: 60,
     paddingRight: 60
   },
@@ -354,8 +373,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
-    backgroundColor: "transparent",
-    borderRadius: 10
+    borderRadius: 10,
+    height: "100%",
+    width: "100%"
   },
   newAccountView: {
     flex: 1,
@@ -381,4 +401,3 @@ const styles = StyleSheet.create({
     color: "#889093"
   }
 });
-export default Home;
