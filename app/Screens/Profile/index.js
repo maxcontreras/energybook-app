@@ -22,7 +22,9 @@ const screenHeight = Math.round(Dimensions.get("window").height);
 const screenWidth = Math.round(Dimensions.get("window").width);
 const mapStateToProps = state => ({
   userData: state.initialValues,
-  readings: state.dailyReducer
+  readings: state.dailyReducer, 
+
+  inCaseCoords: state.weatherReducer
 });
 
 class Profile extends Component {
@@ -101,9 +103,10 @@ class Profile extends Component {
                 <Text style={{ color: "white", fontSize: 15 }}>
                   {this.state.values.company}
                 </Text>
-              </View>
-              <ProfileMaps />
-
+              </View> 
+              {this.state.values.location  &&(
+              <ProfileMaps lat={this.state.values.location ? this.state.values.location.lat : this.props.inCaseCoords.ftcoords[0]} lon={this.state.values.location ? this.state.values.location.lon : this.props.inCaseCoords.ftcoords[1]}/>
+              )}
               <View style={styles.infoView}>
                 <View style={styles.infoSign}>
                   <Text style={{ color: "white", fontSize: 13 }}>

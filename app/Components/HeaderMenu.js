@@ -1,5 +1,11 @@
 import React, { Component, PropTypes } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView
+} from "react-native";
 
 import Charts from "../Assets/Svg/Grafica.svg";
 import Costs from "../Assets/Svg/Costo.svg";
@@ -16,6 +22,9 @@ import CarbonSelect from "../Assets/Svg/huellaS.svg";
 import GenerationSelect from "../Assets/Svg/geneS.svg";
 import { withNavigation } from "react-navigation";
 import Orientation from "react-native-orientation";
+import { withSafeArea } from "react-native-safe-area";
+
+//const SafeAreaView = withSafeArea(View, 'absolutePosition', 'vertical')
 
 class HeaderMenu extends Component {
   constructor(props) {
@@ -70,74 +79,76 @@ class HeaderMenu extends Component {
   render() {
     console.log("HEADER" + this.props);
     return (
-      <View style={styles.menu}>
-        <TouchableOpacity
-          onPress={() => this.props.navigation.navigate("Charts")}
-          style={styles.btn}
-        >
-          {this.state.selected == "charts" ? (
-            <ChartSelect style={styles.imageB} />
-          ) : (
-            <Charts style={styles.imageB} />
-          )}
-          <Text style={styles.btnTxt}>Gráficas</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => this.props.navigation.navigate("Costs")}
-          style={styles.btn}
-        >
-          {this.state.selected == "costos" ? (
-            <CostSelect style={styles.imageB} />
-          ) : (
-            <Costs style={styles.imageB} />
-          )}
-          <Text style={styles.btnTxt}>Costos</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => this.props.navigation.navigate("NetworkC")}
-          style={styles.btn}
-        >
-          {this.state.selected == "codigo" ? (
-            <CodeSelect style={styles.imageB} />
-          ) : (
-            <Code style={styles.imageB} />
-          )}
-          <Text style={styles.btnTxt}>Cógido de red</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => this.props.navigation.navigate("Record")}
-          style={styles.btn}
-        >
-          {this.state.selected == "record" ? (
-            <HistoSelect style={styles.imageB} />
-          ) : (
-            <Histo style={styles.imageB} />
-          )}
-          <Text style={styles.btnTxt}>Historial</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => this.props.navigation.navigate("CarbonF")}
-          style={styles.btn}
-        >
-          {this.state.selected == "carbon" ? (
-            <CarbonSelect style={styles.imageB} />
-          ) : (
-            <CarbonF style={styles.imageB} />
-          )}
-          <Text style={styles.btnTxt}>Huella de Carbono</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => this.props.navigation.navigate("Generation")}
-          style={styles.btn}
-        >
-          {this.state.selected == "gene" ? (
-            <GenerationSelect style={styles.imageB} />
-          ) : (
-            <Generation style={styles.imageB} />
-          )}
-          <Text style={styles.btnTxt}>Generación</Text>
-        </TouchableOpacity>
-      </View>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.menu}>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate("Charts")}
+            style={styles.btn}
+          >
+            {this.props.selected == "charts" ? (
+              <ChartSelect style={styles.imageB} />
+            ) : (
+              <Charts style={styles.imageB} />
+            )}
+            <Text style={styles.btnTxt}>Gráficas</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate("Costs")}
+            style={styles.btn}
+          >
+            {this.props.selected == "costos" ? (
+              <CostSelect style={styles.imageB} />
+            ) : (
+              <Costs style={styles.imageB} />
+            )}
+            <Text style={styles.btnTxt}>Costos</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate("NetworkC")}
+            style={styles.btn}
+          >
+            {this.props.selected == "codigo" ? (
+              <CodeSelect style={styles.imageB} />
+            ) : (
+              <Code style={styles.imageB} />
+            )}
+            <Text style={styles.btnTxt}>Cógido de red</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate("Record")}
+            style={styles.btn}
+          >
+            {this.props.selected == "record" ? (
+              <HistoSelect style={styles.imageB} />
+            ) : (
+              <Histo style={styles.imageB} />
+            )}
+            <Text style={styles.btnTxt}>Historial</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate("CarbonF")}
+            style={styles.btn}
+          >
+            {this.props.selected == "carbon" ? (
+              <CarbonSelect style={styles.imageB} />
+            ) : (
+              <CarbonF style={styles.imageB} />
+            )}
+            <Text style={styles.btnTxt}>Huella de Carbono</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate("Generation")}
+            style={styles.btn}
+          >
+            {this.props.selected == "gene" ? (
+              <GenerationSelect style={styles.imageB} />
+            ) : (
+              <Generation style={styles.imageB} />
+            )}
+            <Text style={styles.btnTxt}>Generación</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     );
   }
 }

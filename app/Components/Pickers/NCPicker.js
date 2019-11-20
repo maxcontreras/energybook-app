@@ -6,7 +6,8 @@ import {
   Dimensions,
   TouchableOpacity,
   Picker,
-  Platform
+  Platform, 
+  ActionSheetIOS
 } from "react-native";
 import { connect } from "react-redux";
 const screenHeight = Math.round(Dimensions.get("window").height);

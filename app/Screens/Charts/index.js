@@ -3,9 +3,9 @@ import {
   View,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   Dimensions,
   Alert,
+  KeyboardAvoidingView,
   Platform
 } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -18,6 +18,12 @@ import CSButtons from "../../Components/CSButtons.js";
 import FilterPicker from "../../Components/Pickers/FilterPicker";
 import IntervalPicker from "../../Components/Pickers/IntervalPicker";
 import ActivityI from "../../Components/ActivityIndicator";
+
+import { withSafeArea } from "react-native-safe-area";
+
+const SafeAreaView = withSafeArea(View, "margin", "horizontal");
+const HeaderSAW = withSafeArea(View, "margin", "top");
+
 const screenHeight = Math.round(Dimensions.get("window").height);
 const screenWidth = Math.round(Dimensions.get("window").width);
 
@@ -25,7 +31,6 @@ const mapStateToProps = state => ({
   userData: state.initialValues,
   readings: state.dailyReducer
 });
-
 class ChartScreen extends Component {
   constructor(props) {
     super(props);
@@ -41,6 +46,7 @@ class ChartScreen extends Component {
       calendar: false,
       arrayWithData: [],
       dates: [],
+      insents: [],
       device: "",
       service: "Servicio 1",
       variable: "EPimp",
@@ -70,12 +76,13 @@ class ChartScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
-        <View style={styles.header}>
-          <HeaderMenu selected="charts" />
-        </View>
+        <HeaderSAW style={styles.header}>
+          <HeaderMenu selected={"charts"} />
+        </HeaderSAW>
       )
     };
   };
+
   componentWillMount() {
     this._retrieveData();
   }
@@ -351,154 +358,140 @@ class ChartScreen extends Component {
       }
     }
     return (
-      <SafeAreaView>
-        <ScrollView>
-          <View
-            style={[
-              styles.container,
-              screenWidth > screenHeight ? styles.width : styles.height
-            ]}
-          >
-            <View
-              style={[
-                styles.topView,
-                screenWidth > screenHeight ? styles.width : styles.height,
-                this.state.orientation == "portrait"
-                  ? {
-                      flexDirection: "column",
-                      height: "auto"
-                    }
-                  : { flexDirection: "row" }
-              ]}
-            >
-              <View style={styles.calendarView}>
-                <CCPicker
-                  function={this.setDevice.bind(this)}
-                  selectedValue={this.state.pickerValue}
-                />
-                <View style={[styles.variableView]}>
-                  <CSButtons
-                    setFunction={this.setVariabe}
-                    texto={"Consumo"}
-                    selected={this.state.caption}
-                    filter={"EPimp"}
-                  />
-                  <CSButtons
-                    setFunction={this.setVariabe}
-                    texto={"Demanda"}
-                    selected={this.state.caption}
-                    filter={"DP"}
-                  />
-                  {this.state.orientation == "portrait" && (
-                    <FilterPicker
-                      function={this.setFilter.bind(this)}
-                      selectedValue={this.state.pickerFValue}
-                    />
-                  )}
-                  {this.state.orientation == "portrait" &&
-                    this.state.timeCustomButtons && (
-                      <IntervalPicker
-                        function={this.setInterval.bind(this)}
-                        selectedValue={this.state.pickerIValue}
-                      />
-                    )}
-                </View>
-              </View>
-              {this.state.orientation == "landscape" && (
+      <View style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
+            <KeyboardAvoidingView enabled>
+              <View style={[styles.container]}>
                 <View
                   style={[
-                    styles.optionButtonsView,
-                    screenWidth > screenHeight ? styles.width : styles.height
+                    styles.topView,
+                    this.state.orientation == "portrait"
+                      ? { width: Math.min(screenWidth, screenHeight) }
+                      : { width: null },
+                    this.state.orientation == "portrait"
+                      ? {
+                          flexDirection: "column",
+                          height: "auto"
+                        }
+                      : { flexDirection: "row", paddingRight: 10 }
                   ]}
                 >
-                  <CSButtons
-                    setFunction={this.Calendario}
-                    texto={"Calendario"}
-                    selected={this.state.filter}
-                    filter={-1}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Hoy"}
-                    selected={this.state.filter}
-                    filter={0}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Ayer"}
-                    selected={this.state.filter}
-                    filter={1}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Esta semana"}
-                    selected={this.state.filter}
-                    filter={2}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Este mes"}
-                    selected={this.state.filter}
-                    filter={3}
-                  />
-                </View>
-              )}
-            </View>
-            <View
-              style={[
-                styles.chart,
-                screenWidth > screenHeight ? styles.width : styles.height
-              ]}
-            >
-              {this.state.timeCustomButtons &&
-                this.state.orientation == "landscape" && (
-                  <View
-                    style={[
-                      styles.timeButtons,
-                      screenWidth > screenHeight ? styles.width : styles.height
-                    ]}
-                  >
-                    <CSButtons
-                      setFunction={this.setInterval}
-                      texto={"1 hora"}
-                      selected={this.state.interval}
-                      filter={3600}
+                  <View style={styles.calendarView}>
+                    <CCPicker
+                      function={this.setDevice.bind(this)}
+                      selectedValue={this.state.pickerValue}
                     />
-                    <CSButtons
-                      setFunction={this.setInterval}
-                      texto={"30 minutos"}
-                      selected={this.state.interval}
-                      filter={1800}
-                    />
-                    <CSButtons
-                      setFunction={this.setInterval}
-                      texto={"15 minutos"}
-                      selected={this.state.interval}
-                      filter={900}
-                    />
+                    <View style={[styles.variableView]}>
+                      <CSButtons
+                        setFunction={this.setVariabe}
+                        texto={"Consumo"}
+                        selected={this.state.caption}
+                        filter={"EPimp"}
+                      />
+                      <CSButtons
+                        setFunction={this.setVariabe}
+                        texto={"Demanda"}
+                        selected={this.state.caption}
+                        filter={"DP"}
+                      />
+                      {this.state.orientation == "portrait" && (
+                        <FilterPicker
+                          function={this.setFilter.bind(this)}
+                          selectedValue={this.state.pickerFValue}
+                        />
+                      )}
+                      {this.state.orientation == "portrait" &&
+                        this.state.timeCustomButtons && (
+                          <IntervalPicker
+                            function={this.setInterval.bind(this)}
+                            selectedValue={this.state.pickerIvalue}
+                          />
+                        )}
+                    </View>
                   </View>
-                )}
+                  {this.state.orientation == "landscape" && (
+                    <View style={styles.optionButtonsView}>
+                      <CSButtons
+                        setFunction={this.Calendario}
+                        texto={"Calendario"}
+                        selected={this.state.filter}
+                        filter={-1}
+                      />
+                      <CSButtons
+                        setFunction={this.setFilter}
+                        texto={"Hoy"}
+                        selected={this.state.filter}
+                        filter={0}
+                      />
+                      <CSButtons
+                        setFunction={this.setFilter}
+                        texto={"Ayer"}
+                        selected={this.state.filter}
+                        filter={1}
+                      />
+                      <CSButtons
+                        setFunction={this.setFilter}
+                        texto={"Esta semana"}
+                        selected={this.state.filter}
+                        filter={2}
+                      />
+                      <CSButtons
+                        setFunction={this.setFilter}
+                        texto={"Este mes"}
+                        selected={this.state.filter}
+                        filter={3}
+                      />
+                    </View>
+                  )}
+                </View>
+                {this.state.timeCustomButtons &&
+                  this.state.orientation == "landscape" && (
+                    <View style={[styles.timeButtons]}>
+                      <CSButtons
+                        setFunction={this.setInterval}
+                        texto={"1 hora"}
+                        selected={this.state.interval}
+                        filter={3600}
+                      />
+                      <CSButtons
+                        setFunction={this.setInterval}
+                        texto={"30 minutos"}
+                        selected={this.state.interval}
+                        filter={1800}
+                      />
+                      <CSButtons
+                        setFunction={this.setInterval}
+                        texto={"15 minutos"}
+                        selected={this.state.interval}
+                        filter={900}
+                      />
+                    </View>
+                  )}
 
-              {this.state.calendar && (
-                <DatesPicker
-                  initialDate={this.state.initialDate}
-                  endDate={this.state.endDate}
-                  setInitial={this.setInitial}
-                  setEnd={this.setEnd}
-                />
-              )}
-              {this.state.indicator && <ActivityI />}
-              {this.state.arrayWithData && !this.state.indicator && (
-                <Chart
-                  type={"line"}
-                  caption={this.state.caption}
-                  data={chartAxis.data}
-                />
-              )}
-            </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
+                <View style={[styles.chart]}>
+                  {this.state.calendar && (
+                    <DatesPicker
+                      initialDate={this.state.initialDate}
+                      endDate={this.state.endDate}
+                      setInitial={this.setInitial}
+                      setEnd={this.setEnd}
+                    />
+                  )}
+                  {this.state.indicator && <ActivityI />}
+                  {this.state.arrayWithData && !this.state.indicator && (
+                    <Chart
+                      type={"line"}
+                      caption={this.state.caption}
+                      data={chartAxis.data}
+                    />
+                  )}
+                </View>
+              </View>
+            </KeyboardAvoidingView>
+          </ScrollView>
+        </SafeAreaView>
+      </View>
     );
   }
 }
@@ -506,8 +499,10 @@ class ChartScreen extends Component {
 export default connect(mapStateToProps)(ChartScreen);
 
 const styles = StyleSheet.create({
+  scroll: {
+    flex: 1
+  },
   header: {
-    height: 60,
     justifyContent: "center"
   },
   topView: {
@@ -520,7 +515,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    height: "auto"
+    height: "auto",
+    backgroundColor: "white"
   },
   chart: {
     justifyContent: "center",
@@ -532,29 +528,32 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     alignItems: "flex-end",
     justifyContent: "flex-end",
-    flex: 3,
-    padding: 10
+    flex: 2,
+    padding: 10,
+    paddingLeft: 0
   },
   calendarView: {
     paddingTop: 10,
     paddingBottom: 10,
     backgroundColor: "white",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    paddingLeft: 10,
+    flex: 1
   },
   timeButtons: {
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
+    height: "auto",
     flexDirection: "row",
-    height: 45,
+    width: "100%",
     backgroundColor: "white",
-    paddingBottom: 10,
-    paddingRight: 10
+    alignItems: "flex-end",
+    justifyContent: "flex-end",
+    padding: 10,
+    paddingRight: 20
   },
   variableView: {
     flexDirection: "row",
     alignItems: "flex-end",
     paddingRight: 10,
-    paddingLeft: 10,
     height: 50,
     backgroundColor: "white"
   },

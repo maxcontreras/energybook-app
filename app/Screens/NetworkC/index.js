@@ -77,9 +77,11 @@ class Codes extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
-        <View style={styles.header}>
-          <HeaderMenu selected="codigo" />
-        </View>
+        <SafeAreaView>
+          <View style={styles.header}>
+            <HeaderMenu selected={"codigo"} />
+          </View>
+        </SafeAreaView>
       )
     };
   };
@@ -359,7 +361,7 @@ class Codes extends Component {
         palettecolors: "ACDE9C,9CB2D8,5E5E5E",
         showhovereffect: "1",
         drawcrossline: "1",
-        theme: "fusion",
+        theme: Platform.OS == "ios" ? "ocean" : "fusion",
         setAdaptiveYMin: "1",
         labelDisplay: "Auto",
         useEllipsesWhenOverflow: "0",
@@ -395,28 +397,20 @@ class Codes extends Component {
     return (
       <SafeAreaView>
         <ScrollView>
-          <View
-            style={[
-              styles.container,
-              screenWidth > screenHeight ? styles.width : styles.height
-            ]}
-          >
+          <View style={[styles.container]}>
             <View
               style={[
                 styles.topView,
-                screenWidth > screenHeight ? styles.width : styles.height
+
+                this.state.orientation == "portrait"
+                  ? { width: Math.min(screenWidth, screenHeight) }
+                  : { width: null }
               ]}
             >
-              <View
-                style={[
-                  styles.calendarView,
-                  screenWidth > screenHeight ? styles.width : styles.height
-                ]}
-              >
+              <View style={[styles.calendarView]}>
                 <View
                   style={[
                     styles.extraView,
-                    screenWidth < screenHeight ? styles.width : styles.height,
 
                     this.state.orientation == "portrait"
                       ? { flexDirection: "row" }
@@ -443,7 +437,11 @@ class Codes extends Component {
                 <View
                   style={[
                     styles.variableView,
-                    screenWidth > screenHeight ? styles.vWidth : styles.vHeight
+                    this.state.orientation == "landscape"
+                      ? {
+                          flex: 1
+                        }
+                      : { flex: null }
                   ]}
                 >
                   <CSButtons
@@ -510,40 +508,34 @@ class Codes extends Component {
             </View>
             <View
               style={[
-                styles.chart,
-                screenWidth > screenHeight ? styles.width : styles.height
+                styles.timeButtons,
+                this.state.orientation == "portrait"
+                  ? {
+                      justifyContent: "flex-start"
+                    }
+                  : { justifyContent: "flex-end" }
               ]}
             >
-              <View
-                style={[
-                  styles.timeButtons,
-                  screenWidth > screenHeight ? styles.width : styles.height,
-                  this.state.orientation == "portrait"
-                    ? {
-                        justifyContent: "flex-start"
-                      }
-                    : { justifyContent: "flex-end" }
-                ]}
-              >
-                <CSButtons
-                  setFunction={this.setInterval}
-                  texto={"1 Hora"}
-                  selected={this.state.interval}
-                  filter={3600}
-                />
-                <CSButtons
-                  setFunction={this.setInterval}
-                  texto={"30 minutos"}
-                  selected={this.state.interval}
-                  filter={1800}
-                />
-                <CSButtons
-                  setFunction={this.setInterval}
-                  texto={"15 minutos"}
-                  selected={this.state.interval}
-                  filter={900}
-                />
-              </View>
+              <CSButtons
+                setFunction={this.setInterval}
+                texto={"1 Hora"}
+                selected={this.state.interval}
+                filter={3600}
+              />
+              <CSButtons
+                setFunction={this.setInterval}
+                texto={"30 minutos"}
+                selected={this.state.interval}
+                filter={1800}
+              />
+              <CSButtons
+                setFunction={this.setInterval}
+                texto={"15 minutos"}
+                selected={this.state.interval}
+                filter={900}
+              />
+            </View>
+            <View style={[styles.chart]}>
               {this.state.calendar && (
                 <DatesPicker
                   initialDate={this.state.initialDate}
@@ -556,15 +548,13 @@ class Codes extends Component {
               {dataSource && !this.state.indicator && (
                 <FusionCharts
                   type={"msline"}
-                  width={"100%"}
-                  height={350}
                   dataFormat={"json"}
                   dataSource={dataSource}
                   libraryPath={this.libraryPath} // set the libraryPath property
                   width={
                     this.state.orientation == "portrait"
-                      ? Math.min(screenWidth, screenHeight)
-                      : Math.max(screenWidth, screenHeight)
+                      ? Math.min(screenWidth, screenHeight) - 20
+                      : Math.max(screenWidth, screenHeight) - 100
                   }
                   height={this.state.orientation == "portrait" ? 500 : 400}
                 />
@@ -588,8 +578,7 @@ const styles = StyleSheet.create({
     height: 110,
     justifyContent: "center",
     flexDirection: "row",
-    backgroundColor: "white",
-    width: screenHeight
+    backgroundColor: "white"
   },
   container: {
     flex: 1,
@@ -611,41 +600,22 @@ const styles = StyleSheet.create({
     padding: 10
   },
   calendarView: {
-    flex: 1.5,
-    paddingTop: 10,
-    paddingBottom: 10,
+    flex: 1,
+    padding: 10,
     justifyContent: "space-between"
   },
   timeButtons: {
-    alignItems: "flex-end",
+    height: "auto",
     flexDirection: "row",
-    width: screenHeight,
-    height: 45,
+    width: "100%",
     backgroundColor: "white",
-    paddingBottom: 10,
-    paddingHorizontal: 10
+    alignItems: "flex-end",
+    padding: 10
   },
   variableView: {
-    width: screenHeight / 2,
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "space-between",
-    paddingRight: 10,
-    paddingLeft: 10
-  },
-  width: {
-    width: screenWidth
-  },
-  height: {
-    width: screenHeight
-  },
-  vWidht: {
-    width: screenHeight / 2
-  },
-  vHeight: {
-    width: screenWidth / 2
-  },
-  extraView: {
-    paddingRight: 20
+    paddingRight: 10
   }
 });

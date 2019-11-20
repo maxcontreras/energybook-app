@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import DatePicker from "react-native-datepicker";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions , ActionSheetIOS} from "react-native";
 
 var today = new Date();
 var date =

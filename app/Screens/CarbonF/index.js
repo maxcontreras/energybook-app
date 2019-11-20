@@ -73,9 +73,11 @@ class Carbon extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
-        <View style={styles.header}>
-          <HeaderMenu selected="carbon" />
-        </View>
+        <SafeAreaView>
+          <View style={styles.header}>
+            <HeaderMenu selected={"carbon"} />
+          </View>
+        </SafeAreaView>
       )
     };
   };
@@ -348,22 +350,18 @@ class Carbon extends Component {
     return (
       <SafeAreaView>
         <ScrollView>
-          <View
-            style={
-              (styles.container,
-              screenWidth > screenHeight ? styles.width : styles.height)
-            }
-          >
+          <View style={styles.container}>
             <View
               style={[
                 styles.topView,
-                screenWidth > screenHeight ? styles.width : styles.height,
+
                 this.state.orientation == "portrait"
                   ? {
+                      width: Math.min(screenWidth, screenHeight),
                       flexDirection: "column",
                       height: "auto"
                     }
-                  : { flexDirection: "row" }
+                  : { width: null, flexDirection: "row" }
               ]}
             >
               <View style={styles.calendarView}>
@@ -438,12 +436,7 @@ class Carbon extends Component {
                 setEnd={this.setEnd}
               />
             )}
-            <View
-              style={[
-                styles.chart,
-                screenWidth > screenHeight ? styles.width : styles.height
-              ]}
-            >
+            <View style={[styles.chart]}>
               {this.state.indicator && <ActivityI />}
               {this.state.arrayWithData && !this.state.indicator && (
                 <Chart

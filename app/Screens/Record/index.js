@@ -52,9 +52,12 @@ class Record extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
+        <SafeAreaView
+        >
         <View style={styles.header}>
-          <HeaderMenu selected="record" />
+          <HeaderMenu selected={"record"} />
         </View>
+        </SafeAreaView>
       )
     };
   };

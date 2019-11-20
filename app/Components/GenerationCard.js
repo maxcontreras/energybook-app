@@ -1,5 +1,12 @@
 import React, { Component, PropTypes } from "react";
-import { View, Text, StyleSheet, Dimensions, Platform } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  Platform,
+  SafeAreaView
+} from "react-native";
 import Orientation from "react-native-orientation";
 import { Card, ListItem, Button, Icon } from "react-native-elements";
 import { n, date, mes } from "./Fecha.js";
@@ -120,74 +127,67 @@ export default class GenerationCard extends Component {
           : "0 t";
       }
     }
-    const uno = screenHeight / 3.2;
-    const dos = screenWidth / 3.2;
-
-    const unou = screenWidth - 20;
-    const dosd = screenHeight - 20;
 
     return (
-      <Card
-        title={fecha}
-        containerStyle={{
-          ...styles.containerCard,
-          width:
-            screenWidth < screenHeight
-              ? this.state.orientation == "landscape"
-                ? uno
-                : unou
-              : this.state.orientation == "landscape"
-              ? dos
-              : dosd
-        }}
-        titleStyle={styles.titleStyle}
-        wrapperStyle={{ borderRadius: 10 }}
-      >
-        <View
-          style={[
-            styles.innerCard,
-            this.props.numero == "3" ? null : styles.height2bottom
+      <SafeAreaView>
+        <Card
+          title={fecha}
+          containerStyle={[
+            styles.containerCard,
+
+            this.state.orientation == "portrait"
+              ? { width: Math.min(screenWidth, screenHeight) - 20 }
+              : { width: Math.max(screenWidth, screenHeight) / 3.5 }
           ]}
+          titleStyle={styles.titleStyle}
+          wrapperStyle={{ borderRadius: 10 }}
         >
           <View
             style={[
-              styles.iconPart,
+              styles.innerCard,
               this.props.numero == "3" ? null : styles.height2bottom
             ]}
           >
-            <Icono1 style={styles.icon} />
-            {this.props.numero != "1" && <Icono2 style={styles.icon} />}
-            {this.props.numero == "3" && <Icono3 style={styles.icon} />}
-          </View>
-          <View
-            style={[
-              styles.textPart,
-              this.props.numero == "3" ? null : styles.height2bottom
-            ]}
-          >
-            <Text style={styles.middleText}>{variable1}</Text>
-            <Text style={styles.middleText}>{variable2}</Text>
+            <View
+              style={[
+                styles.iconPart,
+                this.props.numero == "3" ? null : styles.height2bottom
+              ]}
+            >
+              <Icono1 style={styles.icon} />
+              {this.props.numero != "1" && <Icono2 style={styles.icon} />}
+              {this.props.numero == "3" && <Icono3 style={styles.icon} />}
+            </View>
+            <View
+              style={[
+                styles.textPart,
+                this.props.numero == "3" ? null : styles.height2bottom
+              ]}
+            >
+              <Text style={styles.middleText}>{variable1}</Text>
+              <Text style={styles.middleText}>{variable2}</Text>
 
-            {this.props.numero == "3" && (
-              <Text style={styles.middleText}>{variable3}</Text>
-            )}
+              {this.props.numero == "3" && (
+                <Text style={styles.middleText}>{variable3}</Text>
+              )}
+            </View>
+            <View
+              style={[
+                styles.valuePart,
+                this.props.numero == "3" ? null : styles.height2bottom
+              ]}
+            >
+              <Text style={styles.priceText}>{valor1}</Text>
+              {this.props.numero != "1" && (
+                <Text style={styles.priceText}>{valor2}</Text>
+              )}
+              {this.props.numero == "3" && (
+                <Text style={styles.priceText}>{valor3}</Text>
+              )}
+            </View>
           </View>
-          <View
-            style={[
-              styles.valuePart,
-              this.props.numero == "3" ? null : styles.height2bottom
-            ]}
-          >
-            <Text style={styles.priceText}>{valor1}</Text>
-            {this.props.numero != "1" && (
-              <Text style={styles.priceText}>{valor2}</Text>
-            )}
-            {this.props.numero == "3" && (
-              <Text style={styles.priceText}>{valor3}</Text>
-            )}
-          </View>
-        </View>
-      </Card>
+        </Card>
+      </SafeAreaView>
     );
   }
 }

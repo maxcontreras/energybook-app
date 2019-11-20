@@ -218,9 +218,11 @@ class Generation extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
-        <View style={styles.header}>
-          <HeaderMenu selected="gene" />
-        </View>
+        <SafeAreaView>
+          <View style={styles.header}>
+            <HeaderMenu selected={"gene"} />
+          </View>
+        </SafeAreaView>
       )
     };
   };
@@ -379,16 +381,14 @@ class Generation extends Component {
     return (
       <SafeAreaView>
         <ScrollView>
-          <View
-            style={
-              (styles.container,
-              screenWidth > screenHeight ? styles.width : styles.height)
-            }
-          >
+          <View style={styles.container}>
             <View
               style={[
                 styles.topView,
-                screenWidth > screenHeight ? styles.width : styles.height
+
+                this.state.orientation == "portrait"
+                  ? { width: Math.min(screenWidth, screenHeight) }
+                  : { width: null }
               ]}
             >
               <View style={styles.calendarView}>
@@ -396,12 +396,7 @@ class Generation extends Component {
                   function={this.setDevice.bind(this)}
                   selectedValue={this.state.pickerValue}
                 />
-                <View
-                  style={[
-                    styles.variableView,
-                    screenWidth < screenHeight ? styles.width : styles.height
-                  ]}
-                >
+                <View style={[styles.variableView]}>
                   <CSButtons
                     setFunction={this.setVariabe}
                     texto={"Generación"}
@@ -481,12 +476,7 @@ class Generation extends Component {
                 setEnd={this.setEnd}
               />
             )}
-            <View
-              style={[
-                styles.chart,
-                screenWidth > screenHeight ? styles.width : styles.height
-              ]}
-            >
+            <View style={[styles.chart]}>
               {this.state.indicator && <ActivityI />}
               {this.state.arrayWithData && !this.state.indicator && (
                 <Chart

@@ -72,9 +72,11 @@ class Costs extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
-        <View style={styles.header}>
-          <HeaderMenu selected="costos" />
-        </View>
+        <SafeAreaView>
+          <View style={styles.header}>
+            <HeaderMenu selected={"costos"} />
+          </View>
+        </SafeAreaView>
       )
     };
   };
@@ -317,16 +319,14 @@ class Costs extends Component {
     return (
       <SafeAreaView>
         <ScrollView>
-          <View
-            style={[
-              styles.container,
-              screenWidth > screenHeight ? styles.width : styles.height
-            ]}
-          >
+          <View style={[styles.container]}>
             <View
               style={[
                 styles.topView,
-                screenWidth > screenHeight ? styles.width : styles.height,
+
+                this.state.orientation == "portrait"
+                  ? { width: Math.min(screenWidth, screenHeight) }
+                  : { width: null },
                 this.state.orientation == "portrait"
                   ? {
                       flexDirection: "column",
@@ -338,7 +338,6 @@ class Costs extends Component {
               <View
                 style={[
                   styles.calendarView,
-                  screenWidth > screenHeight ? styles.width : styles.height,
                   this.state.orientation == "portrait"
                     ? {
                         flexDirection: "row"
@@ -353,14 +352,13 @@ class Costs extends Component {
                 {this.state.orientation == "portrait" && (
                   <IntervalPicker
                     function={this.setInterval.bind(this)}
-                    selectedValue={this.state.pickerIValue}
+                    selectedValue={this.state.pickerIvalue}
                   />
                 )}
               </View>
               <View
                 style={[
                   styles.optionButtonsView,
-                  screenWidth > screenHeight ? styles.width : styles.height,
                   this.state.orientation == "portrait"
                     ? {
                         justifyContent: "flex-start"
@@ -400,19 +398,9 @@ class Costs extends Component {
                 />
               </View>
             </View>
-            <View
-              style={[
-                styles.chart,
-                screenWidth > screenHeight ? styles.width : styles.height
-              ]}
-            >
+            <View style={[styles.chart]}>
               {this.state.orientation == "landscape" && (
-                <View
-                  style={[
-                    styles.timeButtons,
-                    screenWidth > screenHeight ? styles.width : styles.height
-                  ]}
-                >
+                <View style={[styles.timeButtons]}>
                   <CSButtons
                     setFunction={this.setInterval}
                     texto={"1 hora"}
