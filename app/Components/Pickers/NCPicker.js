@@ -6,7 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Picker,
-  Platform, 
+  Platform,
   ActionSheetIOS
 } from "react-native";
 import { connect } from "react-redux";
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     height: 35,
     width: screenHeight / 4,
     backgroundColor: "white",
-    marginLeft: 16,
+
     borderWidth: 1,
     borderColor: "#737373",
     borderRadius: 20

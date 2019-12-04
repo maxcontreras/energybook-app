@@ -7,7 +7,7 @@ import Orientation from "react-native-orientation";
 import { connect } from "react-redux";
 import { Card } from "react-native-elements";
 import AsyncStorage from "@react-native-community/async-storage";
-
+import Fp from "../../Assets/Svg/Fp.svg";
 const mapStateToProps = state => ({
   readings: state.dailyReducer,
   meterId: state.dailyReducer.meterId,
@@ -34,73 +34,9 @@ class RecordCard extends Component {
       });
     });
   }
-
-  _retrieveData = async () => {
-    try {
-      const value = await AsyncStorage.getItem("@MySuperStore:key");
-      if (value !== null) {
-        this.setState(
-          {
-            values: JSON.parse(value)
-          },
-          () => {
-            console.log(this.props.meterId);
-            fetch(
-              `http://api.ienergybook.com/api/Meters/getConsumptionCostsByFilter?access_token=${this.state.values.accesToken}`,
-              {
-                method: "POST",
-                headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                  id: this.props.meterId,
-                  device: "",
-                  service: "Servicio 1",
-                  filter: 3,
-                  interval: 86400,
-                  customdates: null
-                })
-              }
-            )
-              .then(res => {
-                let statusCode = res.status;
-                const data = res.json();
-                return Promise.all([statusCode, data]);
-              })
-              .then(json => {
-                //this.props.dispatch(getMonthlyConsumptionPrices(json));
-                console.log("MONTHLY CONSUMPTION");
-                console.log(json);
-
-                var jsonResponse = json[1];
-                var response = [];
-                for (var i = 0; i < jsonResponse.length; i++) {
-                  response[i] = jsonResponse[i].cost;
-                }
-
-                var addPrices = response
-                  .reduce((a, b) => a + b, 0)
-                  .toFixed(2)
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-                this.setState({
-                  monthlyTCC: addPrices
-                });
-              })
-              .catch(err => {
-                console.log("no se pudo");
-              });
-          }
-        );
-        console.log(this.state.values);
-      }
-    } catch (error) {}
-  };
-
   componentWillMount() {
     Orientation.unlockAllOrientations();
-    this._retrieveData();
+    // this._retrieveData();
   }
 
   componentWillUnmount() {
@@ -133,7 +69,11 @@ class RecordCard extends Component {
               </View>
               <View style={styles.datos}>
                 <Text style={styles.titulo}>Consumo</Text>
-                <Text style={styles.texto}>valor aqui</Text>
+                <Text style={styles.texto}>
+                  {this.props.cardData
+                    ? `${this.props.cardData.consumption} kWh`
+                    : "0kWh"}
+                </Text>
               </View>
               <View style={styles.datoView}>
                 <Text style={styles.texto}>precio aqui</Text>
@@ -145,7 +85,11 @@ class RecordCard extends Component {
               </View>
               <View style={styles.datos}>
                 <Text style={styles.titulo}>Distribución</Text>
-                <Text style={styles.texto}>valor aqui</Text>
+                <Text style={styles.texto}>
+                  {this.props.cardData
+                    ? `${this.props.cardData.distribution} kW`
+                    : "0kW"}
+                </Text>
               </View>
               <View style={styles.datoView}>
                 <Text style={styles.texto}>precio aqui</Text>
@@ -157,10 +101,28 @@ class RecordCard extends Component {
               </View>
               <View style={styles.datos}>
                 <Text style={styles.titulo}>Capacidad</Text>
-                <Text style={styles.texto}>valor aqui</Text>
+                <Text style={styles.texto}>
+                  {this.props.cardData
+                    ? `${this.props.cardData.capacity} kWh`
+                    : "0kW"}
+                </Text>
               </View>
               <View style={styles.datoView}>
                 <Text style={styles.texto}>precio aqui</Text>
+              </View>
+            </View>
+            <View style={styles.parte}>
+              <View style={styles.iconView}>
+                <Fp style={styles.icon} />
+              </View>
+              <View style={styles.datos}>
+                <Text style={styles.titulo}>Fp</Text>
+                <Text style={styles.texto}>
+                  {this.props.cardData ? `${this.props.cardData.fp}%` : "0%"}
+                </Text>
+              </View>
+              <View style={styles.datoView}>
+                <Text style={styles.texto}> </Text>
               </View>
             </View>
           </View>

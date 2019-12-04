@@ -18,6 +18,7 @@ import DatesPicker from "../../Components/Pickers/DatePicker.js";
 import NCPicker from "../../Components/Pickers/NCPicker.js";
 import CSButtons from "../../Components/CSButtons.js";
 import FilterPicker from "../../Components/Pickers/FilterPicker.js";
+import VariablePicker from "../../Components/Pickers/VariablePicker.js";
 import ActivityI from "../../Components/ActivityIndicator";
 const mapStateToProps = state => ({
   userData: state.initialValues,
@@ -155,10 +156,17 @@ class Codes extends Component {
           json[1].Ia ||
           json[1].THDIa ||
           json[1].Vunbl ||
-          json[1].Ssist;
+          json[1].Ssist ||
+          json[1].FPa;
         var variable2 =
-          json[1].Vbc || json[1].Ib || json[1].THDIb || json[1].Iunbl || null;
-        var variable3 = json[1].Vca || json[1].Ic || json[1].THDIc || null;
+          json[1].Vbc ||
+          json[1].Ib ||
+          json[1].THDIb ||
+          json[1].Iunbl ||
+          json[1].FPb ||
+          null;
+        var variable3 =
+          json[1].Vca || json[1].Ic || json[1].THDIc || json[1].FPc || null;
         const puntos = ":";
         var horas = [];
         this.setState(
@@ -398,29 +406,9 @@ class Codes extends Component {
       <SafeAreaView>
         <ScrollView>
           <View style={[styles.container]}>
-            <View
-              style={[
-                styles.topView,
-
-                this.state.orientation == "portrait"
-                  ? { width: Math.min(screenWidth, screenHeight) }
-                  : { width: null }
-              ]}
-            >
+            <View style={[styles.topView]}>
               <View style={[styles.calendarView]}>
-                <View
-                  style={[
-                    styles.extraView,
-
-                    this.state.orientation == "portrait"
-                      ? { flexDirection: "row" }
-                      : { flexDirection: "column" },
-
-                    this.state.orientation == "portrait"
-                      ? { justifyContent: "space-between" }
-                      : { justifyContent: null }
-                  ]}
-                >
+                <View style={[styles.pickers]}>
                   <NCPicker
                     function={this.setDevice.bind(this)}
                     selectedValue={this.state.pickerValue}
@@ -433,108 +421,104 @@ class Codes extends Component {
                       screen={"network"}
                     />
                   )}
+                  {this.state.orientation == "landscape" && (
+                    <View style={[styles.variableView]}>
+                      <CSButtons
+                        setFunction={this.setVariabe}
+                        texto={"Voltaje"}
+                        selected={this.state.caption}
+                        filter={["Vab", "Vbc", "Vca"]}
+                      />
+                      <CSButtons
+                        setFunction={this.setVariabe}
+                        texto={"Amperaje"}
+                        selected={this.state.caption}
+                        filter={["Ia", "Ib", "Ic"]}
+                      />
+                      <CSButtons
+                        setFunction={this.setVariabe}
+                        texto={"THD"}
+                        selected={this.state.caption}
+                        filter={["THDIa", "THDIb", "THDIc"]}
+                      />
+                      <CSButtons
+                        setFunction={this.setVariabe}
+                        texto={"Desbalance"}
+                        selected={this.state.caption}
+                        //Vunbl y Iunbl
+                        filter={["Vunbl", "Iunbl"]}
+                      />
+                      <CSButtons
+                        setFunction={this.setVariabe}
+                        texto={"kVA"}
+                        selected={this.state.caption}
+                        filter={["Ssist"]}
+                      />
+                      <CSButtons
+                        setFunction={this.setVariabe}
+                        texto={"FP"}
+                        selected={this.state.caption}
+                        filter={["FPa", "FPb", "FPc"]}
+                      />
+                    </View>
+                  )}
                 </View>
+
                 <View
                   style={[
                     styles.variableView,
-                    this.state.orientation == "landscape"
-                      ? {
-                          flex: 1
-                        }
-                      : { flex: null }
+                    {
+                      flex: this.state.orientation == "landscape" ? 1 : null
+                    }
                   ]}
                 >
-                  <CSButtons
-                    setFunction={this.setVariabe}
-                    texto={"Voltaje"}
-                    selected={this.state.caption}
-                    filter={["Vab", "Vbc", "Vca"]}
-                  />
-                  <CSButtons
-                    setFunction={this.setVariabe}
-                    texto={"Amperaje"}
-                    selected={this.state.caption}
-                    filter={["Ia", "Ib", "Ic"]}
-                  />
-                  <CSButtons
-                    setFunction={this.setVariabe}
-                    texto={"THD"}
-                    selected={this.state.caption}
-                    filter={["THDIa", "THDIb", "THDIc"]}
-                  />
-                  <CSButtons
-                    setFunction={this.setVariabe}
-                    texto={"Desbalance"}
-                    selected={this.state.caption}
-                    //Vunbl y Iunbl
-                    filter={["Vunbl", "Iunbl"]}
-                  />
-                  <CSButtons
-                    setFunction={this.setVariabe}
-                    texto={"kVA"}
-                    selected={this.state.caption}
-                    filter={["Ssist"]}
-                  />
+                  {this.state.orientation == "portrait" && (
+                    <View
+                      style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
+                        paddingTop: 10
+                      }}
+                    >
+                      <VariablePicker
+                        function={this.setVariabe.bind(this)}
+                        selectedValue={this.state.caption}
+                      />
+                    </View>
+                  )}
+                  {this.state.orientation == "landscape" && (
+                    <View style={styles.optionButtonsView}>
+                      <CSButtons
+                        setFunction={this.Calendario}
+                        texto={"Calendario"}
+                        selected={this.state.filter}
+                        filter={-1}
+                      />
+                      <CSButtons
+                        setFunction={this.setFilter}
+                        texto={"Hoy"}
+                        selected={this.state.filter}
+                        filter={0}
+                      />
+                      <CSButtons
+                        setFunction={this.setFilter}
+                        texto={"Ayer"}
+                        selected={this.state.filter}
+                        filter={1}
+                      />
+                      <CSButtons
+                        setFunction={this.setFilter}
+                        texto={"Esta Semana"}
+                        selected={this.state.filter}
+                        filter={2}
+                      />
+                    </View>
+                  )}
                 </View>
               </View>
-              {this.state.orientation == "landscape" && (
-                <View style={styles.optionButtonsView}>
-                  <CSButtons
-                    setFunction={this.Calendario}
-                    texto={"Calendario"}
-                    selected={this.state.filter}
-                    filter={-1}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Hoy"}
-                    selected={this.state.filter}
-                    filter={0}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Ayer"}
-                    selected={this.state.filter}
-                    filter={1}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Esta Semana"}
-                    selected={this.state.filter}
-                    filter={2}
-                  />
-                </View>
-              )}
             </View>
-            <View
-              style={[
-                styles.timeButtons,
-                this.state.orientation == "portrait"
-                  ? {
-                      justifyContent: "flex-start"
-                    }
-                  : { justifyContent: "flex-end" }
-              ]}
-            >
-              <CSButtons
-                setFunction={this.setInterval}
-                texto={"1 Hora"}
-                selected={this.state.interval}
-                filter={3600}
-              />
-              <CSButtons
-                setFunction={this.setInterval}
-                texto={"30 minutos"}
-                selected={this.state.interval}
-                filter={1800}
-              />
-              <CSButtons
-                setFunction={this.setInterval}
-                texto={"15 minutos"}
-                selected={this.state.interval}
-                filter={900}
-              />
-            </View>
+
             <View style={[styles.chart]}>
               {this.state.calendar && (
                 <DatesPicker
@@ -560,6 +544,32 @@ class Codes extends Component {
                 />
               )}
             </View>
+            <View style={[styles.timeButtons]}>
+              <CSButtons
+                setFunction={this.setInterval}
+                texto={"1 Hora"}
+                selected={this.state.interval}
+                filter={3600}
+              />
+              <CSButtons
+                setFunction={this.setInterval}
+                texto={"30 minutos"}
+                selected={this.state.interval}
+                filter={1800}
+              />
+              <CSButtons
+                setFunction={this.setInterval}
+                texto={"15 minutos"}
+                selected={this.state.interval}
+                filter={900}
+              />
+              <CSButtons
+                setFunction={this.setInterval}
+                texto={"5 minutos"}
+                selected={this.state.interval}
+                filter={300}
+              />
+            </View>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -575,47 +585,50 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   topView: {
-    height: 110,
+    height: "auto",
+    width: "100%",
+    padding: 10,
     justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row"
+  },
+  pickers: {
     flexDirection: "row",
-    backgroundColor: "white"
+    justifyContent: "space-between",
+    paddingBottom: 10
   },
   container: {
     flex: 1,
     height: "auto",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    paddingBottom: 20
   },
   chart: {
     justifyContent: "center",
     height: "auto"
   },
   optionButtonsView: {
-    height: 110,
     flexDirection: "row",
-    backgroundColor: "white",
     alignItems: "flex-end",
     justifyContent: "flex-end",
-    flex: 1,
-    padding: 10
+    flex: 1
   },
   calendarView: {
     flex: 1,
-    padding: 10,
+    backgroundColor: "white",
     justifyContent: "space-between"
   },
   timeButtons: {
     height: "auto",
     flexDirection: "row",
-    width: "100%",
+    width: 310,
     backgroundColor: "white",
-    alignItems: "flex-end",
-    padding: 10
+    alignItems: "center",
+    justifyContent: "space-between"
   },
   variableView: {
     flexDirection: "row",
-    alignItems: "flex-end",
-    justifyContent: "space-between",
-    paddingRight: 10
+    justifyContent: "space-between"
   }
 });

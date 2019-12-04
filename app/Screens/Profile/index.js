@@ -17,12 +17,13 @@ import Orientation from "react-native-orientation";
 import { connect } from "react-redux";
 import ProfilePic from "../../Assets/Images/temporayProfile.png";
 import ProfileMaps from "../../Components/ProfileMaps";
-
+import Sesion from "../../Assets/Svg/sesion.svg";
+import SesionS from "../../Assets/Svg/sesionS.svg";
 const screenHeight = Math.round(Dimensions.get("window").height);
 const screenWidth = Math.round(Dimensions.get("window").width);
 const mapStateToProps = state => ({
   userData: state.initialValues,
-  readings: state.dailyReducer, 
+  readings: state.dailyReducer,
 
   inCaseCoords: state.weatherReducer
 });
@@ -103,9 +104,20 @@ class Profile extends Component {
                 <Text style={{ color: "white", fontSize: 15 }}>
                   {this.state.values.company}
                 </Text>
-              </View> 
-              {this.state.values.location  &&(
-              <ProfileMaps lat={this.state.values.location ? this.state.values.location.lat : this.props.inCaseCoords.ftcoords[0]} lon={this.state.values.location ? this.state.values.location.lon : this.props.inCaseCoords.ftcoords[1]}/>
+              </View>
+              {this.state.values.location && (
+                <ProfileMaps
+                  lat={
+                    this.state.values.location
+                      ? this.state.values.location.lat
+                      : this.props.inCaseCoords.ftcoords[0]
+                  }
+                  lon={
+                    this.state.values.location
+                      ? this.state.values.location.lon
+                      : this.props.inCaseCoords.ftcoords[1]
+                  }
+                />
               )}
               <View style={styles.infoView}>
                 <View style={styles.infoSign}>
@@ -151,9 +163,17 @@ class Profile extends Component {
               <View style={styles.button}>
                 <TouchableOpacity
                   onPress={() => this._signOutAsync()}
-                  style={[styles.buttonG, styles.elevation]}
+                  style={styles.logoutButton}
                 >
-                  <Text style={styles.unselectedButtonText}>Salir</Text>
+                  <SesionS style={{ width: 35, height: 35 }} />
+                  <Text
+                    style={[
+                      styles.unselectedButtonText,
+                      { paddingHorizontal: 10, fontSize: 15 }
+                    ]}
+                  >
+                    Cerrar Sesión
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -219,7 +239,7 @@ const styles = StyleSheet.create({
   },
   companyText: {
     color: "black",
-    fontSize: 15,
+    fontSize: 20,
     padding: 10,
     textAlign: "center"
   },
@@ -250,5 +270,11 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     resizeMode: "contain"
+  },
+  logoutButton: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10
   }
 });

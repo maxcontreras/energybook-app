@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "190767866499",
+    "firebase_url": "https://energybook-app.firebaseio.com",
+    "project_id": "energybook-app",
+    "storage_bucket": "energybook-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190767866499:android:7f2c4089ce9e7d91cdf1b6",
+        "android_client_info": {
+          "package_name": "com.ienergybook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190767866499-h9h6u3auomlb1grvn9fu9oahvmmioctk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA674jejO9igUDL-dHDW_CKxuMcoD44q5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190767866499-h9h6u3auomlb1grvn9fu9oahvmmioctk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

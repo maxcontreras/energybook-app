@@ -53,7 +53,10 @@ class Data extends Component {
           title={"Precio  CFE periodo"}
           containerStyle={[
             styles.containerCard,
-            screenWidth < screenHeight ? styles.width : styles.height
+
+            this.state.orientation == "portrait"
+              ? { width: Math.min(screenWidth, screenHeight) - 20 }
+              : { width: Math.min(screenWidth, screenHeight) - 20 }
           ]}
           titleStyle={styles.titleStyle}
           wrapperStyle={{ borderRadius: 10 }}
@@ -179,11 +182,5 @@ const styles = StyleSheet.create({
   },
   pFirst: {
     paddingLeft: 15
-  },
-  width: {
-    width: screenWidth - 20
-  },
-  height: {
-    width: screenHeight - 20
   }
 });

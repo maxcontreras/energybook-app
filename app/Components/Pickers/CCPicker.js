@@ -6,7 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Picker,
-  Platform, 
+  Platform,
   ActionSheetIOS
 } from "react-native";
 import { connect } from "react-redux";
@@ -66,8 +66,14 @@ class PickerAndroid extends Component {
       for (j = 0; j < this.state.numberOfServices; j++) {
         arrayOfServices[j] = `Servicio ${j + 1}`;
       }
-      var pickerArrayIos = arrayOfServices.concat(devices).concat("Cancelar");
-      var pickerArrayAndroid = arrayOfServices.concat(devices);
+      var pickerArrayIos =
+        this.props.screen == "record"
+          ? arrayOfServices.concat("Cancelar")
+          : arrayOfServices.concat(devices).concat("Cancelar");
+      var pickerArrayAndroid =
+        this.props.screen == "record"
+          ? arrayOfServices
+          : arrayOfServices.concat(devices);
       let counter = 0;
     }
     var pickerItems = pickerArrayAndroid;
@@ -92,7 +98,9 @@ class PickerAndroid extends Component {
               }
               style={[
                 styles.PickerIos,
-                screenWidth < screenHeight ? styles.width : styles.height
+                this.state.orientation == "portrait"
+                  ? { width: Math.min(screenWidth, screenHeight) / 2.5 }
+                  : { width: Math.min(screenWidth, screenHeight) / 2.5 }
               ]}
             >
               <Text style={[styles.unselectedButtonText]}>
@@ -105,13 +113,17 @@ class PickerAndroid extends Component {
           <View
             style={[
               styles.Picker,
-              screenWidth < screenHeight ? styles.width : styles.height
+              this.state.orientation == "portrait"
+                ? { width: Math.min(screenWidth, screenHeight) / 2.5 }
+                : { width: Math.min(screenWidth, screenHeight) / 2.5 }
             ]}
           >
             <Picker
               style={[
                 styles.insidePicker,
-                screenWidth < screenHeight ? styles.width : styles.height
+                this.state.orientation == "portrait"
+                  ? { width: Math.min(screenWidth, screenHeight) / 2.5 }
+                  : { width: Math.min(screenWidth, screenHeight) / 2.5 }
               ]}
               selectedValue={this.props.selectedValue}
               onValueChange={(itemValue, itemIndex) =>
@@ -135,7 +147,6 @@ const styles = StyleSheet.create({
   Picker: {
     height: 35,
     backgroundColor: "white",
-    marginLeft: 16,
     borderWidth: 1,
     borderColor: "#737373",
     borderRadius: 20
@@ -146,18 +157,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     height: 35,
     justifyContent: "center",
-    alignItems: "center",
-    marginLeft: 5
+    alignItems: "center"
   },
   unselectedButtonText: {
     color: "black",
     fontSize: 10
-  },
-  width: {
-    width: screenHeight / 4
-  },
-  height: {
-    width: screenWidth / 4
   },
   insidePicker: {
     height: 35,

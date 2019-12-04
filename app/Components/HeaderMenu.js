@@ -22,9 +22,6 @@ import CarbonSelect from "../Assets/Svg/huellaS.svg";
 import GenerationSelect from "../Assets/Svg/geneS.svg";
 import { withNavigation } from "react-navigation";
 import Orientation from "react-native-orientation";
-import { withSafeArea } from "react-native-safe-area";
-
-//const SafeAreaView = withSafeArea(View, 'absolutePosition', 'vertical')
 
 class HeaderMenu extends Component {
   constructor(props) {

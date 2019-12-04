@@ -7,7 +7,8 @@ import {
   ScrollView,
   SafeAreaView,
   KeyboardAvoidingView,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from "react-native";
 import CCPicker from "../../Components/Pickers/CCPicker.js";
 import MonthPicker from "../../Components/RecordC/MonthPicker.js";
@@ -15,15 +16,10 @@ import HeaderMenu from "../../Components/HeaderMenu.js";
 import RecordCard from "../../Components/RecordC/RecordCard.js";
 import Orientation from "react-native-orientation";
 import { connect } from "react-redux";
-
-const screenHeight =
-  Dimensions.get("screen").height > Dimensions.get("screen").width
-    ? Dimensions.get("screen").height
-    : Dimensions.get("screen").width;
-const screenWidth =
-  Dimensions.get("screen").width > Dimensions.get("screen").height
-    ? Dimensions.get("screen").width
-    : Dimensions.get("screen").height;
+import moment from "moment";
+import AsyncStorage from "@react-native-community/async-storage";
+import ActivityI from "../../Components/ActivityIndicator";
+import "moment/min/moment-with-locales";
 const mapStateToProps = state => ({
   userData: state.initialValues,
   readings: state.dailyReducer
@@ -35,13 +31,15 @@ class Record extends Component {
       const dim = Dimensions.get("screen");
       return dim.height >= dim.width;
     };
-
     this.state = {
       orientation: isPortrait() ? "portrait" : "landscape",
-      arrayDevices: [],
-      arrayNameDevices: [],
-      arrayDescriptionDevices: [],
-      pickerValue: "Servicio 1"
+      pickerValue: "Servicio 1",
+      newDate: moment()
+        .startOf("month")
+        .add(-1, "month")
+        .format(),
+      values: [],
+      indicator: false
     };
     Dimensions.addEventListener("change", () => {
       this.setState({
@@ -49,74 +47,122 @@ class Record extends Component {
       });
     });
   }
+
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
-        <SafeAreaView
-        >
-        <View style={styles.header}>
-          <HeaderMenu selected={"record"} />
-        </View>
+        <SafeAreaView>
+          <View style={styles.header}>
+            <HeaderMenu selected={"record"} />
+          </View>
         </SafeAreaView>
       )
     };
   };
+
   componentWillMount() {
-    Orientation.unlockAllOrientations();
-    var arrayDevices = [];
-    var arrayNameDevices = [];
-    var arrayDescriptionDevices = [];
-    for (var j = 1; j < this.props.readings.devices.length; j++) {
-      arrayDevices[j - 1] = this.props.readings.devices[j];
-      arrayNameDevices[j - 1] = this.props.readings.devices[j].name;
-      arrayDescriptionDevices[j - 1] = this.props.readings.devices[
-        j
-      ].description;
-    }
+    this._retrieveData();
+  }
+
+  confirmar() {
     this.setState({
-      arrayDevices: arrayDevices,
-      arrayNameDevices: arrayNameDevices,
-      arrayDescriptionDevices: arrayDescriptionDevices,
-      indicator: false
+      indicator: true
     });
+    console.log(this.state.values.accesToken);
+    console.log(this.state.pickerValue);
+    console.log(this.state.newDate);
+
+    fetch(
+      `http://api.ienergybook.com/api/Services/monthlyHistory?access_token=${this.state.values.accesToken}
+`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          service: this.state.pickerValue,
+          companyId: this.state.values.companyId,
+          period: this.state.newDate
+        })
+      }
+    )
+      .then(res => {
+        this.state.statusCode = res.status;
+        const data = res.json();
+        return Promise.all([this.state.statusCode, data]);
+      })
+      .then(json => {
+        console.log(json);
+        this.setState({
+          cardData: json[1].data,
+          indicator: false
+        });
+      })
+      .catch(err => {
+        console.log("NO SE PUDO");
+        this.setState({
+          indicator: false
+        });
+        Alert.alert("Error", "Hubo un error al obtener los datos.", [
+          {
+            text: "Okay"
+          }
+        ]);
+      });
   }
 
   componentWillUnmount() {
     Dimensions.removeEventListener("change");
   }
-  setDevice(itemValue) {
+  setService(itemValue) {
+    this.setState({
+      pickerValue: itemValue
+    });
+  }
+  changeValue(months, years) {
+    const oldDate = moment()
+      .startOf("month")
+      .add(-1, "month")
+      .format();
+
+    const newDate = moment(this.state.newDate)
+      .add(months, "month")
+      .add(years, "year")
+      .format();
+
+    console.log("OLD DATE:" + newDate);
+    console.log("NEW DATE: " + oldDate);
+
     this.setState(
       {
-        pickerValue: itemValue
+        newDate: moment(newDate).isAfter(oldDate) ? oldDate : newDate
       },
       () => {
-        /*  if (this.state.pickerValue.substr(0, 8) !== "Servicio") {
-          var getIndex = this.state.arrayDescriptionDevices.indexOf(itemValue);
-          this.setState(
-            {
-              service: "",
-              device: this.state.arrayNameDevices[getIndex]
-            },
-            () => {
-              this.getChartData();
-            }
-          );
-        } else {
-          this.setState(
-            {
-              service: this.state.pickerValue,
-              device: ""
-            },
-            () => {
-              this.getChartData();
-            }
-          );
-        }*/
+        console.log(this.state.newDate);
       }
     );
   }
-  confirmar() {}
+  _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@MySuperStore:key");
+      if (value !== null) {
+        this.setState(
+          {
+            values: JSON.parse(value)
+          },
+          () => {
+            console.log(this.props.meterId);
+          }
+        );
+        console.log(this.state.values);
+      }
+    } catch (error) {}
+  };
+
   render() {
+    //console.log(this.state.newDate);
     return (
       <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
         <SafeAreaView>
@@ -125,18 +171,28 @@ class Record extends Component {
               <View style={styles.title}>
                 <Text style={styles.titleText}>Historial de mediciones</Text>
               </View>
-              <View style={styles.monthContainer}>
-                <CCPicker
-                  function={this.setDevice.bind(this)}
-                  selectedValue={this.state.pickerValue}
-                />
-                <MonthPicker />
-                <TouchableOpacity onPress={this.confirmar()} style={styles.btn}>
-                  <Text style={styles.btnTxt}>Confirmar</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.cardView}>
-                <RecordCard />
+
+              <View>
+                <View style={styles.monthContainer}>
+                  <CCPicker
+                    function={this.setService.bind(this)}
+                    selectedValue={this.state.pickerValue}
+                    screen={"record"}
+                  />
+                  <MonthPicker function={this.changeValue.bind(this)} />
+                  <TouchableOpacity
+                    onPress={() => this.confirmar()}
+                    style={styles.btn}
+                  >
+                    <Text style={styles.btnTxt}>Confirmar</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.cardView}>
+                  {this.state.indicator && <ActivityI />}
+                  {!this.state.indicator && (
+                    <RecordCard cardData={this.state.cardData} />
+                  )}
+                </View>
               </View>
             </View>
           </KeyboardAvoidingView>
@@ -161,7 +217,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    marginVertical: 20
   },
   btn: {
     height: 40,

@@ -12,7 +12,7 @@ import {
 const screenHeight = Math.round(Dimensions.get("window").height);
 const screenWidth = Math.round(Dimensions.get("window").width);
 
-class FilterPicker extends Component {
+class VariablePicker extends Component {
   constructor(props) {
     const isPortrait = () => {
       const dim = Dimensions.get("screen");
@@ -33,21 +33,15 @@ class FilterPicker extends Component {
     Dimensions.removeEventListener("change");
   }
   render() {
-    if (this.props.screen == "network") {
-      var FILTERS = ["Calendario", "Hoy", "Ayer", "Esta semana"];
-    } else if (this.props.screen == "carbon" || this.props.screen == "gene") {
-      var FILTERS = [
-        "Calendario",
-        "Hoy",
-        "Ayer",
-        "Esta semana",
-        "Este mes",
-        "Este año"
-      ];
-    } else {
-      var FILTERS = ["Calendario", "Hoy", "Ayer", "Esta semana", "Este mes"];
-    }
-
+    var FILTERS = ["Voltaje", "Amperaje", "THD", "Desbalance", "kVA", "FP"];
+    var VARIABLES = [
+      ["Vab", "Vbc", "Vca"],
+      ["Ia", "Ib", "Ic"],
+      ["THDIa", "THDIb", "THDIc"],
+      ["Vunbl", "Iunbl"],
+      ["Ssist"],
+      ["FPa", "FPb", "FPc"]
+    ];
     let nextKey = 0;
     return (
       <View>
@@ -62,17 +56,15 @@ class FilterPicker extends Component {
                   },
                   buttonIndex => {
                     if (buttonIndex != FILTERS.indexOf("Cancelar")) {
-                      this.props.function(FILTERS[buttonIndex]);
+                      this.props.function(
+                        VARIABLES[buttonIndex],
+                        FILTERS[buttonIndex]
+                      );
                     }
                   }
                 )
               }
-              style={[
-                styles.PickerIos,
-                this.state.orientation == "portrait"
-                  ? { width: Math.min(screenWidth, screenHeight) / 2.5 }
-                  : { width: Math.min(screenWidth, screenHeight) / 2.5 }
-              ]}
+              style={[styles.PickerIos, this.state.orientation == "portrait"]}
             >
               <Text style={[styles.unselectedButtonText]}>
                 {this.props.selectedValue}
@@ -81,25 +73,13 @@ class FilterPicker extends Component {
           </View>
         )}
         {Platform.OS == "android" && (
-          <View
-            style={[
-              styles.Picker,
-              this.state.orientation == "portrait"
-                ? { width: Math.min(screenWidth, screenHeight) / 2.5 }
-                : { width: Math.min(screenWidth, screenHeight) / 2.5 }
-            ]}
-          >
+          <View style={[styles.Picker, this.state.orientation == "portrait"]}>
             <Picker
-              style={[
-                styles.insidePicker,
-                this.state.orientation == "portrait"
-                  ? { width: Math.min(screenWidth, screenHeight) / 2.5 }
-                  : { width: Math.min(screenWidth, screenHeight) / 2.5 }
-              ]}
+              style={[styles.insidePicker]}
               selectedValue={this.props.selectedValue}
               onValueChange={(itemValue, itemIndex) => {
                 console.log(itemValue);
-                this.props.function(itemValue);
+                this.props.function(VARIABLES[itemIndex], itemValue);
               }}
             >
               {FILTERS.map(item => (
@@ -118,16 +98,16 @@ class FilterPicker extends Component {
   }
 }
 
-export default FilterPicker;
+export default VariablePicker;
 
 const styles = StyleSheet.create({
   Picker: {
     height: 35,
     backgroundColor: "white",
-    marginLeft: 5,
     borderWidth: 1,
     borderColor: "#737373",
-    borderRadius: 20
+    borderRadius: 20,
+    width: Math.min(screenWidth, screenHeight) - 20
   },
   PickerIos: {
     borderWidth: 1,
@@ -136,7 +116,7 @@ const styles = StyleSheet.create({
     height: 35,
     justifyContent: "center",
     alignItems: "center",
-    marginLeft: 5
+    width: Math.min(screenWidth, screenHeight) - 20
   },
   unselectedButtonText: {
     color: "black",
@@ -145,6 +125,7 @@ const styles = StyleSheet.create({
   insidePicker: {
     height: 35,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    width: Math.min(screenWidth, screenHeight) - 20
   }
 });

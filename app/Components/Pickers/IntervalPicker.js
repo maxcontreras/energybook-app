@@ -6,7 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Picker,
-  Platform, 
+  Platform,
   ActionSheetIOS
 } from "react-native";
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -14,12 +14,29 @@ const screenWidth = Math.round(Dimensions.get("window").width);
 
 class IntervalPicker extends Component {
   constructor(props) {
+    const isPortrait = () => {
+      const dim = Dimensions.get("screen");
+      return dim.height >= dim.width;
+    };
     super(props);
-    this.state = {};
-  }
+    this.state = {
+      orientation: isPortrait() ? "portrait" : "landscape"
+    };
 
+    Dimensions.addEventListener("change", () => {
+      this.setState({
+        orientation: isPortrait() ? "portrait" : "landscape"
+      });
+    });
+  }
+  componentWillUnmount() {
+    Dimensions.removeEventListener("change");
+  }
   render() {
-    const FILTERS = ["15 minutos", "30 minutos", "1 hora"];
+    const FILTERS =
+      this.props.screen == "charts"
+        ? ["15 minutos", "5 minutos", "30 minutos", "1 hora"]
+        : ["15 minutos", "30 minutos", "1 hora"];
     let nextKey = 0;
     return (
       <View>
@@ -30,7 +47,7 @@ class IntervalPicker extends Component {
                 ActionSheetIOS.showActionSheetWithOptions(
                   {
                     options: FILTERS.concat("Cancelar"),
-                    cancelButtonIndex: FILTERS.length 
+                    cancelButtonIndex: FILTERS.length
                   },
                   buttonIndex => {
                     if (buttonIndex != FILTERS.indexOf("Cancelar")) {
@@ -39,7 +56,12 @@ class IntervalPicker extends Component {
                   }
                 )
               }
-              style={[styles.PickerIos]}
+              style={[
+                styles.PickerIos,
+                this.state.orientation == "portrait"
+                  ? { width: Math.min(screenWidth, screenHeight) / 2.5 }
+                  : { width: Math.min(screenWidth, screenHeight) / 2.5 }
+              ]}
             >
               <Text style={[styles.unselectedButtonText]}>
                 {this.props.selectedValue}
@@ -48,13 +70,25 @@ class IntervalPicker extends Component {
           </View>
         )}
         {Platform.OS == "android" && (
-          <View style={[styles.Picker]}>
+          <View
+            style={[
+              styles.Picker,
+              this.state.orientation == "portrait"
+                ? { width: Math.min(screenWidth, screenHeight) / 2.5 }
+                : { width: Math.min(screenWidth, screenHeight) / 2.5 }
+            ]}
+          >
             <Picker
-              style={[styles.insidePicker]}
+              style={[
+                styles.insidePicker,
+                this.state.orientation == "portrait"
+                  ? { width: Math.min(screenWidth, screenHeight) / 2.5 }
+                  : { width: Math.min(screenWidth, screenHeight) / 2.5 }
+              ]}
               selectedValue={this.props.selectedValue}
               onValueChange={(itemValue, itemIndex) => {
                 console.log(itemValue);
-                this.props.function(itemValue, itemIndex);
+                this.props.function(itemIndex, itemValue);
               }}
             >
               {FILTERS.map(item => (
@@ -78,7 +112,6 @@ export default IntervalPicker;
 const styles = StyleSheet.create({
   Picker: {
     height: 35,
-    width: 90,
     backgroundColor: "white",
     marginLeft: 5,
     borderWidth: 1,
@@ -92,23 +125,14 @@ const styles = StyleSheet.create({
     height: 35,
     justifyContent: "center",
     alignItems: "center",
-    marginLeft: 5,
-    width: 90
+    marginLeft: 5
   },
   unselectedButtonText: {
     color: "black",
     fontSize: 10
   },
-
-  width: {
-    width: screenHeight / 5
-  },
-  height: {
-    width: screenWidth / 5
-  },
   insidePicker: {
     height: 35,
-    width: 90,
     justifyContent: "center",
     alignItems: "center"
   }

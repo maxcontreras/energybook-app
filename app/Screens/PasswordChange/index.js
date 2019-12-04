@@ -160,10 +160,10 @@ class PasswordChange extends Component {
       <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
         <ImageBackground
           style={[
+            styles.background,
             this.state.orientation == "portrait"
-              ? styles.imageBack
-              : styles.imageBackLandscape,
-            screenWidth < screenHeight ? styles.width : styles.height
+              ? { height: Math.max(screenWidth, screenHeight) }
+              : { height: Math.max(screenWidth, screenHeight) - 200 }
           ]}
           source={
             this.state.orientation == "portrait"
@@ -246,18 +246,7 @@ const styles = StyleSheet.create({
   scroll: {
     flex: 1
   },
-  imageBack: {
-    resizeMode: "stretch"
-  },
-  imageBackLandscape: {
-    resizeMode: "stretch"
-  },
-  width: {
-    height: screenHeight
-  },
-  height: {
-    height: screenWidth
-  },
+  background: { flex: 1 },
   input2: {
     borderRadius: 10,
     marginBottom: 5,

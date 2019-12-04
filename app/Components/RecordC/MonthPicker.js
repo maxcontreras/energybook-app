@@ -11,33 +11,28 @@ export default class MonthPicker extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      indexM: 0,
+      indexM: new Date().getMonth() - 1,
       indexA: moment().format("YYYY")
     };
   }
-  increase(valor) {
+
+  increase(valor, months, years) {
     if (valor == "mes") {
-      this.setState(
-        {
-          indexM: ++this.state.indexM
-        },
-        () => {
-          if (this.state.indexM == 12) {
-            this.setState({
-              indexM: 0,
-              indexA: ++this.state.indexA
-            });
-          }
-        }
-      );
-      console.log(this.state.indexM);
-    } else if (valor == "año") {
+      const newMonth = ++this.state.indexM;
+      const compareDate = new Date().getMonth() - 1;
       this.setState({
-        indexA: ++this.state.indexA
+        indexM: newMonth > compareDate ? compareDate : newMonth
       });
     }
+    const newYear = ++this.state.indexA;
+    const compareDate = moment().format("YYYY");
+    this.setState({
+      indexA: newYear > compareDate ? compareDate : newYear
+    });
+
+    this.props.function(months, years);
   }
-  decrease(valor) {
+  decrease(valor, months, years) {
     if (valor == "mes") {
       this.setState(
         {
@@ -46,41 +41,41 @@ export default class MonthPicker extends Component {
         () => {
           if (this.state.indexM == -1) {
             this.setState({
-              indexM: 11,
+              indexM: new Date().getMonth() - 1,
               indexA: --this.state.indexA
             });
           }
         }
       );
-      console.log(this.state.indexM);
     } else if (valor == "año") {
       this.setState({
         indexA: --this.state.indexA
       });
     }
+    this.props.function(months, years);
   }
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.Pcontainer}>
-          <TouchableOpacity onPress={() => this.decrease("mes")}>
+          <TouchableOpacity onPress={() => this.decrease("mes", -1, 0)}>
             <Back style={{ width: 30, height: 30 }} />
           </TouchableOpacity>
           <View style={styles.textView}>
             <Text style={styles.infoText}>{mesesito[this.state.indexM]}</Text>
           </View>
-          <TouchableOpacity onPress={() => this.increase("mes")}>
+          <TouchableOpacity onPress={() => this.increase("mes", 1, 0)}>
             <Fordward style={{ width: 30, height: 30 }} />
           </TouchableOpacity>
         </View>
         <View style={styles.Pcontainer}>
-          <TouchableOpacity onPress={() => this.decrease("año")}>
+          <TouchableOpacity onPress={() => this.decrease("año", 0, -1)}>
             <Back style={{ width: 30, height: 30 }} />
           </TouchableOpacity>
           <View style={styles.textView}>
             <Text style={styles.infoText}>{this.state.indexA}</Text>
           </View>
-          <TouchableOpacity onPress={() => this.increase("año")}>
+          <TouchableOpacity onPress={() => this.increase("año", 0, 1)}>
             <Fordward style={{ width: 30, height: 30 }} />
           </TouchableOpacity>
         </View>

@@ -159,9 +159,9 @@ class SemiCircleProgress extends Component {
       <Card
         containerStyle={[
           defaultStyles.cardStyle,
-          screenWidth < screenHeight
-            ? defaultStyles.width
-            : defaultStyles.height
+          this.state.orientation == "portrait"
+            ? { width: Math.min(screenWidth, screenHeight) - 20 }
+            : { width: Math.min(screenWidth, screenHeight) - 20 }
         ]}
       >
         <View style={defaultStyles.view}>
@@ -316,17 +316,5 @@ const defaultStyles = StyleSheet.create({
   },
   exteriorLS: {
     padding: 10
-  },
-  normalWidht: {
-    width: screenWidth
-  },
-  normalHeight: {
-    height: screenHeight
-  },
-  width: {
-    width: screenWidth - 20
-  },
-  height: {
-    width: screenHeight - 20
   }
 });

@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import HeaderMenu from "../../Components/HeaderMenu.js";
 import CCPicker from "../../Components/Pickers/CCPicker.js";
+import FilterPicker from "../../Components/Pickers/FilterPicker.js";
 import { connect } from "react-redux";
 import Chart from "../../Components/Chart.js";
 import CSButtons from "../../Components/CSButtons.js";
@@ -46,6 +47,7 @@ class Carbon extends Component {
       service: "Servicio 1",
       filter: 0,
       interval: 3600,
+      pickerFValue: "Hoy",
       customdates: { from: null, until: null },
       values: [],
       caption: "CO2e",
@@ -311,16 +313,32 @@ class Carbon extends Component {
       }
     );
   }
-  setFilter(value) {
+  setFilter(value, texto) {
+    if (value == "Calendario" || texto == "Calendario") {
+      var filtro = -1;
+    } else if (value == "Hoy" || texto == "Hoy") {
+      var filtro = 0;
+    } else if (value == "Ayer" || texto == "Ayer") {
+      var filtro = 1;
+    } else if (value == "Esta semana" || texto == "Esta semana") {
+      var filtro = 2;
+    } else if (value == "Este mes" || texto == "Este mes") {
+      var filtro = 3;
+    } else if (value == "Este año" || texto == "Este año") {
+      var filtro = 4;
+    }
     this.setState(
       {
-        filter: value,
+        filter: filtro,
         customdates: { from: null, until: null },
-        calendar: false
+        calendar: filtro == -1 ? true : false,
+        pickerFValue: value
       },
       () => {
-        this.getCardsData();
-        this.getChartData();
+        if (filtro != -1) {
+          this.getChartData();
+          this.getCardsData();
+        }
       }
     );
   }
@@ -358,10 +376,14 @@ class Carbon extends Component {
                 this.state.orientation == "portrait"
                   ? {
                       width: Math.min(screenWidth, screenHeight),
-                      flexDirection: "column",
-                      height: "auto"
+                      flexDirection: "row",
+                      height: "auto",
+                      justifyContent: "space-between"
                     }
-                  : { width: null, flexDirection: "row" }
+                  : {
+                      width: null,
+                      flexDirection: "row"
+                    }
               ]}
             >
               <View style={styles.calendarView}>
@@ -369,65 +391,66 @@ class Carbon extends Component {
                   function={this.setDevice.bind(this)}
                   selectedValue={this.state.pickerValue}
                 />
+                {this.state.orientation == "portrait" && (
+                  <FilterPicker
+                    function={this.setFilter.bind(this)}
+                    selectedValue={this.state.pickerFValue}
+                    screen={"gene"}
+                  />
+                )}
               </View>
-              <View style={styles.optionButtonsView}>
-                <CSButtons
-                  setFunction={this.Calendario}
-                  texto={"Calendario"}
-                  selected={this.state.filter}
-                  filter={-1}
-                />
-                <CSButtons
-                  setFunction={this.setFilter}
-                  texto={"Hoy"}
-                  selected={this.state.filter}
-                  filter={0}
-                />
-                <CSButtons
-                  setFunction={this.setFilter}
-                  texto={"Ayer"}
-                  selected={this.state.filter}
-                  filter={1}
-                />
-                <CSButtons
-                  setFunction={this.setFilter}
-                  texto={"Esta Semana"}
-                  selected={this.state.filter}
-                  filter={2}
-                />
-                <CSButtons
-                  setFunction={this.setFilter}
-                  texto={"Este Mes"}
-                  selected={this.state.filter}
-                  filter={3}
-                />
-                {this.state.orientation == "landscape" && (
+
+              {this.state.orientation == "landscape" && (
+                <View
+                  style={[
+                    styles.optionButtonsView,
+                    this.state.orientation == "portrait"
+                      ? {
+                          width: Math.min(screenWidth, screenHeight),
+                          justifyContent: "space-between"
+                        }
+                      : { width: null, flex: 1.5 }
+                  ]}
+                >
+                  <CSButtons
+                    setFunction={this.Calendario}
+                    texto={"Calendario"}
+                    selected={this.state.filter}
+                    filter={-1}
+                  />
+                  <CSButtons
+                    setFunction={this.setFilter}
+                    texto={"Hoy"}
+                    selected={this.state.filter}
+                    filter={0}
+                  />
+                  <CSButtons
+                    setFunction={this.setFilter}
+                    texto={"Ayer"}
+                    selected={this.state.filter}
+                    filter={1}
+                  />
+                  <CSButtons
+                    setFunction={this.setFilter}
+                    texto={"Esta Semana"}
+                    selected={this.state.filter}
+                    filter={2}
+                  />
+                  <CSButtons
+                    setFunction={this.setFilter}
+                    texto={"Este Mes"}
+                    selected={this.state.filter}
+                    filter={3}
+                  />
                   <CSButtons
                     setFunction={this.setFilter}
                     texto={"Este año"}
                     selected={this.state.filter}
                     filter={4}
                   />
-                )}
-              </View>
+                </View>
+              )}
             </View>
-            {this.state.orientation == "portrait" && (
-              <View
-                style={[
-                  styles.extraButton,
-                  this.state.orientation == "portrait"
-                    ? { width: Math.min(screenWidth, screenHeight) }
-                    : { width: Math.max(screenWidth, screenHeight) }
-                ]}
-              >
-                <CSButtons
-                  setFunction={this.setFilter}
-                  texto={"Este año"}
-                  selected={this.state.filter}
-                  filter={4}
-                />
-              </View>
-            )}
             {this.state.calendar && (
               <DatePicker
                 initialDate={this.state.initialDate}
@@ -471,12 +494,12 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     height: "auto",
-    justifyContent: "center"
+    justifyContent: "center",
+    backgroundColor: "white"
   },
   optionButtonsView: {
     height: 60,
     flexDirection: "row",
-    backgroundColor: "white",
     alignItems: "flex-end",
     justifyContent: "flex-end",
     flex: 1,
@@ -484,16 +507,15 @@ const styles = StyleSheet.create({
   },
   calendarView: {
     flex: 1,
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: "white"
+    padding: 10,
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
   topView: {
     height: 60,
     justifyContent: "center",
     alignItems: "flex-start",
-    flexDirection: "row",
-    backgroundColor: "white"
+    flexDirection: "row"
   },
   cards: {
     justifyContent: "center",
@@ -504,12 +526,6 @@ const styles = StyleSheet.create({
   chart: {
     justifyContent: "center",
     height: "auto"
-  },
-  width: {
-    width: screenWidth
-  },
-  height: {
-    width: screenHeight
   },
   extraButton: {
     justifyContent: "center",

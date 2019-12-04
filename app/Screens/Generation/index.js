@@ -1,5 +1,4 @@
 //0 generation 1 selfconsumption 2 networkinjection
-
 import React, { Component, PropTypes } from "react";
 import {
   View,
@@ -70,6 +69,22 @@ class Generation extends Component {
   componentWillMount() {
     this._retrieveData();
   }
+
+  componentWillUnmount() {
+    Dimensions.removeEventListener("change");
+  }
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      header: (
+        <SafeAreaView>
+          <View style={styles.header}>
+            <HeaderMenu selected={"gene"} />
+          </View>
+        </SafeAreaView>
+      )
+    };
+  };
   _retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem("@MySuperStore:key");
@@ -93,11 +108,10 @@ class Generation extends Component {
       indicator: true,
       cards: false
     });
-    var serv = "Servicio%201";
     var url = `http://api.ienergybook.com/api/DesignatedMeters/generation?company_id=${
       this.state.values.companyId
-    }${this.state.cService ? "service" : "device"}_name=${
-      this.state.cDevice ? this.state.cardDevice : serv
+    }&${this.state.cService ? "service" : "device"}_name=${
+      this.state.cDevice ? this.state.cardDevice : this.state.cardService
     }&access_token=${this.state.values.accesToken}`;
     console.log(url);
     fetch(url, {
@@ -128,7 +142,6 @@ class Generation extends Component {
         });
       });
   }
-
   getChartData() {
     //console.log(this.state.id);
     console.log(this.state.device);
@@ -210,29 +223,11 @@ class Generation extends Component {
       indicator: false
     });
   }
-
-  componentWillUnmount() {
-    Dimensions.removeEventListener("change");
-  }
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      header: (
-        <SafeAreaView>
-          <View style={styles.header}>
-            <HeaderMenu selected={"gene"} />
-          </View>
-        </SafeAreaView>
-      )
-    };
-  };
-
   setInitial(date) {
     this.setState({
       initialDate: date
     });
   }
-
   setEnd(date) {
     this.setState(
       {
@@ -269,7 +264,6 @@ class Generation extends Component {
       });
     }
   }
-
   setDevice(itemValue) {
     var arrayDescriptionDevices = [];
     var arrayNameDevices = [];
@@ -362,7 +356,6 @@ class Generation extends Component {
       }
     );
   }
-
   render() {
     var chartAxis = {
       data: []
@@ -374,99 +367,106 @@ class Generation extends Component {
 
         chartAxis.data.push({
           label: item2,
-          value: item.value
+          value: item.value,
+          color: "#1CD6BF"
         });
       }
     }
     return (
-      <SafeAreaView>
-        <ScrollView>
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
           <View style={styles.container}>
             <View
               style={[
                 styles.topView,
-
                 this.state.orientation == "portrait"
                   ? { width: Math.min(screenWidth, screenHeight) }
-                  : { width: null }
+                  : { width: "100%" }
               ]}
             >
-              <View style={styles.calendarView}>
+              <View style={[styles.calendarView]}>
                 <CCPicker
                   function={this.setDevice.bind(this)}
                   selectedValue={this.state.pickerValue}
                 />
-                <View style={[styles.variableView]}>
-                  <CSButtons
-                    setFunction={this.setVariabe}
-                    texto={"Generación"}
-                    selected={this.state.caption}
-                    filter={0}
-                    generacion={true}
+                {this.state.orientation == "portrait" && (
+                  <FilterPicker
+                    function={this.setFilter.bind(this)}
+                    selectedValue={this.state.pickerFValue}
+                    screen={"gene"}
                   />
-                  <CSButtons
-                    setFunction={this.setVariabe}
-                    texto={"AutoConsumo"}
-                    selected={this.state.caption}
-                    filter={1}
-                    generacion={true}
-                  />
-                  <CSButtons
-                    setFunction={this.setVariabe}
-                    texto={"Inyección a la red"}
-                    selected={this.state.caption}
-                    filter={2}
-                    generacion={true}
-                  />
-                  {this.state.orientation == "portrait" && (
-                    <FilterPicker
-                      function={this.setFilter.bind(this)}
-                      selectedValue={this.state.pickerFValue}
-                      screen={"gene"}
+                )}
+                {this.state.orientation == "landscape" && (
+                  <View style={styles.optionButtonsView}>
+                    <CSButtons
+                      setFunction={this.Calendario}
+                      texto={"Calendario"}
+                      selected={this.state.filter}
+                      filter={-1}
                     />
-                  )}
-                </View>
+                    <CSButtons
+                      setFunction={this.setFilter}
+                      texto={"Hoy"}
+                      selected={this.state.filter}
+                      filter={0}
+                    />
+                    <CSButtons
+                      setFunction={this.setFilter}
+                      texto={"Ayer"}
+                      selected={this.state.filter}
+                      filter={1}
+                    />
+                    <CSButtons
+                      setFunction={this.setFilter}
+                      texto={"Esta Semana"}
+                      selected={this.state.filter}
+                      filter={2}
+                    />
+                    <CSButtons
+                      setFunction={this.setFilter}
+                      texto={"Este Mes"}
+                      selected={this.state.filter}
+                      filter={3}
+                    />
+                    <CSButtons
+                      setFunction={this.setFilter}
+                      texto={"Este año"}
+                      selected={this.state.filter}
+                      filter={4}
+                    />
+                  </View>
+                )}
               </View>
-              {this.state.orientation == "landscape" && (
-                <View style={styles.optionButtonsView}>
-                  <CSButtons
-                    setFunction={this.Calendario}
-                    texto={"Calendario"}
-                    selected={this.state.filter}
-                    filter={-1}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Hoy"}
-                    selected={this.state.filter}
-                    filter={0}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Ayer"}
-                    selected={this.state.filter}
-                    filter={1}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Esta Semana"}
-                    selected={this.state.filter}
-                    filter={2}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Este Mes"}
-                    selected={this.state.filter}
-                    filter={3}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Este año"}
-                    selected={this.state.filter}
-                    filter={4}
-                  />
-                </View>
-              )}
+              <View
+                style={[
+                  styles.variableView,
+                  this.state.orientation == "portrait"
+                    ? { justifyContent: "space-between" }
+                    : { alignItems: "flex-end", justifyContent: "flex-end" }
+                ]}
+              >
+                <CSButtons
+                  setFunction={this.setVariabe}
+                  texto={"Generación"}
+                  selected={this.state.caption}
+                  filter={0}
+                  generacion={true}
+                />
+                <CSButtons
+                  setFunction={this.setVariabe}
+                  texto={"AutoConsumo"}
+                  selected={this.state.caption}
+                  filter={1}
+                  generacion={true}
+                />
+                <CSButtons
+                  setFunction={this.setVariabe}
+                  texto={"Inyección a la red"}
+                  selected={this.state.caption}
+                  filter={2}
+                  generacion={true}
+                />
+              </View>
             </View>
             {this.state.calendar && (
               <DatePicker
@@ -480,7 +480,7 @@ class Generation extends Component {
               {this.state.indicator && <ActivityI />}
               {this.state.arrayWithData && !this.state.indicator && (
                 <Chart
-                  type={"line"}
+                  type={"column2d"}
                   caption={this.state.caption}
                   data={chartAxis.data}
                 />
@@ -517,42 +517,36 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     height: "auto",
-    justifyContent: "center"
+    justifyContent: "center",
+    flex: 1,
+    backgroundColor: "white"
   },
   optionButtonsView: {
-    height: 120,
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "flex-end",
-    flex: 3,
-    padding: 10
+    flex: 1
   },
   calendarView: {
-    flex: 2,
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: "white",
-    justifyContent: "space-between"
+    flex: 1,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    padding: 10
   },
   topView: {
     height: 120,
-    justifyContent: "center",
-    flexDirection: "row"
+    justifyContent: "center"
   },
   variableView: {
     flexDirection: "row",
-    alignItems: "flex-end",
-    paddingHorizontal: 10
+    padding: 10
   },
   chart: {
     justifyContent: "center",
     paddingTop: 5,
     height: "auto"
   },
-  width: {
-    width: screenWidth
-  },
-  height: {
-    width: screenHeight
+  scroll: {
+    flex: 1
   }
 });

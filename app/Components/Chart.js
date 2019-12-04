@@ -48,6 +48,7 @@ export default class Chart extends Component {
           chart: {
             caption: this.props.caption,
             numberprefix: " ",
+            yAxisValueFontSize: "9",
             theme: Platform.OS == "ios" ? "ocean" : "fusion",
             rotatelabels: "1",
             showValues: "0",

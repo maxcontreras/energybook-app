@@ -134,18 +134,7 @@ class Register extends Component {
     return (
       <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
         <ImageBackground
-          style={[
-            styles.background,
-            this.state.orientation == "portrait"
-              ? {
-                  width: Math.min(screenWidth, screenHeight),
-                  height: "auto"
-                }
-              : {
-                  width: Math.max(screenWidth, screenHeight),
-                  height: "auto"
-                }
-          ]}
+          style={[styles.background]}
           source={
             this.state.orientation == "portrait"
               ? RegistroFondo
@@ -289,8 +278,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   background: {
-    height: "100%",
-    width: "100%"
+    flex: 1
   },
   input2: {
     borderRadius: 10,

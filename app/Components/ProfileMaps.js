@@ -1,9 +1,17 @@
-import React, { Component } from 'react';
-import { Text, View, Dimensions, ScrollView, StyleSheet, SafeAreaView, Platform } from 'react-native';
+import React, { Component } from "react";
+import {
+  Text,
+  View,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  SafeAreaView,
+  Platform
+} from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps"; // remove PROVIDER_GOOGLE import if not using Google Maps
-import { connect } from "react-redux"; 
-import PinGoogleMaps from "../Assets/Svg/PinGoogleMaps.svg"; 
+import { connect } from "react-redux";
+import PinGoogleMaps from "../Assets/Svg/PinGoogleMaps.svg";
 
 const mapStateToProps = state => ({
   userData: state.initialValues,
@@ -11,7 +19,7 @@ const mapStateToProps = state => ({
   inCaseCoords: state.weatherReducer
 });
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 const SCREEN_WIDTH = width;
 const ASPECT_RATIO = width / height;
 const LATITUDE = 37.78825;
@@ -19,17 +27,17 @@ const LONGITUDE = -122.4324;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-class ProfileMaps extends Component { 
+class ProfileMaps extends Component {
   constructor(props) {
     const isPortrait = () => {
       const dim = Dimensions.get("screen");
       return dim.height >= dim.width;
     };
     super(props);
-    this.state = { 
-      values:[],
+    this.state = {
+      values: [],
       orientation: isPortrait() ? "portrait" : "landscape"
-    }; 
+    };
     this._retrieveData();
     Dimensions.addEventListener("change", () => {
       this.setState({
@@ -39,7 +47,7 @@ class ProfileMaps extends Component {
   }
   componentWillUnmount() {
     Dimensions.removeEventListener("change");
-  } 
+  }
   _retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem("@MySuperStore:key");
@@ -51,78 +59,70 @@ class ProfileMaps extends Component {
     } catch (error) {}
   };
 
-  render() {  
-    const region =  {
+  render() {
+    const region = {
       latitude: this.props.lat,
       longitude: this.props.lon,
-      latitudeDelta: .002,
-      longitudeDelta: .002,
-    }
-    
-    return ( 
-      <SafeAreaView style={{flex: 1}}>
-     
-      <View style={styles.container}>
-      {Platform.OS == 'ios' &&(
-      
-     <MapView
-          provider={this.props.provider}
-          style={[styles.map, 
-            this.state.orientation == "portrait"
-              ? { width: Math.min(width, height) -20}
-              : { width: Math.max(width, height) -50}]}
-          scrollEnabled={true}
-          zoomEnabled={true}
-          pitchEnabled={true}
-          rotateEnabled={true}
-          initialRegion={region}
-        >
-          <MapView.Marker
-            title={this.state.values.company}
-            coordinate={region}
-          >
-             <PinGoogleMaps width={60} height={60} />
-          
-          </MapView.Marker>
-        </MapView>  
+      latitudeDelta: 0.002,
+      longitudeDelta: 0.002
+    };
 
-        )}
-        {Platform.OS == "android" && (
-        <MapView
-          provider={PROVIDER_GOOGLE}
-          style={styles.map}
-          initialRegion={{
-            latitude: this.state.values.location
-              ? this.state.values.location.lat
-              : this.props.inCaseCoords.ftcoords[0],
-            longitude: this.state.values.location
-              ? this.state.values.location.lon
-              : this.props.inCaseCoords.ftcoords[1],
-            latitudeDelta: 0.002,
-            longitudeDelta: 0.002
-          }}
-        >
-          <Marker
-            title={this.state.values.company}
-            coordinate={{
-              latitude: this.state.values.location
-                ? this.state.values.location.lat
-                : this.props.inCaseCoords.ftcoords[0],
-              longitude: this.state.values.location
-                ? this.state.values.location.lon
-                : this.props.inCaseCoords.ftcoords[1]
-            }}
-          >
-            <PinGoogleMaps width={60} height={60} />
-          </Marker>
-        </MapView> 
-        )}
-    </View>  
-
-    </SafeAreaView>
-  );
+    return (
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          {Platform.OS == "ios" && (
+            <MapView
+              provider={this.props.provider}
+              style={styles.map}
+              scrollEnabled={true}
+              zoomEnabled={true}
+              pitchEnabled={true}
+              rotateEnabled={true}
+              initialRegion={region}
+            >
+              <MapView.Marker
+                title={this.state.values.company}
+                coordinate={region}
+              >
+                <PinGoogleMaps width={60} height={60} />
+              </MapView.Marker>
+            </MapView>
+          )}
+          {Platform.OS == "android" && (
+            <MapView
+              provider={PROVIDER_GOOGLE}
+              style={styles.map}
+              initialRegion={{
+                latitude: this.state.values.location
+                  ? this.state.values.location.lat
+                  : this.props.inCaseCoords.ftcoords[0],
+                longitude: this.state.values.location
+                  ? this.state.values.location.lon
+                  : this.props.inCaseCoords.ftcoords[1],
+                latitudeDelta: 0.002,
+                longitudeDelta: 0.002
+              }}
+            >
+              <Marker
+                title={this.state.values.company}
+                coordinate={{
+                  latitude: this.state.values.location
+                    ? this.state.values.location.lat
+                    : this.props.inCaseCoords.ftcoords[0],
+                  longitude: this.state.values.location
+                    ? this.state.values.location.lon
+                    : this.props.inCaseCoords.ftcoords[1]
+                }}
+              >
+                <PinGoogleMaps width={60} height={60} />
+              </Marker>
+            </MapView>
+          )}
+        </View>
+      </SafeAreaView>
+    );
   }
-} 
+}
 
 export default connect(mapStateToProps)(ProfileMaps);
 
@@ -130,13 +130,13 @@ const styles = StyleSheet.create({
   container: {
     height: 250,
     justifyContent: "flex-end",
-    alignItems: "center", 
-    width: '100%'
+    alignItems: "center",
+    width: "100%"
   },
   scrollview: {
-    alignItems: 'center',
+    alignItems: "center"
   },
   map: {
-    height: 250,
-  },
+    ...StyleSheet.absoluteFillObject
+  }
 });

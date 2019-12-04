@@ -227,7 +227,7 @@ class Home extends Component {
         <ImageBackground
           style={[
             styles.background,
-            screenWidth < screenHeight ? styles.width : styles.height
+            { height: Math.max(screenWidth, screenHeight) }
           ]}
           source={
             this.state.orientation == "portrait" ? LoginFondo : LoginFondoLS
@@ -309,13 +309,6 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%"
   },
-  width: {
-    height: screenHeight
-  },
-  height: {
-    height: screenWidth
-  },
-
   logo: {
     width: 250,
     height: 100,

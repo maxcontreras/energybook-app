@@ -2,18 +2,31 @@ import React, { Component, PropTypes } from "react";
 import { Text, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 class CSButtons extends Component {
   constructor(props) {
+    const isPortrait = () => {
+      const dim = Dimensions.get("screen");
+      return dim.height >= dim.width;
+    };
     super(props);
     this.state = {
       filter: this.props.filter,
       texto: this.props.texto,
-      selected: this.props.selected
+      selected: this.props.selected,
+      orientation: isPortrait() ? "portrait" : "landscape"
     };
+    Dimensions.addEventListener("change", () => {
+      this.setState({
+        orientation: isPortrait() ? "portrait" : "landscape"
+      });
+    });
   }
 
   componentWillReceiveProps(props) {
     this.setState({ selected: props.selected });
   }
 
+  componentWillUnmount() {
+    Dimensions.removeEventListener("change");
+  }
   render() {
     var selected = false;
     if (
@@ -35,7 +48,10 @@ class CSButtons extends Component {
           styles.buttonG,
           styles.elevation,
           [selected ? styles.selectedButtton : styles.unselectedButton],
-          [this.props.generacion ? styles.geneWidth : null]
+          [this.props.generacion ? styles.geneWidth : null],
+          this.state.orientation == "portrait"
+            ? { marginLeft: null }
+            : { marginLeft: 10 }
         ]}
       >
         <Text
@@ -76,8 +92,7 @@ const styles = StyleSheet.create({
     height: 35,
     justifyContent: "center",
     alignItems: "center",
-    width: 70,
-    marginLeft: 5
+    width: 70
   },
   geneWidth: {
     width: 90

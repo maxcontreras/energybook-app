@@ -32,7 +32,10 @@ export default class Daily extends Component {
           title={fecha}
           containerStyle={[
             styles.containerCard,
-            screenWidth < screenHeight ? styles.width : styles.height
+
+            this.state.orientation == "portrait"
+              ? { width: Math.min(screenWidth, screenHeight) - 20 }
+              : { width: Math.min(screenWidth, screenHeight) - 20 }
           ]}
           titleStyle={styles.titleStyle}
           wrapperStyle={{ borderRadius: 10 }}
@@ -155,11 +158,5 @@ const styles = StyleSheet.create({
   },
   marginMiddle: {
     marginTop: 10
-  },
-  width: {
-    width: screenWidth - 20
-  },
-  height: {
-    width: screenHeight - 20
   }
 });

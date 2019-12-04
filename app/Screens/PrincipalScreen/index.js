@@ -64,15 +64,18 @@ class PrincipalScreen extends Component {
               )}
               <View
                 style={[
+                  styles.container2,
                   this.state.orientation == "portrait"
-                    ? styles.container2
-                    : styles.containerLandscape
+                    ? { flexDirection: "column" }
+                    : { flexDirection: "row" }
                 ]}
               >
                 <View
                   style={[
                     styles.daily,
-                    screenWidth < screenHeight ? styles.width : styles.height
+                    this.state.orientation == "portrait"
+                      ? { width: Math.min(screenWidth, screenHeight) }
+                      : { width: Math.min(screenWidth, screenHeight) }
                   ]}
                 >
                   <Daily />
@@ -141,13 +144,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     height: "auto"
   },
-  containerLandscape: {
-    flex: 1,
-    backgroundColor: "white",
-    borderRadius: 10,
-    height: "auto",
-    flexDirection: "row"
-  },
   menu: {
     flex: 1,
     flexDirection: "row",
@@ -156,11 +152,5 @@ const styles = StyleSheet.create({
   },
   daily: {
     justifyContent: "center"
-  },
-  width: {
-    width: screenWidth
-  },
-  height: {
-    width: screenHeight
   }
 });

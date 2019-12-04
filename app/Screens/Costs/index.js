@@ -7,7 +7,6 @@ import {
   Dimensions,
   Alert
 } from "react-native";
-
 import IntervalPicker from "../../Components/Pickers/IntervalPicker";
 import AsyncStorage from "@react-native-community/async-storage";
 import HeaderMenu from "../../Components/HeaderMenu.js";
@@ -21,7 +20,6 @@ import Colors from "../../Components/colorCost";
 import { tsImportEqualsDeclaration } from "@babel/types";
 const screenHeight = Math.round(Dimensions.get("window").height);
 const screenWidth = Math.round(Dimensions.get("window").width);
-
 const mapStateToProps = state => ({
   userData: state.initialValues,
   readings: state.dailyReducer
@@ -68,7 +66,6 @@ class Costs extends Component {
     this.Calendario = this.Calendario.bind(this);
     this.setDevice = this.setDevice.bind(this);
   }
-
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -80,7 +77,6 @@ class Costs extends Component {
       )
     };
   };
-
   _retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem("@MySuperStore:key");
@@ -172,13 +168,11 @@ class Costs extends Component {
       indicator: false
     });
   }
-
   setInitial(date) {
     this.setState({
       initialDate: date
     });
   }
-
   setEnd(date) {
     this.setState(
       {
@@ -215,7 +209,6 @@ class Costs extends Component {
       });
     }
   }
-
   setInterval(value, texto) {
     if (value == "15 minutos" || texto == "15 minutos") {
       var intervalo = 900;
@@ -227,14 +220,13 @@ class Costs extends Component {
     this.setState(
       {
         interval: intervalo,
-        pickerIValue: value
+        pickerIValue: texto
       },
       () => {
         this.getChartData();
       }
     );
   }
-
   setFilter(value) {
     this.setState(
       {
@@ -286,7 +278,6 @@ class Costs extends Component {
       }
     );
   }
-
   render() {
     var chartAxis = {
       data: []
@@ -311,11 +302,6 @@ class Costs extends Component {
         color: color
       });
     }
-    const uno = screenHeight;
-    const dos = screenWidth;
-
-    const unou = screenWidth;
-    const dosd = screenHeight;
     return (
       <SafeAreaView>
         <ScrollView>
@@ -323,26 +309,17 @@ class Costs extends Component {
             <View
               style={[
                 styles.topView,
-
-                this.state.orientation == "portrait"
-                  ? { width: Math.min(screenWidth, screenHeight) }
-                  : { width: null },
-                this.state.orientation == "portrait"
-                  ? {
-                      flexDirection: "column",
-                      height: "auto"
-                    }
-                  : { flexDirection: "row" }
+                {
+                  flexDirection:
+                    this.state.orientation == "portrait" ? "column" : "row"
+                }
               ]}
             >
               <View
                 style={[
-                  styles.calendarView,
                   this.state.orientation == "portrait"
-                    ? {
-                        flexDirection: "row"
-                      }
-                    : { flexDirection: null, flex: 0.5 }
+                    ? styles.pCalendarView
+                    : styles.lCalendarView
                 ]}
               >
                 <CCPicker
@@ -352,18 +329,19 @@ class Costs extends Component {
                 {this.state.orientation == "portrait" && (
                   <IntervalPicker
                     function={this.setInterval.bind(this)}
-                    selectedValue={this.state.pickerIvalue}
+                    selectedValue={this.state.pickerIValue}
                   />
                 )}
               </View>
               <View
                 style={[
                   styles.optionButtonsView,
-                  this.state.orientation == "portrait"
-                    ? {
-                        justifyContent: "flex-start"
-                      }
-                    : { justifyContent: "flex-end" }
+                  {
+                    justifyContent:
+                      this.state.orientation == "portrait"
+                        ? "space-between"
+                        : "flex-end"
+                  }
                 ]}
               >
                 <CSButtons
@@ -398,29 +376,30 @@ class Costs extends Component {
                 />
               </View>
             </View>
+
+            {this.state.orientation == "landscape" && (
+              <View style={[styles.timeButtons]}>
+                <CSButtons
+                  setFunction={this.setInterval}
+                  texto={"1 hora"}
+                  selected={this.state.interval}
+                  filter={3600}
+                />
+                <CSButtons
+                  setFunction={this.setInterval}
+                  texto={"30 minutos"}
+                  selected={this.state.interval}
+                  filter={1800}
+                />
+                <CSButtons
+                  setFunction={this.setInterval}
+                  texto={"15 minutos"}
+                  selected={this.state.interval}
+                  filter={900}
+                />
+              </View>
+            )}
             <View style={[styles.chart]}>
-              {this.state.orientation == "landscape" && (
-                <View style={[styles.timeButtons]}>
-                  <CSButtons
-                    setFunction={this.setInterval}
-                    texto={"1 hora"}
-                    selected={this.state.interval}
-                    filter={3600}
-                  />
-                  <CSButtons
-                    setFunction={this.setInterval}
-                    texto={"30 minutos"}
-                    selected={this.state.interval}
-                    filter={1800}
-                  />
-                  <CSButtons
-                    setFunction={this.setInterval}
-                    texto={"15 minutos"}
-                    selected={this.state.interval}
-                    filter={900}
-                  />
-                </View>
-              )}
               {this.state.calendar && (
                 <DatesPicker
                   initialDate={this.state.initialDate}
@@ -448,25 +427,27 @@ class Costs extends Component {
 }
 
 export default connect(mapStateToProps)(Costs);
-
 const styles = StyleSheet.create({
   header: {
     height: 60,
     justifyContent: "center"
   },
   topView: {
-    height: 60,
+    height: "auto",
+    width: "100%",
+    padding: 10,
     justifyContent: "center",
-    flexDirection: "row",
-    backgroundColor: "white"
+    alignItems: "center"
   },
   container: {
     flex: 1,
     height: "auto",
-    justifyContent: "center"
+    justifyContent: "center",
+    alignItems: "center"
   },
   chart: {
     justifyContent: "center",
+    alignItems: "center",
     height: "auto"
   },
   optionButtonsView: {
@@ -475,26 +456,25 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     alignItems: "center",
     flex: 1,
-    padding: 10
+    width: "100%"
   },
-  calendarView: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: "white"
+  pCalendarView: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  lCalendarView: {
+    width: "100%",
+    flexDirection: "column",
+    flex: 0.5
   },
   timeButtons: {
     justifyContent: "flex-end",
     alignItems: "flex-end",
     flexDirection: "row",
-    height: 45,
     backgroundColor: "white",
     paddingBottom: 10,
-    paddingRight: 10
-  },
-  width: {
-    width: screenWidth
-  },
-  height: {
-    width: screenHeight
+    paddingRight: 10,
+    width: "100%"
   }
 });
