@@ -10,9 +10,12 @@ import {
   ImageBackground,
   Image,
   ScrollView,
-  Dimensions
+  Dimensions,
+  PermissionsAndroid,
+  Linking,
+  Alert
 } from "react-native";
-
+import { CheckBox } from "react-native-elements";
 import { Formik } from "formik";
 import * as yup from "yup";
 import RegistroFondo from "../../Assets/Images/RegistroFondo.jpg";
@@ -21,6 +24,9 @@ import LogoCl from "../../Assets/Images/LogoCl.png";
 import { validationSchema } from "../../Components/ValidationSchemas/ValidationSchema.js";
 import Orientation from "react-native-orientation";
 import RegisterPicker from "../../Components/Pickers/RegisterPicker";
+import AvisoDePrivacidad from "../../Components/AvisoDePrivacidad";
+import { Overlay } from "react-native-elements";
+
 const StyledInput = ({
   label,
   formikProps,
@@ -54,7 +60,9 @@ class Register extends Component {
     };
 
     this.state = {
-      orientation: isPortrait() ? "portrait" : "landscape"
+      orientation: isPortrait() ? "portrait" : "landscape",
+      checked: false,
+      aviso: false
     };
     Dimensions.addEventListener("change", () => {
       this.setState({
@@ -76,58 +84,79 @@ class Register extends Component {
   Registrarse(values) {
     console.log(values);
 
-    var datos = {
-      name: values.name,
-      lastname: values.lastname,
-      email: values.email,
-      password: values.confirmPassword,
-      contact_data: {
-        full_name: `${values.name} ${values.lastname}`,
-        company_name: values.company,
-        business_line: values.businessR,
-        state: values.state,
-        size: values.size,
-        phone: values.phone
-      },
-      free_trial: true,
-      phone: values.phone
-    };
-    fetch("http://api.ienergybook.com/api/eUsers", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(datos)
-    })
-      .then(res => {
-        this.state.statusCode = res.status;
-        const data = res.json();
-        return Promise.all([this.state.statusCode, data]);
-      })
-      .then(json => {
-        if (this.state.statusCode == 200) {
-          Alert.alert("Registro completo!", [
-            {
-              text: "Okay",
-              onPress: () => this.props.navigation.navigate("Home")
-            }
-          ]);
-        } else {
-          Alert.alert("Lo sentimos, hubo un error.", [
-            {
-              text: "Okay"
-            }
-          ]);
+    if (this.state.checked == false) {
+      Alert.alert("Error", "Favor de aceptar el aviso de privacidad.", [
+        {
+          text: "Okay"
         }
+      ]);
+    } else if (this.state.checked == true) {
+      var datos = {
+        name: values.name,
+        lastname: values.lastname,
+        email: values.email,
+        password: values.confirmPassword,
+        contact_data: {
+          full_name: `${values.name} ${values.lastname}`,
+          company_name: values.company,
+          business_line: values.businessR,
+          state: values.state,
+          size: values.size,
+          phone: values.phone
+        },
+        free_trial: true,
+        phone: values.phone,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      fetch("http://192.168.8.44:3000/api/eUsers", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(datos)
       })
-      .catch(err => {
-        console.log("no se pudo");
-      });
+        .then(res => {
+          this.state.statusCode = res.status;
+          const data = res.json();
+          return Promise.all([this.state.statusCode, data]);
+        })
+        .then(json => {
+          console.log(json);
+          if (this.state.statusCode == 200) {
+            Alert.alert("Registro completo!", "Por favor, inicia sesión", [
+              {
+                text: "Okay",
+                onPress: () => this.props.navigation.navigate("Home")
+              }
+            ]);
+          } else {
+            Alert.alert(
+              "Lo sentimos",
+              "Hubo un error al registrar tus datos.",
+              [
+                {
+                  text: "Okay"
+                }
+              ]
+            );
+          }
+        })
+        .catch(err => {
+          console.log("no se pudo");
+        });
+    }
   }
 
   Iniciar() {
     this.props.navigation.navigate("Home");
+  }
+
+  setAviso() {
+    this.setState({
+      aviso: false
+    });
   }
 
   render() {
@@ -160,8 +189,8 @@ class Register extends Component {
                   company: "",
                   phone: "",
                   state: "",
-                  businessR: "",
-                  size: ""
+                  businessR: "Manufactura",
+                  size: "2-10"
                 }}
                 onSubmit={values => {
                   this.Registrarse(values);
@@ -246,6 +275,42 @@ class Register extends Component {
                       </Text>
                     </View>
                     <View style={styles.btnRegV}>
+                      <View
+                        style={{
+                          flex: 1,
+                          width: "100%",
+                          flexDirection: "row",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          padding: 10,
+                          paddingTop: 0
+                        }}
+                      >
+                        <CheckBox
+                          center
+                          checkedColor="black"
+                          checked={this.state.checked}
+                          onPress={() =>
+                            this.setState({ checked: !this.state.checked })
+                          }
+                        />
+                        <Text style={[styles.btnTxt2, { fontSize: 15 }]}>
+                          Acepto el
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => this.setState({ aviso: true })}
+                          style={[styles.btn2, { padding: 5 }]}
+                        >
+                          <Text
+                            style={[
+                              styles.btnTxt2,
+                              { textDecorationLine: "underline", fontSize: 15 }
+                            ]}
+                          >
+                            Aviso de privacidad
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
                       <TouchableOpacity
                         onPress={formikProps.handleSubmit}
                         style={styles.btn}
@@ -265,6 +330,12 @@ class Register extends Component {
                 )}
               </Formik>
             </View>
+            <Overlay
+              isVisible={this.state.aviso}
+              onBackdropPress={() => this.setState({ aviso: false })}
+            >
+              <AvisoDePrivacidad function={this.setAviso.bind(this)} />
+            </Overlay>
           </View>
         </ImageBackground>
       </ScrollView>
@@ -346,7 +417,7 @@ const styles = StyleSheet.create({
   data: {
     color: "#000000",
     fontSize: 15,
-    paddingBottom: 20,
+    paddingVertical: 20,
     textAlign: "center"
   },
   container2: {

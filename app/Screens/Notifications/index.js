@@ -58,7 +58,7 @@ export default class Notifications extends Component {
             console.log(this.state.values);
 
             fetch(
-              `http://192.168.8.42:3000/api/notificaciones/VerNotificaciones`,
+              `http://192.168.8.44:3000/api/notificaciones/VerNotificaciones`,
               {
                 method: "POST",
                 headers: {
