@@ -13,7 +13,7 @@ import {
 const mapStateToProps = state => ({
   readings: state.dailyReducer,
   meterId: state.dailyReducer.meterId,
-  prices: state.costReducer[1]
+  prices: state.costReducer
 });
 
 class Daily extends Component {
@@ -110,10 +110,7 @@ class Daily extends Component {
       })
       .then(json => {
         console.log(json);
-        this.props.dispatch(getPrices(json, this.state.values.tipoTarifa));
-
-        this.props.dispatch(getFinalPrices(this.props.readings));
-
+        this.props.dispatch(getPrices(json[1].cfeValue));
         this.getDCP();
       })
       .catch(err => {
@@ -145,6 +142,8 @@ class Daily extends Component {
         return Promise.all([statusCode, data]);
       })
       .then(json => {
+        console.log("AQUI LOS PRECIOS");
+        console.log(json[1]);
         var jsonResponse = json[1];
         var response = [];
         for (var i = 0; i < jsonResponse.length; i++) {
@@ -159,13 +158,40 @@ class Daily extends Component {
         this.setState({
           dailyTCC: addPrices
         });
+        console.log(this.state.dailyTCC);
+        this._storeData();
       })
       .catch(err => {
         console.log("no se pudo");
       });
   }
 
+  _storeData = async () => {
+    let datos = {
+      meterId: this.props.meterId
+    };
+    try {
+      await AsyncStorage.setItem("meterId", JSON.stringify(datos), () => {
+        console.log(datos);
+      });
+    } catch (error) {
+      // Error saving data
+    }
+  };
+
   render() {
+    console.log(this.props);
+    const capacityPrice =
+      (this.state.values.tipoTarifa == "GDMTH"
+        ? this.props.prices.GDMTH.capacityPrice
+        : this.props.prices.GDMTO.capacityPrice) *
+      this.props.readings.dailyReadings.capacity;
+    const distributionPrice =
+      (this.state.values.tipoTarifa == "GDMTH"
+        ? this.props.prices.GDMTH.distributionPrice
+        : this.props.prices.GDMTO.distributionPrice) *
+      this.props.readings.dailyReadings.distribution;
+
     return (
       <ScrollView
         horizontal={true}
@@ -208,7 +234,10 @@ class Daily extends Component {
             }
             valuePrice={
               this.props.prices
-                ? "$" + this.props.prices.totalDailyDistribution
+                ? "$" +
+                  distributionPrice
+                    .toFixed(2)
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 : "$0"
             }
             ultima={
@@ -233,7 +262,8 @@ class Daily extends Component {
             }
             valuePrice={
               this.props.prices
-                ? "$" + this.props.prices.totalDailyCapacity
+                ? "$" +
+                  capacityPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 : "$0"
             }
             ultima={

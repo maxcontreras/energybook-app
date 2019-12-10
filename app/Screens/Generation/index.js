@@ -236,6 +236,7 @@ class Generation extends Component {
       },
       () => {
         if (this.state.initialDate && this.state.endDate) {
+          console.log(this.state.initialDate);
           this.setState(
             {
               customdates: {

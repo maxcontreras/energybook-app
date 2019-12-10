@@ -79,7 +79,9 @@ class PrincipalScreen extends Component {
                   ]}
                 >
                   <Daily />
-                  {this.props.readings && <Data />}
+                  {this.props.readings && (
+                    <Data meterId={this.props.readings.meterId} />
+                  )}
                 </View>
                 {this.props.readings && (
                   <View

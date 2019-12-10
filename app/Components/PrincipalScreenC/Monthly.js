@@ -23,7 +23,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 
 const mapStateToProps = state => ({
   readings: state.dailyReducer,
-  prices: state.costReducer[1]
+  prices: state.costReducer
 });
 
 class Data extends Component {
@@ -37,6 +37,7 @@ class Data extends Component {
     this.state = {
       url: "",
       monthlyTCC: "",
+      meterId: "",
       values: [],
       orientation: isPortrait() ? "portrait" : "landscape"
     };
@@ -53,66 +54,88 @@ class Data extends Component {
       if (value !== null) {
         this.setState(
           {
-            values: JSON.parse(value)
+            values: JSON.parse(value),
+            meterId: this.props.readings.meterId
           },
           () => {
-            console.log(this.props.meterId);
-            fetch(
-              `http://api.ienergybook.com/api/Meters/getConsumptionCostsByFilter?access_token=${this.state.values.accesToken}`,
-              {
-                method: "POST",
-                headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                  id: this.props.readings.meterId,
-                  device: "",
-                  service: "Servicio 1",
-                  filter: 3,
-                  interval: 86400,
-                  customdates: null
-                })
-              }
-            )
-              .then(res => {
-                let statusCode = res.status;
-                const data = res.json();
-                return Promise.all([statusCode, data]);
-              })
-              .then(json => {
-                //this.props.dispatch(getMonthlyConsumptionPrices(json));
-                console.log("MONTHLY CONSUMPTION");
-                console.log(json);
-
-                var jsonResponse = json[1];
-                var response = [];
-                for (var i = 0; i < jsonResponse.length; i++) {
-                  response[i] = jsonResponse[i].cost;
-                }
-
-                var addPrices = response
-                  .reduce((a, b) => a + b, 0)
-                  .toFixed(2)
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-                this.setState({
-                  monthlyTCC: addPrices
-                });
-              })
-              .catch(err => {
-                console.log("no se pudo");
-              });
+            this.getMeterId();
           }
         );
         console.log(this.state.values);
       }
     } catch (error) {}
   };
+  getMeterId = async () => {
+    try {
+      const value = await AsyncStorage.getItem("meterId");
+      if (value !== null) {
+        this.setState(
+          {
+            meterId: JSON.parse(value).meterId
+          },
+          () => {
+            this.getData();
+          }
+        );
+        console.log(this.state.meterId);
+      }
+    } catch (error) {}
+  };
+  getData() {
+    console.log(this.props);
+    fetch(
+      `http://api.ienergybook.com/api/Meters/getConsumptionCostsByFilter?access_token=${this.state.values.accesToken}`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: this.state.meterId,
+          device: "",
+          service: "Servicio 1",
+          filter: 3,
+          interval: 86400,
+          customdates: null
+        })
+      }
+    )
+      .then(res => {
+        let statusCode = res.status;
+        const data = res.json();
+        return Promise.all([statusCode, data]);
+      })
+      .then(json => {
+        //this.props.dispatch(getMonthlyConsumptionPrices(json));
+        console.log("MONTHLY CONSUMPTION");
+        console.log(json);
+
+        var jsonResponse = json[1];
+        var response = [];
+        for (var i = 0; i < jsonResponse.length; i++) {
+          response[i] = jsonResponse[i].cost;
+        }
+
+        var addPrices = response
+          .reduce((a, b) => a + b, 0)
+          .toFixed(2)
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        this.setState({
+          monthlyTCC: addPrices
+        });
+      })
+      .catch(err => {
+        console.log("no se pudo");
+      });
+  }
 
   componentWillMount() {
     Orientation.unlockAllOrientations();
     this._retrieveData();
+    this._isMounted = true;
+    this.getData();
   }
 
   componentWillUnmount() {
@@ -121,6 +144,18 @@ class Data extends Component {
 
   render() {
     var fecha = date + " " + n + " " + "de" + " " + mes;
+
+    const capacityPrice =
+      (this.state.values.tipoTarifa == "GDMTH"
+        ? this.props.prices.GDMTH.capacityPrice
+        : this.props.prices.GDMTO.capacityPrice) *
+      this.props.readings.monthlyReadings.capacity;
+    const distributionPrice =
+      (this.state.values.tipoTarifa == "GDMTH"
+        ? this.props.prices.GDMTH.distributionPrice
+        : this.props.prices.GDMTO.distributionPrice) *
+      this.props.readings.monthlyReadings.distribution;
+
     return (
       <View
         style={[
@@ -132,10 +167,7 @@ class Data extends Component {
           title={fecha}
           containerStyle={[
             styles.containerCard,
-
-            this.state.orientation == "portrait"
-              ? { width: Math.min(screenWidth, screenHeight) - 20 }
-              : { width: Math.min(screenWidth, screenHeight) - 20 }
+            { width: Math.min(screenWidth, screenHeight) - 20 }
           ]}
           titleStyle={styles.titleStyle}
           wrapperStyle={{ borderRadius: 10 }}
@@ -185,12 +217,18 @@ class Data extends Component {
               </Text>
               <Text style={styles.priceText}>
                 {this.props.prices
-                  ? "$" + this.props.prices.totalMonthlyDistribution
+                  ? "$" +
+                    distributionPrice
+                      .toFixed(2)
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                   : "$0"}
               </Text>
               <Text style={styles.priceText}>
                 {this.props.prices
-                  ? "$" + this.props.prices.totalMonthlyCapacity
+                  ? "$" +
+                    capacityPrice
+                      .toFixed(2)
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                   : "$0"}
               </Text>
               <Text style={styles.priceText}>{this.props.valuePrice}</Text>

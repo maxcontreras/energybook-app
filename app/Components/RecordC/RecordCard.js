@@ -11,7 +11,7 @@ import Fp from "../../Assets/Svg/Fp.svg";
 const mapStateToProps = state => ({
   readings: state.dailyReducer,
   meterId: state.dailyReducer.meterId,
-  prices: state.costReducer[1]
+  prices: state.costReducer
 });
 
 class RecordCard extends Component {
@@ -36,25 +36,82 @@ class RecordCard extends Component {
   }
   componentWillMount() {
     Orientation.unlockAllOrientations();
-    // this._retrieveData();
+    this._retrieveData();
   }
+
+  _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@MySuperStore:key");
+      if (value !== null) {
+        this.setState({
+          values: JSON.parse(value)
+        });
+      }
+    } catch (error) {}
+  };
 
   componentWillUnmount() {
     Dimensions.removeEventListener("change");
   }
 
   render() {
+    const capacityPrice =
+      (this.state.values.tipoTarifa == "GDMTH"
+        ? this.props.prices.GDMTH.capacityPrice
+        : this.props.prices.GDMTO.capacityPrice) *
+      (this.props.cardData ? this.props.cardData.capacity : 0);
+    const distributionPrice =
+      (this.state.values.tipoTarifa == "GDMTH"
+        ? this.props.prices.GDMTH.distributionPrice
+        : this.props.prices.GDMTO.distributionPrice) *
+      (this.props.cardData ? this.props.cardData.capacity : 0);
+
+    const data = [
+      {
+        Icono: Consumo,
+        title: "Consumo",
+        reading: this.props.cardData
+          ? `${this.props.cardData.consumption} kWh`
+          : "0kWh",
+        price: this.props.consumptionPrice
+          ? " $" + this.props.consumptionPrice
+          : "$0"
+      },
+      {
+        Icono: Distribucion,
+        title: "Distribución",
+        reading: this.props.cardData
+          ? `${this.props.cardData.distribution} kWh`
+          : "0kWh",
+        price:
+          "$" +
+          distributionPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      },
+      {
+        Icono: Capacidad,
+        title: "Capacidad",
+        reading: this.props.cardData
+          ? `${this.props.cardData.capacity} kWh`
+          : "0kWh",
+        price:
+          "$" + capacityPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      },
+      {
+        Icono: Fp,
+        title: "Fp",
+        reading: this.props.cardData ? `${this.props.cardData.fp}%` : "0%",
+        price: " "
+      }
+    ];
+
+    var key = 0;
+
     return (
-      <View
-        style={[
-          styles.container,
-          this.state.orientation == "landscape" ? styles.pLandscape : null
-        ]}
-      >
+      <View style={styles.container}>
         <Card
           containerStyle={[
             styles.containerCard,
-            screenWidth < screenHeight ? styles.width : styles.height
+            { width: Math.min(screenWidth, screenHeight) - 20 }
           ]}
           wrapperStyle={{
             borderRadius: 10,
@@ -63,68 +120,20 @@ class RecordCard extends Component {
           }}
         >
           <View style={styles.innerCard}>
-            <View style={styles.parte}>
-              <View style={styles.iconView}>
-                <Consumo style={styles.icon} />
+            {data.map(datos => (
+              <View key={key++} style={styles.parte}>
+                <View style={styles.iconView}>
+                  <datos.Icono style={styles.icon} />
+                </View>
+                <View style={styles.datos}>
+                  <Text style={styles.titulo}>{datos.title}</Text>
+                  <Text style={styles.texto}>{datos.reading}</Text>
+                </View>
+                <View style={styles.datoView}>
+                  <Text style={styles.texto}>{datos.price}</Text>
+                </View>
               </View>
-              <View style={styles.datos}>
-                <Text style={styles.titulo}>Consumo</Text>
-                <Text style={styles.texto}>
-                  {this.props.cardData
-                    ? `${this.props.cardData.consumption} kWh`
-                    : "0kWh"}
-                </Text>
-              </View>
-              <View style={styles.datoView}>
-                <Text style={styles.texto}>precio aqui</Text>
-              </View>
-            </View>
-            <View style={styles.parte}>
-              <View style={styles.iconView}>
-                <Distribucion style={styles.icon} />
-              </View>
-              <View style={styles.datos}>
-                <Text style={styles.titulo}>Distribución</Text>
-                <Text style={styles.texto}>
-                  {this.props.cardData
-                    ? `${this.props.cardData.distribution} kW`
-                    : "0kW"}
-                </Text>
-              </View>
-              <View style={styles.datoView}>
-                <Text style={styles.texto}>precio aqui</Text>
-              </View>
-            </View>
-            <View style={styles.parte}>
-              <View style={styles.iconView}>
-                <Capacidad style={styles.icon} />
-              </View>
-              <View style={styles.datos}>
-                <Text style={styles.titulo}>Capacidad</Text>
-                <Text style={styles.texto}>
-                  {this.props.cardData
-                    ? `${this.props.cardData.capacity} kWh`
-                    : "0kW"}
-                </Text>
-              </View>
-              <View style={styles.datoView}>
-                <Text style={styles.texto}>precio aqui</Text>
-              </View>
-            </View>
-            <View style={styles.parte}>
-              <View style={styles.iconView}>
-                <Fp style={styles.icon} />
-              </View>
-              <View style={styles.datos}>
-                <Text style={styles.titulo}>Fp</Text>
-                <Text style={styles.texto}>
-                  {this.props.cardData ? `${this.props.cardData.fp}%` : "0%"}
-                </Text>
-              </View>
-              <View style={styles.datoView}>
-                <Text style={styles.texto}> </Text>
-              </View>
-            </View>
+            ))}
           </View>
         </Card>
       </View>
@@ -139,6 +148,7 @@ var screenWidth = Math.round(Dimensions.get("window").width);
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center"
   },
@@ -176,9 +186,10 @@ const styles = StyleSheet.create({
     height: 30
   },
   containerCard: {
+    flex: 1,
     height: 290,
     padding: 0,
-    width: screenWidth - 20,
+    margin: 20,
     borderRadius: 10,
     ...Platform.select({
       ios: {
@@ -198,11 +209,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "center",
     padding: 30
-  },
-  width: {
-    width: screenWidth - 20
-  },
-  height: {
-    width: screenHeight - 20
   }
 });

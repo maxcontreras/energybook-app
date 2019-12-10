@@ -22,32 +22,24 @@ import ActivityI from "../../Components/ActivityIndicator";
 import "moment/min/moment-with-locales";
 const mapStateToProps = state => ({
   userData: state.initialValues,
-  readings: state.dailyReducer
+  readings: state.dailyReducer,
+  prices: state.costReducer
 });
 class Record extends Component {
   constructor(props) {
     super(props);
-    const isPortrait = () => {
-      const dim = Dimensions.get("screen");
-      return dim.height >= dim.width;
-    };
     this.state = {
-      orientation: isPortrait() ? "portrait" : "landscape",
       pickerValue: "Servicio 1",
       newDate: moment()
         .startOf("month")
         .add(-1, "month")
         .format(),
       values: [],
-      indicator: false
+      indicator: false,
+      meterId: "",
+      consumptionPrice: null
     };
-    Dimensions.addEventListener("change", () => {
-      this.setState({
-        orientation: isPortrait() ? "portrait" : "landscape"
-      });
-    });
   }
-
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -59,17 +51,16 @@ class Record extends Component {
       )
     };
   };
-
   componentWillMount() {
     this._retrieveData();
+    this._getMeter;
   }
-
   confirmar() {
     this.setState({
       indicator: true
     });
-    console.log(this.state.values.accesToken);
     console.log(this.state.pickerValue);
+    console.log(this.state.values.companyId);
     console.log(this.state.newDate);
 
     fetch(
@@ -99,6 +90,7 @@ class Record extends Component {
           cardData: json[1].data,
           indicator: false
         });
+        this.getPrices();
       })
       .catch(err => {
         console.log("NO SE PUDO");
@@ -110,6 +102,61 @@ class Record extends Component {
             text: "Okay"
           }
         ]);
+      });
+  }
+  getPrices() {
+    console.log(moment(this.state.newDate).format("YYYY-MM-DD"));
+    console.log(
+      moment(this.state.newDate)
+        .endOf("month")
+        .format("YYYY-MM-DD")
+    );
+
+    fetch(
+      `http://api.ienergybook.com/api/Meters/getConsumptionCostsByFilter?access_token=${this.state.values.accesToken}`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: this.state.meterId,
+          device: "",
+          service: this.state.pickerValue,
+          filter: -1,
+          interval: 86400,
+          customdates: {
+            from: `${moment(this.state.newDate).format("YYYY-MM-DD")}`,
+            until: `${moment(this.state.newDate)
+              .endOf("month")
+              .format("YYYY-MM-DD")}`
+          }
+        })
+      }
+    )
+      .then(res => {
+        let statusCode = res.status;
+        const data = res.json();
+        return Promise.all([statusCode, data]);
+      })
+      .then(json => {
+        var jsonResponse = json[1];
+        var response = [];
+        for (var i = 0; i < jsonResponse.length; i++) {
+          response[i] = jsonResponse[i].cost;
+        }
+        var addPrices = response
+          .reduce((a, b) => a + b, 0)
+          .toFixed(2)
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        this.setState({
+          consumptionPrice: addPrices
+        });
+      })
+      .catch(err => {
+        console.log("no se pudo");
       });
   }
 
@@ -126,15 +173,10 @@ class Record extends Component {
       .startOf("month")
       .add(-1, "month")
       .format();
-
     const newDate = moment(this.state.newDate)
       .add(months, "month")
       .add(years, "year")
       .format();
-
-    console.log("OLD DATE:" + newDate);
-    console.log("NEW DATE: " + oldDate);
-
     this.setState(
       {
         newDate: moment(newDate).isAfter(oldDate) ? oldDate : newDate
@@ -153,16 +195,25 @@ class Record extends Component {
             values: JSON.parse(value)
           },
           () => {
-            console.log(this.props.meterId);
+            this.getMeterId();
           }
         );
-        console.log(this.state.values);
+      }
+    } catch (error) {}
+  };
+  getMeterId = async () => {
+    try {
+      const value = await AsyncStorage.getItem("meterId");
+      if (value !== null) {
+        this.setState({
+          meterId: JSON.parse(value).meterId
+        });
+        console.log(this.state.meterId);
       }
     } catch (error) {}
   };
 
   render() {
-    //console.log(this.state.newDate);
     return (
       <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
         <SafeAreaView>
@@ -171,7 +222,6 @@ class Record extends Component {
               <View style={styles.title}>
                 <Text style={styles.titleText}>Historial de mediciones</Text>
               </View>
-
               <View>
                 <View style={styles.monthContainer}>
                   <CCPicker
@@ -190,7 +240,10 @@ class Record extends Component {
                 <View style={styles.cardView}>
                   {this.state.indicator && <ActivityI />}
                   {!this.state.indicator && (
-                    <RecordCard cardData={this.state.cardData} />
+                    <RecordCard
+                      cardData={this.state.cardData}
+                      consumptionPrice={this.state.consumptionPrice}
+                    />
                   )}
                 </View>
               </View>

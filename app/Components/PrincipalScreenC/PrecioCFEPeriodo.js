@@ -13,11 +13,12 @@ import {
 import Orientation from "react-native-orientation";
 import { connect } from "react-redux";
 import { Card } from "react-native-elements";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const mapStateToProps = state => ({
   readings: state.dailyReducer,
   meterId: state.dailyReducer.meterId,
-  prices: state.costReducer[0]
+  prices: state.costReducer
 });
 
 class Data extends Component {
@@ -29,7 +30,8 @@ class Data extends Component {
     };
 
     this.state = {
-      orientation: isPortrait() ? "portrait" : "landscape"
+      orientation: isPortrait() ? "portrait" : "landscape",
+      values: []
     };
     Dimensions.addEventListener("change", () => {
       console.log(Dimensions.get("screen"));
@@ -37,16 +39,24 @@ class Data extends Component {
         orientation: isPortrait() ? "portrait" : "landscape"
       });
     });
+    this._retrieveData();
   }
-  componentWillMount() {
-    Orientation.unlockAllOrientations();
-  }
-
+  _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@MySuperStore:key");
+      if (value !== null) {
+        this.setState({
+          values: JSON.parse(value)
+        });
+      }
+    } catch (error) {}
+  };
   componentWillUnmount() {
     Dimensions.removeEventListener("change");
   }
 
   render() {
+    console.log(this.state.values.tipoTarifa);
     return (
       <View style={styles.container}>
         <Card
@@ -63,36 +73,53 @@ class Data extends Component {
         >
           <View style={styles.innerCard}>
             <View style={[styles.textPart, styles.pFirst]}>
-              <Text style={[styles.middleText, styles.titleWeight]}>Base</Text>
+              <Text style={[styles.middleText, styles.titleWeight]}>
+                {this.state.values.tipoTarifa == "GDMTH" ? "Base" : "Ordinario"}
+              </Text>
               <Text style={styles.middleText}>
                 {this.props.prices
-                  ? "$" + " " + this.props.prices.basePrice
+                  ? "$" +
+                    " " +
+                    (this.state.values.tipoTarifa == "GDMTH"
+                      ? this.props.prices.GDMTH.basePrice
+                      : this.props.prices.GDMTO.ordinaryPrice)
                   : "$0"}
               </Text>
             </View>
-            <View style={styles.textPart}>
-              <Text style={[styles.middleText, styles.titleWeight]}>Media</Text>
-              <Text style={styles.middleText}>
-                {this.props.prices
-                  ? "$" + " " + this.props.prices.middlePrice
-                  : "$0"}
-              </Text>
-            </View>
-            <View style={styles.textPart}>
-              <Text style={[styles.middleText, styles.titleWeight]}>Punta</Text>
-              <Text style={styles.middleText}>
-                {this.props.prices
-                  ? "$" + " " + this.props.prices.peakPrice
-                  : "$0"}
-              </Text>
-            </View>
+            {this.state.values.tipoTarifa == "GDMTH" && (
+              <View style={styles.textPart}>
+                <Text style={[styles.middleText, styles.titleWeight]}>
+                  Media
+                </Text>
+                <Text style={styles.middleText}>
+                  {this.props.prices
+                    ? "$" + " " + this.props.prices.GDMTH.middlePrice
+                    : "$0"}
+                </Text>
+              </View>
+            )}
+            {this.state.values.tipoTarifa == "GDMTH" && (
+              <View style={styles.textPart}>
+                <Text style={[styles.middleText, styles.titleWeight]}>
+                  Punta
+                </Text>
+                <Text style={styles.middleText}>
+                  {this.props.prices
+                    ? "$" + " " + this.props.prices.GDMTH.peakPrice
+                    : "$0"}
+                </Text>
+              </View>
+            )}
             <View style={styles.textPart}>
               <Text style={[styles.middleText, styles.titleWeight]}>
                 Capacidad
               </Text>
               <Text style={styles.middleText}>
                 {this.props.prices
-                  ? "$" + " " + this.props.prices.capacityPrice
+                  ? "$ " +
+                    (this.state.values.tipoTarifa == "GDMTH"
+                      ? this.props.prices.GDMTH.capacityPrice
+                      : this.props.prices.GDMTO.capacityPrice)
                   : "$0"}
               </Text>
             </View>
@@ -102,7 +129,11 @@ class Data extends Component {
               </Text>
               <Text style={styles.middleText}>
                 {this.props.prices
-                  ? "$" + " " + this.props.prices.distributionPrice
+                  ? "$" +
+                    " " +
+                    (this.state.values.tipoTarifa == "GDMTH"
+                      ? this.props.prices.GDMTH.distributionPrice
+                      : this.props.prices.GDMTO.distributionPrice)
                   : "$0"}
               </Text>
             </View>
