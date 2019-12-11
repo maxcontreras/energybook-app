@@ -192,87 +192,68 @@ class Daily extends Component {
         : this.props.prices.GDMTO.distributionPrice) *
       this.props.readings.dailyReadings.distribution;
 
+    const ultimaActualizacion = this.props.readings.dailyReadings.lastUpdated
+      ? this.props.readings.dailyReadings.lastUpdated.substr(0, 10)
+      : " ";
+
+    const data = [
+      {
+        title: "Consumo",
+        valuekwh: this.props.readings.dailyReadings.consumption
+          ? this.props.readings.dailyReadings.consumption + " kwh"
+          : "0 kwh",
+        valuePrice: this.state.dailyTCC ? " $" + this.state.dailyTCC : "$0",
+        ultima: ultimaActualizacion
+      },
+      {
+        title: "Distribución",
+        valuekwh: this.props.readings.dailyReadings.distribution
+          ? this.props.readings.dailyReadings.distribution + " kwh"
+          : "0 kwh",
+        valuePrice: this.props.prices
+          ? "$" +
+            distributionPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          : "$0",
+        ultima: ultimaActualizacion
+      },
+      {
+        title: "Capacidad",
+        valuekwh: this.props.readings.dailyReadings.capacity
+          ? this.props.readings.dailyReadings.capacity + " kwh"
+          : "0 kwh",
+        valuePrice: this.props.prices
+          ? "$" + capacityPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          : "$0",
+        ultima: ultimaActualizacion
+      }
+    ];
+
+    var key = 0;
+
     return (
       <ScrollView
         horizontal={true}
         pagingEnabled={true}
         showsHorizontalScrollIndicator={true}
       >
-        <View
-          style={[
-            styles.VCstyle,
-            screenWidth < screenHeight ? styles.width : styles.height
-          ]}
-        >
-          <SecondDaily
-            title={"Consumo"}
-            valuekwh={
-              this.props.readings.dailyReadings.consumption
-                ? this.props.readings.dailyReadings.consumption + " kwh"
-                : "0 kwh"
-            }
-            valuePrice={this.state.dailyTCC ? " $" + this.state.dailyTCC : "$0"}
-            ultima={
-              this.props.readings.dailyReadings.lastUpdated
-                ? this.props.readings.dailyReadings.lastUpdated.substr(0, 10)
-                : " "
-            }
-          />
-        </View>
-        <View
-          style={[
-            styles.VCstyle,
-            screenWidth < screenHeight ? styles.width : styles.height
-          ]}
-        >
-          <SecondDaily
-            title={"Distribución"}
-            valuekwh={
-              this.props.readings.dailyReadings.distribution
-                ? this.props.readings.dailyReadings.distribution + " kwh"
-                : "0 kwh"
-            }
-            valuePrice={
-              this.props.prices
-                ? "$" +
-                  distributionPrice
-                    .toFixed(2)
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                : "$0"
-            }
-            ultima={
-              this.props.readings.dailyReadings.lastUpdated
-                ? this.props.readings.dailyReadings.lastUpdated.substr(0, 10)
-                : " "
-            }
-          />
-        </View>
-        <View
-          style={[
-            styles.VCstyle,
-            screenWidth < screenHeight ? styles.width : styles.height
-          ]}
-        >
-          <SecondDaily
-            title={"Capacidad"}
-            valuekwh={
-              this.props.readings.dailyReadings.capacity
-                ? this.props.readings.dailyReadings.capacity + " kwh"
-                : "0 kwh"
-            }
-            valuePrice={
-              this.props.prices
-                ? "$" +
-                  capacityPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                : "$0"
-            }
-            ultima={
-              this.props.readings.dailyReadings.lastUpdated
-                ? this.props.readings.dailyReadings.lastUpdated.substr(0, 10)
-                : " "
-            }
-          />
-        </View>
+        {data.map(datos => (
+          <View
+            key={key++}
+            style={[
+              styles.VCstyle,
+              this.state.orientation == "portrait"
+                ? { width: Math.min(screenWidth, screenHeight) }
+                : { width: Math.max(screenWidth, screenHeight) / 2 }
+            ]}
+          >
+            <SecondDaily
+              title={datos.title}
+              valuekwh={datos.valuekwh}
+              valuePrice={datos.valuePrice}
+              ultima={datos.ultima}
+            />
+          </View>
+        ))}
       </ScrollView>
     );
   }

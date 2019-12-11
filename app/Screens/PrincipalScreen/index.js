@@ -74,8 +74,10 @@ class PrincipalScreen extends Component {
                   style={[
                     styles.daily,
                     this.state.orientation == "portrait"
-                      ? { width: Math.min(screenWidth, screenHeight) }
-                      : { width: Math.min(screenWidth, screenHeight) }
+                      ? { width: Math.min(screenHeight, screenWidth) }
+                      : {
+                          width: Math.max(screenHeight, screenWidth) / 2
+                        }
                   ]}
                 >
                   <Daily />
@@ -86,9 +88,16 @@ class PrincipalScreen extends Component {
                 {this.props.readings && (
                   <View
                     style={[
+                      styles.charts,
                       this.state.orientation == "portrait"
-                        ? styles.charts
-                        : styles.chartsLS
+                        ? {
+                            justifyContent: "center",
+                            width: Math.min(screenHeight, screenWidth)
+                          }
+                        : {
+                            justifyContent: "space-between",
+                            width: Math.max(screenHeight, screenWidth) / 2
+                          }
                     ]}
                   >
                     <SemiCircleProgress
@@ -125,14 +134,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 10,
     alignItems: "center",
-    justifyContent: "center",
     paddingBottom: 10
-  },
-  chartsLS: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingTop: 10
   },
   container: {
     flex: 1,

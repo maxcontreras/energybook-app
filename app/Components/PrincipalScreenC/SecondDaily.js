@@ -11,7 +11,25 @@ export default class Daily extends Component {
   _isMounted = false;
   constructor(props) {
     super(props);
-    this.state = {};
+    const isPortrait = () => {
+      const dim = Dimensions.get("screen");
+      return dim.height >= dim.width;
+    };
+    this.state = {
+      url: "",
+      monthlyTCC: "",
+      values: [],
+      orientation: isPortrait() ? "portrait" : "landscape"
+    };
+    Dimensions.addEventListener("change", () => {
+      this.setState({
+        orientation: isPortrait() ? "portrait" : "landscape"
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    Dimensions.removeEventListener("change");
   }
 
   render() {
@@ -27,40 +45,40 @@ export default class Daily extends Component {
     }
 
     return (
-      <View style={styles.container}>
-        <Card
-          title={fecha}
-          containerStyle={[
-            styles.containerCard,
-
-            this.state.orientation == "portrait"
-              ? { width: Math.min(screenWidth, screenHeight) - 20 }
-              : { width: Math.min(screenWidth, screenHeight) - 20 }
-          ]}
-          titleStyle={styles.titleStyle}
-          wrapperStyle={{ borderRadius: 10 }}
-        >
-          <View style={styles.innerCard}>
-            <View style={styles.iconPart}>
-              <Icono style={styles.icon} />
-            </View>
-            <View style={styles.textPart}>
-              <Text style={[styles.middleText, styles.titleWeight]}>
-                {this.props.title}
-              </Text>
-              <Text style={styles.middleText}>{this.props.valuekwh}</Text>
-            </View>
-            <View style={styles.valuePart}>
-              <Text style={styles.priceText}>{this.props.valuePrice}</Text>
-            </View>
-            <View style={styles.ultimaAcualizacion}>
-              <Text style={styles.lastText}>
-                Última actualización: {this.props.ultima}
-              </Text>
-            </View>
+      <Card
+        title={fecha}
+        containerStyle={[
+          styles.containerCard,
+          {
+            width:
+              this.state.orientation == "portrait"
+                ? Math.min(screenWidth, screenHeight) - 20
+                : Math.max(screenWidth, screenHeight) / 2.2
+          }
+        ]}
+        titleStyle={styles.titleStyle}
+        wrapperStyle={{ borderRadius: 10 }}
+      >
+        <View style={styles.innerCard}>
+          <View style={styles.iconPart}>
+            <Icono style={styles.icon} />
           </View>
-        </Card>
-      </View>
+          <View style={styles.textPart}>
+            <Text style={[styles.middleText, styles.titleWeight]}>
+              {this.props.title}
+            </Text>
+            <Text style={styles.middleText}>{this.props.valuekwh}</Text>
+          </View>
+          <View style={styles.valuePart}>
+            <Text style={styles.priceText}>{this.props.valuePrice}</Text>
+          </View>
+          <View style={styles.ultimaAcualizacion}>
+            <Text style={styles.lastText}>
+              Última actualización: {this.props.ultima}
+            </Text>
+          </View>
+        </View>
+      </Card>
     );
   }
 }
@@ -74,6 +92,7 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   container: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center"
   },

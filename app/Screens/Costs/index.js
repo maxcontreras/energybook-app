@@ -181,6 +181,8 @@ class Costs extends Component {
       },
       () => {
         if (this.state.initialDate && this.state.endDate) {
+          console.log(this.state.initialDate);
+          console.log(this.state.endDate);
           this.setState(
             {
               customdates: {

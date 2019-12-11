@@ -167,7 +167,12 @@ class Data extends Component {
           title={fecha}
           containerStyle={[
             styles.containerCard,
-            { width: Math.min(screenWidth, screenHeight) - 20 }
+            {
+              width:
+                this.state.orientation == "portrait"
+                  ? Math.min(screenWidth, screenHeight) - 20
+                  : Math.max(screenWidth, screenHeight) / 2.2
+            }
           ]}
           titleStyle={styles.titleStyle}
           wrapperStyle={{ borderRadius: 10 }}

@@ -161,7 +161,7 @@ class SemiCircleProgress extends Component {
           defaultStyles.cardStyle,
           this.state.orientation == "portrait"
             ? { width: Math.min(screenWidth, screenHeight) - 20 }
-            : { width: Math.min(screenWidth, screenHeight) - 20 }
+            : { width: Math.max(screenWidth, screenHeight) / 2.2 }
         ]}
       >
         <View style={defaultStyles.view}>

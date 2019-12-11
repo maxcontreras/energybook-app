@@ -111,7 +111,6 @@ class Record extends Component {
         .endOf("month")
         .format("YYYY-MM-DD")
     );
-
     fetch(
       `http://api.ienergybook.com/api/Meters/getConsumptionCostsByFilter?access_token=${this.state.values.accesToken}`,
       {
@@ -122,11 +121,10 @@ class Record extends Component {
         },
         body: JSON.stringify({
           id: this.state.meterId,
-          device: "",
           service: this.state.pickerValue,
           filter: -1,
           interval: 86400,
-          customdates: {
+          custom_dates: {
             from: `${moment(this.state.newDate).format("YYYY-MM-DD")}`,
             until: `${moment(this.state.newDate)
               .endOf("month")
