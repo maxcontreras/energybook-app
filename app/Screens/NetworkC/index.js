@@ -373,7 +373,8 @@ class Codes extends Component {
         setAdaptiveYMin: "1",
         labelDisplay: "Auto",
         useEllipsesWhenOverflow: "0",
-        rotatelabels: "1"
+        rotatelabels: "1",
+        showValues: "0"
       },
       categories: [
         {

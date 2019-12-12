@@ -6,7 +6,8 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   SafeAreaView,
-  Dimensions
+  Dimensions,
+  Platform
 } from "react-native";
 import Daily from "../../Components/PrincipalScreenC/Daily.js";
 import SemiCircleProgress from "../../Components/PrincipalScreenC/DashboardChart.js";
@@ -14,6 +15,8 @@ import Data from "../../Components/PrincipalScreenC/Monthly.js";
 import Menu from "../../Components/PrincipalScreenC/Menu.js";
 import PrecioCFE from "../../Components/PrincipalScreenC/PrecioCFEPeriodo.js";
 import Orientation from "react-native-orientation";
+
+import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
 import { connect } from "react-redux";
 
 const mapStateToProps = state => ({
@@ -52,9 +55,20 @@ class PrincipalScreen extends Component {
   }
 
   render() {
+    const insents =
+      (Math.max(screenHeight, screenWidth) -
+        (Math.max(
+          StaticSafeAreaInsets.safeAreaInsetsTop,
+          StaticSafeAreaInsets.safeAreaInsetsRight
+        ) +
+          Math.max(
+            StaticSafeAreaInsets.safeAreaInsetsBottom,
+            StaticSafeAreaInsets.safeAreaInsetsLeft
+          ))) /
+      2;
     return (
-      <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
-        <SafeAreaView>
+      <SafeAreaView>
+        <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
           <KeyboardAvoidingView enabled>
             <View style={styles.container}>
               {this.props.readings && (
@@ -76,7 +90,7 @@ class PrincipalScreen extends Component {
                     this.state.orientation == "portrait"
                       ? { width: Math.min(screenHeight, screenWidth) }
                       : {
-                          width: Math.max(screenHeight, screenWidth) / 2
+                          width: insents
                         }
                   ]}
                 >
@@ -96,7 +110,7 @@ class PrincipalScreen extends Component {
                           }
                         : {
                             justifyContent: "space-between",
-                            width: Math.max(screenHeight, screenWidth) / 2
+                            width: insents
                           }
                     ]}
                   >
@@ -114,8 +128,8 @@ class PrincipalScreen extends Component {
               </View>
             </View>
           </KeyboardAvoidingView>
-        </SafeAreaView>
-      </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }

@@ -15,6 +15,8 @@ import Orientation from "react-native-orientation";
 import { Card } from "react-native-elements";
 import { connect } from "react-redux";
 
+import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
+
 const mapStateToProps = state => ({
   userData: state.initialValues,
   //companyId
@@ -155,13 +157,26 @@ class SemiCircleProgress extends Component {
   render() {
     const styles = this.getStyles();
     //console.log(this.props);
+    const insents =
+      (Math.max(screenHeight, screenWidth) -
+        (Math.max(
+          StaticSafeAreaInsets.safeAreaInsetsTop,
+          StaticSafeAreaInsets.safeAreaInsetsRight
+        ) +
+          Math.max(
+            StaticSafeAreaInsets.safeAreaInsetsBottom,
+            StaticSafeAreaInsets.safeAreaInsetsLeft
+          ))) /
+      2.2;
     return (
       <Card
         containerStyle={[
           defaultStyles.cardStyle,
           this.state.orientation == "portrait"
             ? { width: Math.min(screenWidth, screenHeight) - 20 }
-            : { width: Math.max(screenWidth, screenHeight) / 2.2 }
+            : {
+                width: insents
+              }
         ]}
       >
         <View style={defaultStyles.view}>

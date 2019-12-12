@@ -8,7 +8,8 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   TouchableOpacity,
-  Platform
+  Platform,
+  Alert
 } from "react-native";
 import HeaderMenu from "../../Components/HeaderMenu.js";
 import Orientation from "react-native-orientation";
@@ -25,7 +26,8 @@ export default class Info extends Component {
       return dim.height >= dim.width;
     };
     this.state = {
-      orientation: isPortrait() ? "portrait" : "landscape"
+      orientation: isPortrait() ? "portrait" : "landscape",
+      values: []
     };
     Dimensions.addEventListener("change", () => {
       this.setState({
@@ -35,6 +37,51 @@ export default class Info extends Component {
   }
   componentWillUnmount() {
     Dimensions.removeEventListener("change");
+  }
+
+  _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@MySuperStore:key");
+      if (value !== null) {
+        this.setState(
+          {
+            values: JSON.parse(value)
+          },
+          () => {
+            console.log(this.state.values);
+
+            fetch(
+              `http://api.ienergybook.com/api/InformationFiles?access_token=${this.state.values.accesToken}`,
+              {
+                method: "GET",
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json"
+                }
+              }
+            )
+              .then(res => {
+                this.state.statusCode = res.status;
+                const data = res.json();
+                return Promise.all([this.state.statusCode, data]);
+              })
+              .then(json => {
+                console.log(json);
+                if (this.state.statusCode == 200) {
+                  this.setState({
+                    pdfs: json[1]
+                  });
+                }
+              })
+              .catch(err => {});
+          }
+        );
+      }
+    } catch (error) {}
+  };
+
+  componentWillMount() {
+    this._retrieveData();
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -59,7 +106,7 @@ export default class Info extends Component {
                   Información
                 </Text>
               </View>
-              <PDFCard />
+              {this.state.pdfs && <PDFCard pdfs={this.state.pdfs} />}
             </View>
           </KeyboardAvoidingView>
         </ScrollView>

@@ -20,7 +20,7 @@ import Orientation from "react-native-orientation";
 import { connect } from "react-redux";
 import { Card } from "react-native-elements";
 import AsyncStorage from "@react-native-community/async-storage";
-
+import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
 const mapStateToProps = state => ({
   readings: state.dailyReducer,
   prices: state.costReducer
@@ -156,6 +156,18 @@ class Data extends Component {
         : this.props.prices.GDMTO.distributionPrice) *
       this.props.readings.monthlyReadings.distribution;
 
+    const insents =
+      (Math.max(screenHeight, screenWidth) -
+        (Math.max(
+          StaticSafeAreaInsets.safeAreaInsetsTop,
+          StaticSafeAreaInsets.safeAreaInsetsRight
+        ) +
+          Math.max(
+            StaticSafeAreaInsets.safeAreaInsetsBottom,
+            StaticSafeAreaInsets.safeAreaInsetsLeft
+          ))) /
+      2.2;
+
     return (
       <View
         style={[
@@ -171,7 +183,7 @@ class Data extends Component {
               width:
                 this.state.orientation == "portrait"
                   ? Math.min(screenWidth, screenHeight) - 20
-                  : Math.max(screenWidth, screenHeight) / 2.2
+                  : insents
             }
           ]}
           titleStyle={styles.titleStyle}

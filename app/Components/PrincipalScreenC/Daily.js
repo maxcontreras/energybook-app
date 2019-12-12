@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
 import SecondDaily from "./SecondDaily";
 import AsyncStorage from "@react-native-community/async-storage";
 import moment from "moment";
+import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
 import { connect } from "react-redux";
 import {
   getDailyReadings,
@@ -229,7 +230,17 @@ class Daily extends Component {
     ];
 
     var key = 0;
-
+    const insents =
+      (Math.max(screenHeight, screenWidth) -
+        (Math.max(
+          StaticSafeAreaInsets.safeAreaInsetsTop,
+          StaticSafeAreaInsets.safeAreaInsetsRight
+        ) +
+          Math.max(
+            StaticSafeAreaInsets.safeAreaInsetsBottom,
+            StaticSafeAreaInsets.safeAreaInsetsLeft
+          ))) /
+      2;
     return (
       <ScrollView
         horizontal={true}
@@ -243,7 +254,7 @@ class Daily extends Component {
               styles.VCstyle,
               this.state.orientation == "portrait"
                 ? { width: Math.min(screenWidth, screenHeight) }
-                : { width: Math.max(screenWidth, screenHeight) / 2 }
+                : { width: insents }
             ]}
           >
             <SecondDaily

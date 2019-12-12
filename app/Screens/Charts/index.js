@@ -36,7 +36,7 @@ class ChartScreen extends Component {
     this.state = {
       pickerValue: "Servicio 1",
       pickerFValue: "Hoy",
-      pickerIvalue: "15 minutos",
+      pickerIValue: "15 minutos",
       indicator: false,
       calendar: false,
       arrayWithData: [],
@@ -264,7 +264,7 @@ class ChartScreen extends Component {
     this.setState(
       {
         interval: intervalo,
-        pickerIValue: texto
+        pickerIValue: value
       },
       () => {
         this.getChartData();

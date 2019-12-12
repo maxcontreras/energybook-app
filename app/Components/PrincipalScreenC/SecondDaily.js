@@ -6,6 +6,7 @@ import Distribucion from "../../Assets/Svg/Distribucion.svg";
 import Capacidad from "../../Assets/Svg/Capacidad.svg";
 import Fp from "../../Assets/Svg/Fp.svg";
 import { Card } from "react-native-elements";
+import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
 
 export default class Daily extends Component {
   _isMounted = false;
@@ -43,6 +44,17 @@ export default class Daily extends Component {
     } else {
       var Icono = Fp;
     }
+    const insents =
+      (Math.max(screenHeight, screenWidth) -
+        (Math.max(
+          StaticSafeAreaInsets.safeAreaInsetsTop,
+          StaticSafeAreaInsets.safeAreaInsetsRight
+        ) +
+          Math.max(
+            StaticSafeAreaInsets.safeAreaInsetsBottom,
+            StaticSafeAreaInsets.safeAreaInsetsLeft
+          ))) /
+      2.2;
 
     return (
       <Card
@@ -53,7 +65,7 @@ export default class Daily extends Component {
             width:
               this.state.orientation == "portrait"
                 ? Math.min(screenWidth, screenHeight) - 20
-                : Math.max(screenWidth, screenHeight) / 2.2
+                : insents
           }
         ]}
         titleStyle={styles.titleStyle}

@@ -11,7 +11,6 @@ import {
   KeyboardAvoidingView
 } from "react-native";
 import HeaderMenu from "../../Components/HeaderMenu.js";
-import Orientation from "react-native-orientation";
 import OneSignal from "react-native-onesignal";
 import AsyncStorage from "@react-native-community/async-storage";
 import Consumo from "../../Assets/Svg/Consumo.svg";
@@ -159,11 +158,43 @@ export default class Notifications extends Component {
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
           <KeyboardAvoidingView enabled>
-            <View style={{ flex: 1, height: "auto", paddingBottom: 20 }}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center"
+              }}
+            >
               <View style={styles.headerTitle}>
                 <Text style={styles.headerText}>Nuevas notificaciones!</Text>
               </View>
-
+              {this.state.new_notifications && (
+                <View
+                  style={{
+                    flex: 1,
+                    height: "auto",
+                    margin: 10,
+                    padding: 20,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    ...Platform.select({
+                      ios: {
+                        shadowRadius: 5,
+                        shadowColor: "black",
+                        shadowOffset: { width: 5, height: 5 },
+                        shadowOpacity: 0.2
+                      },
+                      android: {
+                        elevation: 5
+                      }
+                    }),
+                    backgroundColor: "white"
+                  }}
+                >
+                  <Text style={{ fontSize: 10, textAlign: "center" }}>
+                    No hay nuevas notificaciones por el momento
+                  </Text>
+                </View>
+              )}
               {this.state.new_notifications.map(device => (
                 <View key={key++} style={styles.notificationView}>
                   <View style={styles.notificationTopView}>
@@ -265,16 +296,14 @@ export default class Notifications extends Component {
 
 const styles = StyleSheet.create({
   scroll: {
-    flex: 0,
-    height: "auto",
-    flexGrow: 1
+    flex: 1
   },
   header: {
     height: 60,
     justifyContent: "center"
   },
   headerTitle: {
-    height: 30,
+    height: "auto",
     width: null,
     backgroundColor: "#E8ECEF",
     justifyContent: "center",
