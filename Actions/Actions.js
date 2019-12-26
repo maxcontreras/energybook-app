@@ -58,3 +58,8 @@ export const getMonthlyConsumptionPrices = json => ({
   type: "GET_MONTLHY_CONSUMPTION_PRICES",
   json
 });
+
+export const setAdminIds = json => ({
+  type: "SET_ADMIN_IDS",
+  json
+});

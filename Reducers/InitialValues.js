@@ -24,7 +24,9 @@ const initialState = {
   lastLogin: "",
   name: "",
   lastname: "",
-  email: ""
+  email: "",
+  role_id: "",
+  administrando: null
 };
 
 const initialValues = (state = initialState, action) => {
@@ -62,6 +64,8 @@ const initialValues = (state = initialState, action) => {
       newState.giro = action.json[1][0].contact_data
         ? action.json[1][0].contact_data.business_line
         : null;
+      newState.role_id = action.json[1][0].role_id;
+      newState.administrando = action.json[1][0].Administrando;
       break;
   }
 

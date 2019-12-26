@@ -73,7 +73,7 @@ class Home extends Component {
   }
 
   postLogin() {
-    fetch("http://api.ienergybook.com/api/eUsers/login", {
+    fetch("http://192.168.1.66:3000/api/eUsers/login", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -112,7 +112,7 @@ class Home extends Component {
   getCompany() {
     console.log(this.props);
     fetch(
-      `http://api.ienergybook.com/api/eUsers/?filter={"where":{"id":"${this.props.homeData.userId}"}}&access_token=${this.props.homeData.accesToken}`,
+      `http://192.168.1.66:3000/api/eUsers/?filter={"where":{"id":"${this.props.homeData.userId}"}}&access_token=${this.props.homeData.accesToken}`,
       {
         method: "GET",
         headers: {
@@ -142,7 +142,7 @@ class Home extends Component {
   getCompanyData() {
     console.log(this.props.homeData.companyId);
     fetch(
-      `http://api.ienergybook.com/api/Companies/?filter={"where":{"id":"${this.props.homeData.companyId}"}}&access_token=${this.props.homeData.accesToken}`,
+      `http://192.168.1.66:3000/api/Companies/?filter={"where":{"id":"${this.props.homeData.companyId}"}}&access_token=${this.props.homeData.accesToken}`,
       {
         method: "GET",
         headers: {
@@ -188,7 +188,9 @@ class Home extends Component {
       lastname: this.props.homeData.lastname,
       email: this.props.homeData.email,
       location: this.props.homeData.location,
-      giro: this.props.homeData.giro
+      giro: this.props.homeData.giro,
+      role_id: this.props.homeData.role_id,
+      administrando: this.props.homeData.administrando
     };
     try {
       await AsyncStorage.setItem(
@@ -205,7 +207,7 @@ class Home extends Component {
   Navigate() {
     if (this.state.statusCode == 200) {
       this._storeData();
-      this.props.navigation.navigate("PrincipalScreen");
+      this.props.navigation.navigate("Dashboard");
     } else {
       Alert.alert("Error", "Usuario o Contraseña incorrectos.", [
         {

@@ -24,7 +24,8 @@ const screenWidth = Math.round(Dimensions.get("window").width);
 
 const mapStateToProps = state => ({
   userData: state.initialValues,
-  readings: state.dailyReducer
+  readings: state.dailyReducer,
+  adminIds: state.adminReducer
 });
 class ChartScreen extends Component {
   constructor(props) {
@@ -102,7 +103,6 @@ class ChartScreen extends Component {
             }
           }
         );
-        console.log(this.state.values);
       }
     } catch (error) {
       // Error retrieving data
@@ -121,7 +121,10 @@ class ChartScreen extends Component {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          id: this.props.readings.meterId,
+          id:
+            this.props.adminIds.meter_id != ""
+              ? this.props.adminIds.meter_id
+              : this.props.readings.meterId,
           device: this.state.device,
           service: this.state.service,
           variable: this.state.variable,
@@ -137,7 +140,6 @@ class ChartScreen extends Component {
         return Promise.all([this.state.statusCode, data]);
       })
       .then(json => {
-        console.log(json);
         if (this.state.statusCode == 504) {
           Alert.alert(
             "Error",
@@ -158,11 +160,6 @@ class ChartScreen extends Component {
           fechas[i] = array1[i].date
             .substr(8, 2)
             .concat(puntos.concat(array1[i].date.substr(10, 2)));
-          console.log(
-            array1[i].date
-              .substr(8, 2)
-              .concat(puntos.concat(array1[i].date.substr(10, 2)))
-          );
         }
         this.setValues(array, fechas);
       })
@@ -227,10 +224,7 @@ class ChartScreen extends Component {
         if (value == "DP") {
           this.setState(
             {
-              caption: "Demanda",
-              pickerIValue: "15 minutos"
-              //interval: 900,
-              //timeCustomButtons: false
+              caption: "Demanda"
             },
             () => {
               this.getChartData();
@@ -239,9 +233,7 @@ class ChartScreen extends Component {
         } else if (value == "EPimp") {
           this.setState(
             {
-              caption: "Consumo",
-              //timeCustomButtons: true,
-              pickerIValue: "15 minutos"
+              caption: "Consumo"
             },
             () => {
               this.getChartData();
@@ -264,7 +256,7 @@ class ChartScreen extends Component {
     this.setState(
       {
         interval: intervalo,
-        pickerIValue: value
+        pickerIValue: texto
       },
       () => {
         this.getChartData();
@@ -345,7 +337,6 @@ class ChartScreen extends Component {
       for (var i in this.state.arrayWithData) {
         var item = this.state.arrayWithData[i];
         var item2 = this.state.dates[i];
-
         chartAxis.data.push({
           label: item2,
           value: item.value

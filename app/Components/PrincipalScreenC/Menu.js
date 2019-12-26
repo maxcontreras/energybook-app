@@ -37,6 +37,16 @@ class Menu extends Component {
   }
 
   render() {
+    const data = [
+      { screen: "Charts", Icon: Charts, titulo: "Gráficas" },
+      { screen: "Costs", Icon: Costs, titulo: "Costos" },
+      { screen: "NetworkC", Icon: Code, titulo: "Código de red" },
+      { screen: "Record", Icon: Histo, titulo: "Historial" },
+      { screen: "CarbonF", Icon: CarbonF, titulo: "Huella de Carbono" },
+      { screen: "Generation", Icon: Generation, titulo: "Generación" }
+    ];
+    var key = 0;
+
     return (
       <View style={styles.container}>
         <View style={styles.topScreen}>
@@ -44,53 +54,27 @@ class Menu extends Component {
             <Weather
               userCity={this.state.userCity}
               userCompanyName={this.state.userCompanyName}
+              screen={this.props.screen}
             />
           </View>
           <View styles={styles.logoView}>
             <Image source={LogoObs} style={styles.logo} />
           </View>
         </View>
-        <View style={styles.menu}>
-          <TouchableOpacity onPress={() => this.chartS()} style={styles.btn}>
-            <Charts style={styles.imageB} />
-            <Text style={styles.btnTxt}>Gráficas</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("Costs")}
-            style={styles.btn}
-          >
-            <Costs style={styles.imageB} />
-            <Text style={styles.btnTxt}>Costos</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("NetworkC")}
-            style={styles.btn}
-          >
-            <Code style={styles.imageB} />
-            <Text style={styles.btnTxt}>Cógido de red</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("Record")}
-            style={styles.btn}
-          >
-            <Histo style={styles.imageB} />
-            <Text style={styles.btnTxt}>Historial</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("CarbonF")}
-            style={styles.btn}
-          >
-            <CarbonF style={styles.imageB} />
-            <Text style={styles.btnTxt}>Huella de Carbono</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("Generation")}
-            style={styles.btn}
-          >
-            <Generation style={styles.imageB} />
-            <Text style={styles.btnTxt}>Generación</Text>
-          </TouchableOpacity>
-        </View>
+        {this.props.screen != "SuperAdmin" && (
+          <View style={styles.menu}>
+            {data.map(screens => (
+              <TouchableOpacity
+                key={key++}
+                onPress={() => this.props.navigation.navigate(screens.screen)}
+                style={styles.btn}
+              >
+                <screens.Icon style={styles.imageB} />
+                <Text style={styles.btnTxt}>{screens.titulo}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
       </View>
     );
   }

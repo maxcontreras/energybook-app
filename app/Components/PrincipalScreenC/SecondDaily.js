@@ -44,7 +44,7 @@ export default class Daily extends Component {
     } else {
       var Icono = Fp;
     }
-    const insents =
+    const insetsIos =
       (Math.max(screenHeight, screenWidth) -
         (Math.max(
           StaticSafeAreaInsets.safeAreaInsetsTop,
@@ -55,6 +55,7 @@ export default class Daily extends Component {
             StaticSafeAreaInsets.safeAreaInsetsLeft
           ))) /
       2.2;
+    const insetsAndroid = Math.max(screenHeight, screenWidth) / 2.2;
 
     return (
       <Card
@@ -65,7 +66,9 @@ export default class Daily extends Component {
             width:
               this.state.orientation == "portrait"
                 ? Math.min(screenWidth, screenHeight) - 20
-                : insents
+                : Platform.OS == "android"
+                ? insetsAndroid
+                : insetsIos
           }
         ]}
         titleStyle={styles.titleStyle}
@@ -114,7 +117,7 @@ const styles = StyleSheet.create({
     fontWeight: "normal",
     margin: 10,
     textAlign: "right",
-    height: 10,
+    height: "auto",
     justifyContent: "center"
   },
 

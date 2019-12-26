@@ -22,7 +22,8 @@ import VariablePicker from "../../Components/Pickers/VariablePicker.js";
 import ActivityI from "../../Components/ActivityIndicator";
 const mapStateToProps = state => ({
   userData: state.initialValues,
-  readings: state.dailyReducer
+  readings: state.dailyReducer,
+  adminIds: state.adminReducer
 });
 class Codes extends Component {
   constructor(props) {
@@ -123,7 +124,10 @@ class Codes extends Component {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          id: this.props.readings.meterId,
+          id:
+            this.props.adminIds.meter_id != ""
+              ? this.props.adminIds.meter_id
+              : this.props.readings.meterId,
           device: this.state.device,
           filter: this.state.filter,
           variables: this.state.variables,

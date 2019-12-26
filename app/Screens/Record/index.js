@@ -23,7 +23,8 @@ import "moment/min/moment-with-locales";
 const mapStateToProps = state => ({
   userData: state.initialValues,
   readings: state.dailyReducer,
-  prices: state.costReducer
+  prices: state.costReducer,
+  adminIds: state.adminReducer
 });
 class Record extends Component {
   constructor(props) {
@@ -59,10 +60,6 @@ class Record extends Component {
     this.setState({
       indicator: true
     });
-    console.log(this.state.pickerValue);
-    console.log(this.state.values.companyId);
-    console.log(this.state.newDate);
-
     fetch(
       `http://api.ienergybook.com/api/Services/monthlyHistory?access_token=${this.state.values.accesToken}
 `,
@@ -74,7 +71,10 @@ class Record extends Component {
         },
         body: JSON.stringify({
           service: this.state.pickerValue,
-          companyId: this.state.values.companyId,
+          companyId:
+            this.props.adminIds.company_id != ""
+              ? this.props.adminIds.company_id
+              : this.state.values.companyId,
           period: this.state.newDate
         })
       }
@@ -120,7 +120,10 @@ class Record extends Component {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          id: this.state.meterId,
+          id:
+            this.props.adminIds.meter_id != ""
+              ? this.props.adminIds.meter_id
+              : this.state.meterId,
           service: this.state.pickerValue,
           filter: -1,
           interval: 86400,
@@ -213,8 +216,8 @@ class Record extends Component {
 
   render() {
     return (
-      <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
-        <SafeAreaView>
+      <SafeAreaView>
+        <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
           <KeyboardAvoidingView enabled>
             <View style={styles.container}>
               <View style={styles.title}>
@@ -247,8 +250,8 @@ class Record extends Component {
               </View>
             </View>
           </KeyboardAvoidingView>
-        </SafeAreaView>
-      </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }

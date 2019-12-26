@@ -168,6 +168,7 @@ class SemiCircleProgress extends Component {
             StaticSafeAreaInsets.safeAreaInsetsLeft
           ))) /
       2.2;
+    const insetsAndroid = Math.max(screenHeight, screenWidth) / 2.2;
     return (
       <Card
         containerStyle={[
@@ -175,7 +176,7 @@ class SemiCircleProgress extends Component {
           this.state.orientation == "portrait"
             ? { width: Math.min(screenWidth, screenHeight) - 20 }
             : {
-                width: insents
+                width: Platform.OS == "android" ? insetsAndroid : insetsIos
               }
         ]}
       >

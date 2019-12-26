@@ -22,7 +22,8 @@ const screenHeight = Math.round(Dimensions.get("window").height);
 const screenWidth = Math.round(Dimensions.get("window").width);
 const mapStateToProps = state => ({
   userData: state.initialValues,
-  readings: state.dailyReducer
+  readings: state.dailyReducer,
+  adminIds: state.adminReducer
 });
 
 class Costs extends Component {
@@ -115,7 +116,10 @@ class Costs extends Component {
         //this.props.readings.meterId
         //5bf6ef89db55ec4a265b3179
         body: JSON.stringify({
-          id: this.props.readings.meterId,
+          id:
+            this.props.adminIds.meter_id != ""
+              ? this.props.adminIds.meter_id
+              : this.props.readings.meterId,
           device: this.state.device,
           service: this.state.service,
           filter: this.state.filter,
@@ -222,7 +226,7 @@ class Costs extends Component {
     this.setState(
       {
         interval: intervalo,
-        pickerIValue: value
+        pickerIValue: texto
       },
       () => {
         this.getChartData();

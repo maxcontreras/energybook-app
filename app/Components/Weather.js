@@ -32,7 +32,8 @@ import { getWeather, setFTcoords } from "../../Actions/Actions.js";
 import { connect } from "react-redux";
 
 const mapStateToProps = state => ({
-  datosClima: state.weatherReducer
+  datosClima: state.weatherReducer,
+  adminIds: state.adminReducer
 });
 
 class Weather extends Component {
@@ -56,7 +57,6 @@ class Weather extends Component {
         this.setState({
           values: JSON.parse(value)
         });
-        console.log(this.state.values);
       }
     } catch (error) {
       // Error retrieving data
@@ -93,35 +93,36 @@ class Weather extends Component {
   _startUpdatingLocation = () => {
     this.locationSubscription = RNLocation.subscribeToLocationUpdates(
       locations => {
-        this.setState({ location: locations[0] });
-        fetch(`http://api.ienergybook.com/api/DesignatedMeters/getWeather`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            lat: this.state.location.latitude,
-            lon: this.state.location.longitude
+        this.setState({ location: locations[0] }, () => {
+          fetch(`http://api.ienergybook.com/api/DesignatedMeters/getWeather`, {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              lat: this.state.location.latitude,
+              lon: this.state.location.longitude
+            })
           })
-        })
-          .then(res => {
-            this.state.statusCode = res.status;
-            const data = res.json();
-            return Promise.all([this.state.statusCode, data]);
-          })
-          .then(json => {
-            if (this._isMounted) {
-              this.props.dispatch(getWeather(json));
-              this.props.dispatch(
-                setFTcoords(
-                  this.state.location.latitude,
-                  this.state.location.longitude
-                )
-              );
-            }
-          })
-          .catch(err => {});
+            .then(res => {
+              this.state.statusCode = res.status;
+              const data = res.json();
+              return Promise.all([this.state.statusCode, data]);
+            })
+            .then(json => {
+              if (this._isMounted) {
+                this.props.dispatch(getWeather(json));
+                this.props.dispatch(
+                  setFTcoords(
+                    this.state.location.latitude,
+                    this.state.location.longitude
+                  )
+                );
+              }
+            })
+            .catch(err => {});
+        });
       }
     );
   };
@@ -137,6 +138,7 @@ class Weather extends Component {
 
   render() {
     const { location } = this.state;
+    console.log(this.props);
     return (
       <View style={styles.container}>
         {location && this.props.datosClima && (
@@ -211,9 +213,13 @@ class Weather extends Component {
             <Text style={styles.description}>
               {this.props.datosClima.clima}
             </Text>
-            <Text style={[styles.description, styles.description2]}>
-              {this.state.values.company}
-            </Text>
+            {this.props.screen != "SuperAdmin" && (
+              <Text style={[styles.description, styles.description2]}>
+                {this.props.adminIds.company_name != ""
+                  ? this.props.adminIds.company_name
+                  : this.state.values.company}
+              </Text>
+            )}
             <Text style={styles.description}>
               {this.props.datosClima.lugar}
             </Text>

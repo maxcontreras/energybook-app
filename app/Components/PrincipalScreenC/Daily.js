@@ -1,5 +1,12 @@
 import React, { Component, PropTypes } from "react";
-import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+  Platform
+} from "react-native";
 import SecondDaily from "./SecondDaily";
 import AsyncStorage from "@react-native-community/async-storage";
 import moment from "moment";
@@ -14,7 +21,8 @@ import {
 const mapStateToProps = state => ({
   readings: state.dailyReducer,
   meterId: state.dailyReducer.meterId,
-  prices: state.costReducer
+  prices: state.costReducer,
+  adminIds: state.adminReducer
 });
 
 class Daily extends Component {
@@ -41,6 +49,7 @@ class Daily extends Component {
   }
   componentWillUnmount() {
     Dimensions.removeEventListener("change");
+    this._isMounted = false;
   }
   _retrieveData = async () => {
     try {
@@ -53,7 +62,11 @@ class Daily extends Component {
           },
           () => {
             fetch(
-              `http://api.ienergybook.com/api/DesignatedMeters/?filter={"include":["services"],"where":{"company_id":"${this.state.values.companyId}"}}`,
+              `http://api.ienergybook.com/api/DesignatedMeters/?filter={"include":["services"],"where":{"company_id":"${
+                this.props.companyId != ""
+                  ? this.props.companyId
+                  : this.state.values.companyId
+              }"}}`,
               {
                 method: "GET",
                 headers: {
@@ -82,7 +95,6 @@ class Daily extends Component {
 
   componentWillMount() {
     this._retrieveData();
-
     this._isMounted = true;
   }
   getData() {
@@ -90,6 +102,7 @@ class Daily extends Component {
       1}-01T00:00:00.000Z`;
 
     console.log(newDate);
+    console.log(this.props.city);
     fetch(
       `http://api.ienergybook.com/api/AdminValues/findByDate?access_token=${this.state.values.accesToken}`,
       {
@@ -100,7 +113,7 @@ class Daily extends Component {
         },
         body: JSON.stringify({
           date: newDate,
-          city: this.state.values.city
+          city: this.props.city != "" ? this.props.city : this.state.values.city
         })
       }
     )
@@ -128,7 +141,10 @@ class Daily extends Component {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          id: this.props.meterId,
+          id:
+            this.props.adminMeterId != ""
+              ? this.props.adminMeterId
+              : this.props.meterId,
           device: "",
           service: "Servicio 1",
           filter: 0,
@@ -230,7 +246,7 @@ class Daily extends Component {
     ];
 
     var key = 0;
-    const insents =
+    const insets =
       (Math.max(screenHeight, screenWidth) -
         (Math.max(
           StaticSafeAreaInsets.safeAreaInsetsTop,
@@ -241,6 +257,8 @@ class Daily extends Component {
             StaticSafeAreaInsets.safeAreaInsetsLeft
           ))) /
       2;
+
+    const insetsAndroid = Math.max(screenHeight, screenWidth) / 2;
     return (
       <ScrollView
         horizontal={true}
@@ -254,7 +272,9 @@ class Daily extends Component {
               styles.VCstyle,
               this.state.orientation == "portrait"
                 ? { width: Math.min(screenWidth, screenHeight) }
-                : { width: insents }
+                : {
+                    width: Platform.OS == "android" ? insetsAndroid : insetsIos
+                  }
             ]}
           >
             <SecondDaily

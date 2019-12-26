@@ -22,7 +22,8 @@ import DatePicker from "../../Components/Pickers/DatePicker";
 
 const mapStateToProps = state => ({
   userData: state.initialValues,
-  readings: state.dailyReducer
+  readings: state.dailyReducer,
+  adminIds: state.adminReducer
 });
 class Generation extends Component {
   constructor(props) {
@@ -108,9 +109,11 @@ class Generation extends Component {
       indicator: true,
       cards: false
     });
-    var url = `http://api.ienergybook.com/api/DesignatedMeters/generation?company_id=${
-      this.state.values.companyId
-    }&${this.state.cService ? "service" : "device"}_name=${
+    var url = `http://api.ienergybook.com/api/DesignatedMeters/generation?company_id=${(this.props.adminIds = !""
+      ? this.props.adminIds.company_id
+      : this.state.values.companyId)}&${
+      this.state.cService ? "service" : "device"
+    }_name=${
       this.state.cDevice ? this.state.cardDevice : this.state.cardService
     }&access_token=${this.state.values.accesToken}`;
     console.log(url);
@@ -162,7 +165,10 @@ class Generation extends Component {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          id: this.props.readings.meterId,
+          id:
+            this.props.adminIds.meter_id != ""
+              ? this.props.adminIds.meter_id
+              : this.props.readings.meterId,
           device: this.state.device,
           service: this.state.service,
           filter: this.state.filter,

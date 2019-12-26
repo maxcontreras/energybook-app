@@ -21,7 +21,8 @@ import DatePicker from "../../Components/Pickers/DatePicker";
 
 const mapStateToProps = state => ({
   userData: state.initialValues,
-  readings: state.dailyReducer
+  readings: state.dailyReducer,
+  adminIds: state.adminReducer
 });
 class Carbon extends Component {
   constructor(props) {
@@ -109,12 +110,12 @@ class Carbon extends Component {
       cards: false
     });
     var serv = "Servicio%201";
-    var url = `http://api.ienergybook.com/api/DesignatedMeters/carbonFootprint?company_id=${
-      this.state.values.companyId
-    }&service_name=${
+    var url = `http://api.ienergybook.com/api/DesignatedMeters/carbonFootprint?company_id=${(this.props.adminIds = !""
+      ? this.props.adminIds.company_id
+      : this.state.values.companyId)}&service_name=${
       this.state.cDevice ? this.state.cardDevice : serv
     }&access_token=${this.state.values.accesToken}`;
-    console.log(url);
+
     fetch(url, {
       method: "GET",
       headers: {
@@ -128,9 +129,6 @@ class Carbon extends Component {
         return Promise.all([this.state.statusCode, data]);
       })
       .then(json => {
-        console.log(json);
-        console.log(json[1].response);
-
         this.setState({
           indicator: false,
           response: json[1].response,
@@ -146,13 +144,6 @@ class Carbon extends Component {
   }
 
   getChartData() {
-    //console.log(this.state.id);
-    console.log(this.state.device);
-    console.log(this.state.service);
-    console.log(this.state.filter);
-    //console.log(this.state.variable);
-    console.log(this.state.interval);
-    console.log(this.state.customdates);
     this.setState({
       indicator: true
     });
@@ -165,7 +156,10 @@ class Carbon extends Component {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          id: this.props.readings.meterId,
+          id:
+            this.props.adminIds.meter_id != ""
+              ? this.props.adminIds.meter_id
+              : this.props.readings.meterId,
           device: this.state.device,
           service: this.state.service,
           filter: this.state.filter,
@@ -180,7 +174,6 @@ class Carbon extends Component {
         return Promise.all([this.state.statusCode, data]);
       })
       .then(json => {
-        console.log(json);
         if (this.state.statusCode == 504) {
           Alert.alert(
             "Error",
@@ -220,6 +213,18 @@ class Carbon extends Component {
       })
       .catch(err => {
         console.log("no  se pudo");
+        this.setState({
+          indicator: false
+        });
+        Alert.alert(
+          "Error",
+          "Hubo un error al obtener los datos del medidor.",
+          [
+            {
+              text: "Okay"
+            }
+          ]
+        );
       });
   }
 

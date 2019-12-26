@@ -26,9 +26,10 @@ class FirstScreen extends Component {
     super();
     this._bootstrapAsync();
   }
+
   _bootstrapAsync = async () => {
     const userToken = await AsyncStorage.getItem("@MySuperStore:key");
-    this.props.navigation.navigate(userToken ? "PrincipalScreen" : "Home");
+    this.props.navigation.navigate(userToken ? "Dashboard" : "Home");
   };
   render() {
     return (

@@ -105,7 +105,7 @@ class Profile extends Component {
                   {this.state.values.company}
                 </Text>
               </View>
-              {this.state.values.location && (
+              {this.state.values && (
                 <ProfileMaps
                   lat={
                     this.state.values.location

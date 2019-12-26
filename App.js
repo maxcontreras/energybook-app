@@ -10,7 +10,9 @@ import React, { Component } from "react";
 import {
   createStackNavigator,
   createAppContainer,
-  createBottomTabNavigator
+  createBottomTabNavigator,
+  StackActions,
+  NavigationActions
 } from "react-navigation";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { StyleSheet } from "react-native";
@@ -29,6 +31,7 @@ import Record from "./app/Screens/Record";
 import CarbonF from "./app/Screens/CarbonF";
 import Generation from "./app/Screens/Generation";
 import PrincipalScreen from "./app/Screens/PrincipalScreen";
+import SADashboard from "./app/Screens/SADashboard";
 
 import InfoSvg from "./app/Assets/Svg/Info.svg";
 import ProfileSvg from "./app/Assets/Svg/Perfil.svg";
@@ -45,22 +48,20 @@ import store from "./Store";
 
 console.disableYellowBox = true;
 
+const navigateAction = NavigationActions.navigate({
+  routeName: "Dashboard",
+
+  params: {},
+
+  action: NavigationActions.navigate({ routeName: "Dashboard" })
+});
+
 export default class App extends Component {
   render() {
-    const PrincipalScreen1 = createStackNavigator({
-      PrincipalScreen: PrincipalScreen,
-      Charts: Charts,
-      Costs: Costs,
-      NetworkC: NetworkC,
-      Record: Record,
-      CarbonF: CarbonF,
-      Generation: Generation
-    });
-
     const BottomNavigation = createMaterialBottomTabNavigator(
       {
         Dashboard: {
-          screen: PrincipalScreen1,
+          screen: PrincipalScreen,
           navigationOptions: {
             tabBarLabel: "Dashboard",
             tabBarIcon: ({ focused, tintColor }) => {
@@ -70,6 +71,9 @@ export default class App extends Component {
                 <DashSvg style={styles.icon} />
               );
               return iconName;
+            },
+            tabBarOnPress: ({ navigation }) => {
+              navigation.dispatch(navigateAction);
             }
           }
         },
@@ -118,6 +122,7 @@ export default class App extends Component {
       },
       {
         initialRouteName: "Dashboard",
+        // backBehavior: "order",
         shifting: true,
         showIcon: true,
         headerMode: "none",

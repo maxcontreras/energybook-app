@@ -7,7 +7,8 @@ import {
   ScrollView,
   SafeAreaView,
   Dimensions,
-  Platform
+  Platform,
+  TouchableOpacity
 } from "react-native";
 import Daily from "../../Components/PrincipalScreenC/Daily.js";
 import SemiCircleProgress from "../../Components/PrincipalScreenC/DashboardChart.js";
@@ -15,160 +16,108 @@ import Data from "../../Components/PrincipalScreenC/Monthly.js";
 import Menu from "../../Components/PrincipalScreenC/Menu.js";
 import PrecioCFE from "../../Components/PrincipalScreenC/PrecioCFEPeriodo.js";
 import Orientation from "react-native-orientation";
+import AsyncStorage from "@react-native-community/async-storage";
 
 import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
 import { connect } from "react-redux";
+
+import {
+  createStackNavigator,
+  createAppContainer,
+  createBottomTabNavigator
+} from "react-navigation";
+
+import Charts from "../Charts";
+import Costs from "../Costs";
+import NetworkC from "../NetworkC";
+import Record from "../Record";
+import CarbonF from "../CarbonF";
+import Generation from "../Generation";
+import Role2Dashboard from "../Role2Dashboard";
+import SADashboard from "../SADashboard";
+import AdminDashboard from "../AdminDashboard";
 
 const mapStateToProps = state => ({
   readings: state.dailyReducer
 });
 
-class PrincipalScreen extends Component {
+export default class PrincipalScreen extends Component {
   _isMounted = false;
   constructor(props) {
     super(props);
-    const isPortrait = () => {
-      const dim = Dimensions.get("screen");
-      return dim.height >= dim.width;
-    };
     this.state = {
-      orientation: isPortrait() ? "portrait" : "landscape",
       values: []
     };
-    Dimensions.addEventListener("change", () => {
-      this.setState({
-        orientation: isPortrait() ? "portrait" : "landscape"
-      });
-    });
   }
   static navigationOptions = {
     header: null
   };
-  componentWillMount() {}
-
-  componentDidMount() {
-    Orientation.unlockAllOrientations();
+  componentWillMount() {
+    this._retrieveData();
   }
 
-  componentWillUnmount() {
-    Dimensions.removeEventListener("change");
-  }
+  _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@MySuperStore:key");
+      if (value !== null) {
+        this.setState(
+          {
+            values: JSON.parse(value)
+          },
+          () => {
+            console.log(this.state.values);
+          }
+        );
+      }
+    } catch (error) {}
+  };
 
   render() {
-    const insents =
-      (Math.max(screenHeight, screenWidth) -
-        (Math.max(
-          StaticSafeAreaInsets.safeAreaInsetsTop,
-          StaticSafeAreaInsets.safeAreaInsetsRight
-        ) +
-          Math.max(
-            StaticSafeAreaInsets.safeAreaInsetsBottom,
-            StaticSafeAreaInsets.safeAreaInsetsLeft
-          ))) /
-      2;
-    return (
-      <SafeAreaView>
-        <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
-          <KeyboardAvoidingView enabled>
-            <View style={styles.container}>
-              {this.props.readings && (
-                <View style={styles.menu}>
-                  <Menu />
-                </View>
-              )}
-              <View
-                style={[
-                  styles.container2,
-                  this.state.orientation == "portrait"
-                    ? { flexDirection: "column" }
-                    : { flexDirection: "row" }
-                ]}
-              >
-                <View
-                  style={[
-                    styles.daily,
-                    this.state.orientation == "portrait"
-                      ? { width: Math.min(screenHeight, screenWidth) }
-                      : {
-                          width: insents
-                        }
-                  ]}
-                >
-                  <Daily />
-                  {this.props.readings && (
-                    <Data meterId={this.props.readings.meterId} />
-                  )}
-                </View>
-                {this.props.readings && (
-                  <View
-                    style={[
-                      styles.charts,
-                      this.state.orientation == "portrait"
-                        ? {
-                            justifyContent: "center",
-                            width: Math.min(screenHeight, screenWidth)
-                          }
-                        : {
-                            justifyContent: "space-between",
-                            width: insents
-                          }
-                    ]}
-                  >
-                    <SemiCircleProgress
-                      progressColor={"green"}
-                      dp={this.props.readings.dp}
-                      maxVal={this.props.readings.maxVal}
-                      minVal={this.props.readings.minVal}
-                    >
-                      <Text style={{ fontSize: 10 }}>kW</Text>
-                    </SemiCircleProgress>
-                    <PrecioCFE />
-                  </View>
-                )}
-              </View>
-            </View>
-          </KeyboardAvoidingView>
-        </ScrollView>
-      </SafeAreaView>
+    console.log(this.state.values.role_id);
+    console.log(this.state.values.administrando);
+    const superAdmin = createStackNavigator({
+      PrincipalScreen: SADashboard
+    });
+    const admin = createStackNavigator(
+      {
+        PrincipalScreen: AdminDashboard,
+        Role2Dashboard: Role2Dashboard,
+        Charts: Charts,
+        Costs: Costs,
+        NetworkC: NetworkC,
+        Record: Record,
+        CarbonF: CarbonF,
+        Generation: Generation
+      },
+      {
+        initialRouteName: "PrincipalScreen"
+      }
     );
+    const normalUsr = createStackNavigator(
+      {
+        PrincipalScreen: Role2Dashboard,
+        Charts: Charts,
+        Costs: Costs,
+        NetworkC: NetworkC,
+        Record: Record,
+        CarbonF: CarbonF,
+        Generation: Generation
+      },
+      {
+        initialRouteName: "PrincipalScreen"
+      }
+    );
+    const PrincipalScreen =
+      this.state.values.role_id == 1 && this.state.values.administrando == null
+        ? superAdmin
+        : this.state.values.role_id == 1 &&
+          this.state.values.administrando != null
+        ? admin
+        : normalUsr;
+    const AppNavigator = createAppContainer(PrincipalScreen);
+
+    return <AppNavigator />;
   }
 }
 
-export default connect(mapStateToProps)(PrincipalScreen);
-
-const screenHeight = Math.round(Dimensions.get("window").height);
-const screenWidth = Math.round(Dimensions.get("window").width);
-const styles = StyleSheet.create({
-  scroll: {
-    flex: 0,
-    height: "auto",
-    flexGrow: 1
-  },
-  charts: {
-    flex: 1,
-    paddingTop: 10,
-    alignItems: "center",
-    paddingBottom: 10
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-    borderRadius: 10,
-    height: "auto"
-  },
-  container2: {
-    flex: 1,
-    backgroundColor: "white",
-    borderRadius: 10,
-    height: "auto"
-  },
-  menu: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "auto"
-  },
-  daily: {
-    justifyContent: "center"
-  }
-});
+const styles = StyleSheet.create({});

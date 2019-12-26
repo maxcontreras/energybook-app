@@ -58,7 +58,7 @@ class Data extends Component {
 
   render() {
     console.log(this.state.values.tipoTarifa);
-    const insents =
+    const insetsIOS =
       (Math.max(screenHeight, screenWidth) -
         (Math.max(
           StaticSafeAreaInsets.safeAreaInsetsTop,
@@ -69,6 +69,58 @@ class Data extends Component {
             StaticSafeAreaInsets.safeAreaInsetsLeft
           ))) /
       2.2;
+    const insetsAndroid = Math.max(screenHeight, screenWidth) / 2.2;
+    const data = [
+      {
+        title: this.state.values.tipoTarifa == "GDMTH" ? "Base" : "Ordinario",
+        price: this.props.prices
+          ? "$" +
+            " " +
+            (this.state.values.tipoTarifa == "GDMTH"
+              ? this.props.prices.GDMTH.basePrice
+              : this.props.prices.GDMTO.ordinaryPrice)
+          : "$0"
+      },
+      {
+        title: this.state.values.tipoTarifa == "GDMTH" ? "Media" : " ",
+        price:
+          this.state.values.tipoTarifa == "GDMTH"
+            ? this.props.prices
+              ? "$ " + this.props.prices.GDMTH.middlePrice
+              : "$0"
+            : " "
+      },
+      {
+        title: this.state.values.tipoTarifa == "GDMTH" ? "Punta" : " ",
+        price:
+          this.state.values.tipoTarifa == "GDMTH"
+            ? this.props.prices
+              ? "$ " + this.props.prices.GDMTH.peakPrice
+              : "$0"
+            : " "
+      },
+      {
+        title: "Capacidad",
+        price: this.props.prices
+          ? "$ " +
+            (this.state.values.tipoTarifa == "GDMTH"
+              ? this.props.prices.GDMTH.capacityPrice
+              : this.props.prices.GDMTO.capacityPrice)
+          : "$0"
+      },
+      {
+        title: "Distribución",
+        price: this.props.prices
+          ? "$" +
+            " " +
+            (this.state.values.tipoTarifa == "GDMTH"
+              ? this.props.prices.GDMTH.distributionPrice
+              : this.props.prices.GDMTO.distributionPrice)
+          : "$0"
+      }
+    ];
+
+    var key = 0;
     return (
       <View style={styles.container}>
         <Card
@@ -78,77 +130,20 @@ class Data extends Component {
 
             this.state.orientation == "portrait"
               ? { width: Math.min(screenWidth, screenHeight) - 20 }
-              : { width: insents }
+              : { width: Platform.OS == "android" ? insetsAndroid : insetsIos }
           ]}
           titleStyle={styles.titleStyle}
           wrapperStyle={{ borderRadius: 10 }}
         >
           <View style={styles.innerCard}>
-            <View style={[styles.textPart, styles.pFirst]}>
-              <Text style={[styles.middleText, styles.titleWeight]}>
-                {this.state.values.tipoTarifa == "GDMTH" ? "Base" : "Ordinario"}
-              </Text>
-              <Text style={styles.middleText}>
-                {this.props.prices
-                  ? "$" +
-                    " " +
-                    (this.state.values.tipoTarifa == "GDMTH"
-                      ? this.props.prices.GDMTH.basePrice
-                      : this.props.prices.GDMTO.ordinaryPrice)
-                  : "$0"}
-              </Text>
-            </View>
-            {this.state.values.tipoTarifa == "GDMTH" && (
-              <View style={styles.textPart}>
+            {data.map(datos => (
+              <View key={key++} style={[styles.textPart]}>
                 <Text style={[styles.middleText, styles.titleWeight]}>
-                  Media
+                  {datos.title}
                 </Text>
-                <Text style={styles.middleText}>
-                  {this.props.prices
-                    ? "$" + " " + this.props.prices.GDMTH.middlePrice
-                    : "$0"}
-                </Text>
+                <Text style={styles.middleText}>{datos.price}</Text>
               </View>
-            )}
-            {this.state.values.tipoTarifa == "GDMTH" && (
-              <View style={styles.textPart}>
-                <Text style={[styles.middleText, styles.titleWeight]}>
-                  Punta
-                </Text>
-                <Text style={styles.middleText}>
-                  {this.props.prices
-                    ? "$" + " " + this.props.prices.GDMTH.peakPrice
-                    : "$0"}
-                </Text>
-              </View>
-            )}
-            <View style={styles.textPart}>
-              <Text style={[styles.middleText, styles.titleWeight]}>
-                Capacidad
-              </Text>
-              <Text style={styles.middleText}>
-                {this.props.prices
-                  ? "$ " +
-                    (this.state.values.tipoTarifa == "GDMTH"
-                      ? this.props.prices.GDMTH.capacityPrice
-                      : this.props.prices.GDMTO.capacityPrice)
-                  : "$0"}
-              </Text>
-            </View>
-            <View style={[styles.textPart, styles.flexlast]}>
-              <Text style={[styles.middleText, styles.titleWeight]}>
-                Distribución
-              </Text>
-              <Text style={styles.middleText}>
-                {this.props.prices
-                  ? "$" +
-                    " " +
-                    (this.state.values.tipoTarifa == "GDMTH"
-                      ? this.props.prices.GDMTH.distributionPrice
-                      : this.props.prices.GDMTO.distributionPrice)
-                  : "$0"}
-              </Text>
-            </View>
+            ))}
           </View>
         </Card>
       </View>
@@ -172,10 +167,9 @@ const styles = StyleSheet.create({
     fontWeight: "normal",
     margin: 10,
     textAlign: "left",
-    height: 12,
+    height: "auto",
     justifyContent: "center"
   },
-
   containerCard: {
     height: 110,
     padding: 0,
@@ -198,7 +192,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     height: 60,
-    borderRadius: 10
+    borderRadius: 10,
+    padding: 10
   },
   textPart: {
     justifyContent: "center",
@@ -208,22 +203,7 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: "flex-start"
   },
-  valuePart: {
-    justifyContent: "center",
-    flex: 3,
-    height: 60,
-    alignItems: "flex-start"
-  },
   titleWeight: {
     fontWeight: "bold"
-  },
-  marginMiddle: {
-    marginTop: 10
-  },
-  flexlast: {
-    flex: 1.2
-  },
-  pFirst: {
-    paddingLeft: 15
   }
 });

@@ -27,7 +27,7 @@ const LONGITUDE = -122.4324;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-class ProfileMaps extends Component {
+class SAmap extends Component {
   constructor(props) {
     const isPortrait = () => {
       const dim = Dimensions.get("screen");
@@ -63,9 +63,10 @@ class ProfileMaps extends Component {
     const region = {
       latitude: this.props.lat,
       longitude: this.props.lon,
-      latitudeDelta: 0.002,
-      longitudeDelta: 0.002
+      latitudeDelta: 15,
+      longitudeDelta: 15
     };
+    var key = 0;
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -80,23 +81,53 @@ class ProfileMaps extends Component {
               rotateEnabled={true}
               initialRegion={region}
             >
-              <MapView.Marker
-                title={this.state.values.company}
-                coordinate={region}
-              >
-                <PinGoogleMaps width={60} height={60} />
-              </MapView.Marker>
+              {this.props.coords.map(coords => (
+                <View key={key++}>
+                  {coords.location && (
+                    <MapView.Marker
+                      title={coords.company_name}
+                      coordinate={{
+                        latitude: coords.location.lat,
+                        longitude: coords.location.lon
+                      }}
+                    >
+                      <PinGoogleMaps width={60} height={60} />
+                    </MapView.Marker>
+                  )}
+                </View>
+              ))}
             </MapView>
           )}
           {Platform.OS == "android" && (
             <MapView
               provider={PROVIDER_GOOGLE}
               style={styles.map}
-              initialRegion={region}
+              region={{
+                latitude: this.state.values.location
+                  ? this.state.values.location.lat
+                  : this.props.inCaseCoords.ftcoords[0],
+                longitude: this.state.values.location
+                  ? this.state.values.location.lon
+                  : this.props.inCaseCoords.ftcoords[1],
+                latitudeDelta: 15,
+                longitudeDelta: 15
+              }}
             >
-              <Marker title={this.state.values.company} coordinate={region}>
-                <PinGoogleMaps width={60} height={60} />
-              </Marker>
+              {this.props.coords.map(coords => (
+                <View key={key++}>
+                  {coords.location && (
+                    <Marker
+                      title={coords.company_name}
+                      coordinate={{
+                        latitude: coords.location.lat,
+                        longitude: coords.location.lon
+                      }}
+                    >
+                      <PinGoogleMaps width={60} height={60} />
+                    </Marker>
+                  )}
+                </View>
+              ))}
             </MapView>
           )}
         </View>
@@ -105,7 +136,7 @@ class ProfileMaps extends Component {
   }
 }
 
-export default connect(mapStateToProps)(ProfileMaps);
+export default connect(mapStateToProps)(SAmap);
 
 const styles = StyleSheet.create({
   container: {
@@ -118,6 +149,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   map: {
-    ...StyleSheet.absoluteFillObject
+    ...StyleSheet.absoluteFillObject,
+    height: 500
   }
 });

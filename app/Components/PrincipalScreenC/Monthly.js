@@ -23,7 +23,8 @@ import AsyncStorage from "@react-native-community/async-storage";
 import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
 const mapStateToProps = state => ({
   readings: state.dailyReducer,
-  prices: state.costReducer
+  prices: state.costReducer,
+  adminIds: state.adminReducer
 });
 
 class Data extends Component {
@@ -37,7 +38,7 @@ class Data extends Component {
     this.state = {
       url: "",
       monthlyTCC: "",
-      meterId: "",
+      meterId: this.props.meterId,
       values: [],
       orientation: isPortrait() ? "portrait" : "landscape"
     };
@@ -61,7 +62,6 @@ class Data extends Component {
             this.getMeterId();
           }
         );
-        console.log(this.state.values);
       }
     } catch (error) {}
   };
@@ -77,12 +77,10 @@ class Data extends Component {
             this.getData();
           }
         );
-        console.log(this.state.meterId);
       }
     } catch (error) {}
   };
   getData() {
-    console.log(this.props);
     fetch(
       `http://api.ienergybook.com/api/Meters/getConsumptionCostsByFilter?access_token=${this.state.values.accesToken}`,
       {
@@ -92,7 +90,7 @@ class Data extends Component {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          id: this.state.meterId,
+          id: this.props.meterId,
           device: "",
           service: "Servicio 1",
           filter: 3,
@@ -107,10 +105,6 @@ class Data extends Component {
         return Promise.all([statusCode, data]);
       })
       .then(json => {
-        //this.props.dispatch(getMonthlyConsumptionPrices(json));
-        console.log("MONTHLY CONSUMPTION");
-        console.log(json);
-
         var jsonResponse = json[1];
         var response = [];
         for (var i = 0; i < jsonResponse.length; i++) {
@@ -144,7 +138,6 @@ class Data extends Component {
 
   render() {
     var fecha = date + " " + n + " " + "de" + " " + mes;
-
     const capacityPrice =
       (this.state.values.tipoTarifa == "GDMTH"
         ? this.props.prices.GDMTH.capacityPrice
@@ -155,8 +148,7 @@ class Data extends Component {
         ? this.props.prices.GDMTH.distributionPrice
         : this.props.prices.GDMTO.distributionPrice) *
       this.props.readings.monthlyReadings.distribution;
-
-    const insents =
+    const insetsIos =
       (Math.max(screenHeight, screenWidth) -
         (Math.max(
           StaticSafeAreaInsets.safeAreaInsetsTop,
@@ -167,6 +159,41 @@ class Data extends Component {
             StaticSafeAreaInsets.safeAreaInsetsLeft
           ))) /
       2.2;
+    const insetsAndroid = Math.max(screenHeight, screenWidth) / 2.2;
+    const data = [
+      {
+        title: "Consumo",
+        value: this.props.readings.monthlyReadings.consumption
+          ? this.props.readings.monthlyReadings.consumption + " kwh"
+          : "0 kwh",
+        price: this.state.monthlyTCC ? " $" + this.state.monthlyTCC : "$0"
+      },
+      {
+        title: "Distribución",
+        value: this.props.readings.monthlyReadings.distribution
+          ? this.props.readings.monthlyReadings.distribution + " kwh"
+          : "0 kwh",
+        price: this.props.prices
+          ? "$" +
+            distributionPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          : "$0"
+      },
+      {
+        title: "Capacidad",
+        value: this.props.readings.monthlyReadings.capacity
+          ? this.props.readings.monthlyReadings.capacity + " kwh"
+          : "0 kwh",
+        price: this.props.prices
+          ? "$" + capacityPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          : "$0"
+      },
+      {
+        title: "FP",
+        value: this.props.readings.fp ? this.props.readings.fp + " %" : "0%",
+        price: " "
+      }
+    ];
+    var key = 0;
 
     return (
       <View
@@ -183,7 +210,9 @@ class Data extends Component {
               width:
                 this.state.orientation == "portrait"
                   ? Math.min(screenWidth, screenHeight) - 20
-                  : insents
+                  : Platform.OS == "android"
+                  ? insetsAndroid
+                  : insetsIos
             }
           ]}
           titleStyle={styles.titleStyle}
@@ -197,58 +226,21 @@ class Data extends Component {
               <Fp style={styles.icon} />
             </View>
             <View style={styles.textPart}>
-              <Text style={[styles.middleText, styles.titleWeight]}>
-                {"Consumo"}
-              </Text>
-              <Text style={styles.middleText}>
-                {this.props.readings.monthlyReadings.consumption
-                  ? this.props.readings.monthlyReadings.consumption + " kwh"
-                  : "0 kwh"}
-              </Text>
-              <Text style={[styles.middleText, styles.titleWeight]}>
-                {"Distribución"}
-              </Text>
-              <Text style={styles.middleText}>
-                {this.props.readings.monthlyReadings.distribution
-                  ? this.props.readings.monthlyReadings.distribution + " kwh"
-                  : "0 kwh"}
-              </Text>
-              <Text style={[styles.middleText, styles.titleWeight]}>
-                {"Capacidad"}
-              </Text>
-              <Text style={styles.middleText}>
-                {this.props.readings.monthlyReadings.capacity
-                  ? this.props.readings.monthlyReadings.capacity + " kwh"
-                  : "0 kwh"}
-              </Text>
-              <Text style={[styles.middleText, styles.titleWeight]}>
-                {"FP"}
-              </Text>
-              <Text style={styles.middleText}>
-                {this.props.readings.fp ? this.props.readings.fp + " %" : "0%"}
-              </Text>
+              {data.map(datos => (
+                <View key={key++}>
+                  <Text style={[styles.middleText, styles.titleWeight]}>
+                    {datos.title}
+                  </Text>
+                  <Text style={styles.middleText}>{datos.value}</Text>
+                </View>
+              ))}
             </View>
             <View style={styles.valuePart}>
-              <Text style={styles.priceText}>
-                {this.state.monthlyTCC ? " $" + this.state.monthlyTCC : "$0"}
-              </Text>
-              <Text style={styles.priceText}>
-                {this.props.prices
-                  ? "$" +
-                    distributionPrice
-                      .toFixed(2)
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                  : "$0"}
-              </Text>
-              <Text style={styles.priceText}>
-                {this.props.prices
-                  ? "$" +
-                    capacityPrice
-                      .toFixed(2)
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                  : "$0"}
-              </Text>
-              <Text style={styles.priceText}>{this.props.valuePrice}</Text>
+              {data.map(datos => (
+                <Text key={key++} style={styles.priceText}>
+                  {datos.price}
+                </Text>
+              ))}
             </View>
           </View>
         </Card>
@@ -273,7 +265,7 @@ const styles = StyleSheet.create({
     fontWeight: "normal",
     margin: 10,
     textAlign: "right",
-    height: 10,
+    height: "auto",
     justifyContent: "center"
   },
 
@@ -321,7 +313,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 3,
     height: 230,
-    alignItems: "flex-start"
+    alignItems: "flex-start",
+    paddingTop: 10
   },
   icon: {
     height: 35,
