@@ -19,6 +19,8 @@ import ProfilePic from "../../Assets/Images/temporayProfile.png";
 import ProfileMaps from "../../Components/ProfileMaps";
 import Sesion from "../../Assets/Svg/sesion.svg";
 import SesionS from "../../Assets/Svg/sesionS.svg";
+import RNRestart from "react-native-restart";
+
 const screenHeight = Math.round(Dimensions.get("window").height);
 const screenWidth = Math.round(Dimensions.get("window").width);
 const mapStateToProps = state => ({
@@ -72,6 +74,7 @@ class Profile extends Component {
         try {
           await AsyncStorage.setItem("inCaseKey", this.state.inCaseKey, () => {
             console.log(JSON.stringify(this.state.inCaseKey));
+            RNRestart.Restart();
             this.props.navigation.navigate("Home");
           });
         } catch (error) {

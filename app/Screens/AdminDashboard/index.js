@@ -60,7 +60,7 @@ class AdminDashboard extends Component {
             console.log(this.state.values);
 
             fetch(
-              `http://192.168.1.66:3000/api/Companies?access_token=${this.state.values.accesToken}`,
+              `http://api.ienergybook.com/api/Companies?access_token=${this.state.values.accesToken}`,
               {
                 method: "GET",
                 headers: {
@@ -85,12 +85,14 @@ class AdminDashboard extends Component {
                   var created_at = json[1][i].created_at;
                   var id = json[1][i].id;
                   var city = json[1][i].city;
+                  var tipoTarif = json[1][i].tariff_type;
                   companies.data.push({
                     company_name: name,
                     location: coords,
                     created_at: created_at,
                     company_id: id,
-                    city: city
+                    city: city,
+                    tipoTarif: tipoTarif
                   });
                 }
                 this.setState({
@@ -114,7 +116,7 @@ class AdminDashboard extends Component {
   componentWillUnmount() {
     Dimensions.removeEventListener("change");
   }
-  navigate(company_id, company_name, city) {
+  navigate(company_id, company_name, city, tipoTarif) {
     fetch(
       `http://api.ienergybook.com/api/DesignatedMeters/?filter={"include":["services"],"where":{"company_id":"${company_id}"}}`,
       {
@@ -137,7 +139,8 @@ class AdminDashboard extends Component {
             company_id: company_id,
             meter_id: json[1][0].meter_id,
             city: city,
-            company_name: company_name
+            company_name: company_name,
+            tipoTarif: tipoTarif
           }
         ];
         this.props.dispatch(setAdminIds(array));
@@ -182,7 +185,8 @@ class AdminDashboard extends Component {
                       this.navigate(
                         company.company_id,
                         company.company_name,
-                        company.city
+                        company.city,
+                        company.tipoTarif
                       )
                     }
                   >

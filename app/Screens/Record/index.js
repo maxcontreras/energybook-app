@@ -57,6 +57,8 @@ class Record extends Component {
     this._getMeter;
   }
   confirmar() {
+    console.log(this.state.newDate);
+
     this.setState({
       indicator: true
     });
@@ -215,6 +217,12 @@ class Record extends Component {
   };
 
   render() {
+    console.log(moment(this.state.newDate).format("YYYY-MM-DD"));
+    console.log(
+      moment(this.state.newDate)
+        .endOf("month")
+        .format("YYYY-MM-DD")
+    );
     return (
       <SafeAreaView>
         <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">

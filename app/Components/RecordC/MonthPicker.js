@@ -6,51 +6,91 @@ import { mesesito, n } from "../Fecha.js";
 import Back from "../../Assets/Svg/Back.svg";
 import Fordward from "../../Assets/Svg/Fordward.svg";
 import moment from "moment";
-
+const month1 = new Date().getMonth() - 1 == -1 ? 0 : new Date().getMonth() - 1;
 export default class MonthPicker extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      indexM: new Date().getMonth() - 1,
-      indexA: moment().format("YYYY")
+      indexM: new Date().getMonth() - 1 == -1 ? 11 : new Date().getMonth() - 1,
+      indexA:
+        new Date().getMonth() == 0
+          ? moment().format("YYYY") - 1
+          : moment().format("YYYY")
     };
   }
 
   increase(valor, months, years) {
     if (valor == "mes") {
-      const newMonth = ++this.state.indexM;
-      const compareDate = new Date().getMonth() - 1;
-      this.setState({
-        indexM: newMonth > compareDate ? compareDate : newMonth
-      });
-    }
-    const newYear = ++this.state.indexA;
-    const compareDate = moment().format("YYYY");
-    this.setState({
-      indexA: newYear > compareDate ? compareDate : newYear
-    });
-
-    this.props.function(months, years);
-  }
-  decrease(valor, months, years) {
-    if (valor == "mes") {
       this.setState(
         {
-          indexM: --this.state.indexM
+          indexM: this.state.indexM + months
         },
         () => {
-          if (this.state.indexM == -1) {
+          if (this.state.indexM == 12) {
             this.setState({
-              indexM: new Date().getMonth() - 1,
-              indexA: --this.state.indexA
+              indexM: 11
+            });
+          }
+          if (
+            this.state.indexM == 12 &&
+            this.state.indexA < moment().format("YYYY") - 1
+          ) {
+            this.setState({
+              indexM: 0,
+              indexA: this.state.indexA + 1
             });
           }
         }
       );
+      console.log("MES" + this.state.indexM);
+    } else if (valor == "año") {
+      if (
+        new Date().getMonth() == 0 &&
+        this.state.indexA == moment().format("YYYY") - 1
+      ) {
+        this.setState(
+          {
+            indexA: this.state.indexA
+          },
+          () => {
+            this.setState({
+              disabled: true
+            });
+          }
+        );
+      } else if (this.state.indexA < moment().format("YYYY")) {
+        this.setState({
+          indexA: this.state.indexA + years
+        });
+      }
+      console.log("AÑO" + this.state.indexA);
+    }
+
+    this.props.function(months, years);
+  }
+  decrease(valor, months, years) {
+    console.log(this.state.indexM);
+
+    if (valor == "mes") {
+      this.setState(
+        {
+          indexM: this.state.indexM + months
+        },
+        () => {
+          if (this.state.indexM == -1) {
+            this.setState({
+              indexM: 11,
+              indexA: this.state.indexA - 1
+            });
+          }
+        }
+      );
+      console.log("MES DRECREASE " + this.state.indexM);
     } else if (valor == "año") {
       this.setState({
-        indexA: --this.state.indexA
+        indexA: this.state.indexA + years
       });
+      console.log("AÑO DRECREASE " + this.state.indexA);
     }
     this.props.function(months, years);
   }
@@ -75,7 +115,12 @@ export default class MonthPicker extends Component {
           <View style={styles.textView}>
             <Text style={styles.infoText}>{this.state.indexA}</Text>
           </View>
-          <TouchableOpacity onPress={() => this.increase("año", 0, 1)}>
+          <TouchableOpacity
+            onPress={() => this.increase("año", 0, 1)}
+            disabled={
+              this.state.indexA == moment().format("YYYY") - 1 ? true : false
+            }
+          >
             <Fordward style={{ width: 30, height: 30 }} />
           </TouchableOpacity>
         </View>

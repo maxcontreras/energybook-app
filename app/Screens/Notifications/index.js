@@ -57,7 +57,7 @@ export default class Notifications extends Component {
             console.log(this.state.values);
 
             fetch(
-              `http://192.168.1.66:3000/api/notificaciones/VerNotificaciones`,
+              `http://api.ienergybook.com/api/notificaciones/VerNotificaciones`,
               {
                 method: "POST",
                 headers: {
@@ -148,12 +148,7 @@ export default class Notifications extends Component {
 
   render() {
     var key = 0;
-    var arreglo = [];
-    for (i = 7; i < this.state.old_notifications.length; i++) {
-      arreglo[i - 7] = this.state.old_notifications[i];
-    }
-    console.log(arreglo);
-    console.log(this.state.new_notifications);
+    console.log(this.state.new_notifications.length);
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
         <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
@@ -167,29 +162,8 @@ export default class Notifications extends Component {
               <View style={styles.headerTitle}>
                 <Text style={styles.headerText}>Nuevas notificaciones!</Text>
               </View>
-              {this.state.new_notifications && (
-                <View
-                  style={{
-                    flex: 1,
-                    height: "auto",
-                    margin: 10,
-                    padding: 20,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    ...Platform.select({
-                      ios: {
-                        shadowRadius: 5,
-                        shadowColor: "black",
-                        shadowOffset: { width: 5, height: 5 },
-                        shadowOpacity: 0.2
-                      },
-                      android: {
-                        elevation: 5
-                      }
-                    }),
-                    backgroundColor: "white"
-                  }}
-                >
+              {this.state.new_notifications.length == 0 && (
+                <View style={styles.noNotifications}>
                   <Text style={{ fontSize: 10, textAlign: "center" }}>
                     No hay nuevas notificaciones por el momento
                   </Text>
@@ -242,7 +216,7 @@ export default class Notifications extends Component {
               <View style={styles.headerTitle}>
                 <Text style={styles.headerText}>Notificaciones Pasadas</Text>
               </View>
-              {arreglo.map(device => (
+              {this.state.old_notifications.map(device => (
                 <View key={key++} style={styles.notificationView}>
                   <View style={styles.notificationTopView}>
                     {device.tipo == "Semanal" && (
@@ -350,5 +324,25 @@ const styles = StyleSheet.create({
     height: "auto",
     justifyContent: "space-between",
     alignItems: "center"
+  },
+  noNotifications: {
+    flex: 1,
+    height: "auto",
+    margin: 10,
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    ...Platform.select({
+      ios: {
+        shadowRadius: 5,
+        shadowColor: "black",
+        shadowOffset: { width: 5, height: 5 },
+        shadowOpacity: 0.2
+      },
+      android: {
+        elevation: 5
+      }
+    }),
+    backgroundColor: "white"
   }
 });

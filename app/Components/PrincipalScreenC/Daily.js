@@ -98,11 +98,13 @@ class Daily extends Component {
     this._isMounted = true;
   }
   getData() {
-    var newDate = `${new Date().getFullYear()}-${new Date().getMonth() +
-      1}-01T00:00:00.000Z`;
+    var newDate = `${moment().format("YYYY")}-${moment().format(
+      "MM"
+    )}-01T00:00:00.000Z`;
 
     console.log(newDate);
     console.log(this.props.city);
+    console.log(this.state.values);
     fetch(
       `http://api.ienergybook.com/api/AdminValues/findByDate?access_token=${this.state.values.accesToken}`,
       {

@@ -3,6 +3,7 @@ package com.ienergybook;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.gaspardbruno.staticsafeareainsets.RNStaticSafeAreaInsetsPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
@@ -36,6 +37,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ReactNativeRestartPackage(),
             new RNStaticSafeAreaInsetsPackage(),
             new RNFetchBlobPackage(),
             new ReactNativeOneSignalPackage(),

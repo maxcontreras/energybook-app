@@ -19,7 +19,8 @@ import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
 const mapStateToProps = state => ({
   readings: state.dailyReducer,
   meterId: state.dailyReducer.meterId,
-  prices: state.costReducer
+  prices: state.costReducer,
+  adminIds: state.adminReducer
 });
 
 class Data extends Component {
@@ -70,30 +71,34 @@ class Data extends Component {
           ))) /
       2.2;
     const insetsAndroid = Math.max(screenHeight, screenWidth) / 2.2;
+    const tarifType =
+      this.props.adminIds.tipoTarif != ""
+        ? this.props.adminIds.tipoTarif
+        : this.state.values.tipoTarifa;
     const data = [
       {
-        title: this.state.values.tipoTarifa == "GDMTH" ? "Base" : "Ordinario",
+        title: tarifType == "GDMTH" ? "Base" : "Ordinario",
         price: this.props.prices
           ? "$" +
             " " +
-            (this.state.values.tipoTarifa == "GDMTH"
+            (tarifType == "GDMTH"
               ? this.props.prices.GDMTH.basePrice
               : this.props.prices.GDMTO.ordinaryPrice)
           : "$0"
       },
       {
-        title: this.state.values.tipoTarifa == "GDMTH" ? "Media" : " ",
+        title: tarifType == "GDMTH" ? "Media" : " ",
         price:
-          this.state.values.tipoTarifa == "GDMTH"
+          tarifType == "GDMTH"
             ? this.props.prices
               ? "$ " + this.props.prices.GDMTH.middlePrice
               : "$0"
             : " "
       },
       {
-        title: this.state.values.tipoTarifa == "GDMTH" ? "Punta" : " ",
+        title: tarifType == "GDMTH" ? "Punta" : " ",
         price:
-          this.state.values.tipoTarifa == "GDMTH"
+          tarifType == "GDMTH"
             ? this.props.prices
               ? "$ " + this.props.prices.GDMTH.peakPrice
               : "$0"
@@ -103,7 +108,7 @@ class Data extends Component {
         title: "Capacidad",
         price: this.props.prices
           ? "$ " +
-            (this.state.values.tipoTarifa == "GDMTH"
+            (tarifType == "GDMTH"
               ? this.props.prices.GDMTH.capacityPrice
               : this.props.prices.GDMTO.capacityPrice)
           : "$0"
@@ -113,7 +118,7 @@ class Data extends Component {
         price: this.props.prices
           ? "$" +
             " " +
-            (this.state.values.tipoTarifa == "GDMTH"
+            (tarifType == "GDMTH"
               ? this.props.prices.GDMTH.distributionPrice
               : this.props.prices.GDMTO.distributionPrice)
           : "$0"
@@ -124,7 +129,7 @@ class Data extends Component {
     return (
       <View style={styles.container}>
         <Card
-          title={"Precio  CFE periodo"}
+          title={"Precios  CFE del periodo"}
           containerStyle={[
             styles.containerCard,
 
@@ -137,11 +142,15 @@ class Data extends Component {
         >
           <View style={styles.innerCard}>
             {data.map(datos => (
-              <View key={key++} style={[styles.textPart]}>
-                <Text style={[styles.middleText, styles.titleWeight]}>
-                  {datos.title}
-                </Text>
-                <Text style={styles.middleText}>{datos.price}</Text>
+              <View key={key++} style={{ flex: datos.title != " " ? 1 : 0 }}>
+                {datos.title != " " && (
+                  <View style={[styles.textPart]}>
+                    <Text style={[styles.middleText, styles.titleWeight]}>
+                      {datos.title}
+                    </Text>
+                    <Text style={styles.middleText}>{datos.price}</Text>
+                  </View>
+                )}
               </View>
             ))}
           </View>

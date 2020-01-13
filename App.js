@@ -23,15 +23,7 @@ import Home from "./app/Screens/Home";
 import Register from "./app/Screens/Register";
 import FirstScreen from "./app/Screens/FirstScreen";
 import PasswordChange from "./app/Screens/PasswordChange";
-
-import Charts from "./app/Screens/Charts";
-import Costs from "./app/Screens/Costs";
-import NetworkC from "./app/Screens/NetworkC";
-import Record from "./app/Screens/Record";
-import CarbonF from "./app/Screens/CarbonF";
-import Generation from "./app/Screens/Generation";
 import PrincipalScreen from "./app/Screens/PrincipalScreen";
-import SADashboard from "./app/Screens/SADashboard";
 
 import InfoSvg from "./app/Assets/Svg/Info.svg";
 import ProfileSvg from "./app/Assets/Svg/Perfil.svg";
@@ -122,7 +114,6 @@ export default class App extends Component {
       },
       {
         initialRouteName: "Dashboard",
-        // backBehavior: "order",
         shifting: true,
         showIcon: true,
         headerMode: "none",

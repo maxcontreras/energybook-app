@@ -73,7 +73,7 @@ class Home extends Component {
   }
 
   postLogin() {
-    fetch("http://192.168.1.66:3000/api/eUsers/login", {
+    fetch("http://api.ienergybook.com/api/eUsers/login", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -112,7 +112,7 @@ class Home extends Component {
   getCompany() {
     console.log(this.props);
     fetch(
-      `http://192.168.1.66:3000/api/eUsers/?filter={"where":{"id":"${this.props.homeData.userId}"}}&access_token=${this.props.homeData.accesToken}`,
+      `http://api.ienergybook.com/api/eUsers/?filter={"where":{"id":"${this.props.homeData.userId}"}}&access_token=${this.props.homeData.accesToken}`,
       {
         method: "GET",
         headers: {
@@ -142,7 +142,7 @@ class Home extends Component {
   getCompanyData() {
     console.log(this.props.homeData.companyId);
     fetch(
-      `http://192.168.1.66:3000/api/Companies/?filter={"where":{"id":"${this.props.homeData.companyId}"}}&access_token=${this.props.homeData.accesToken}`,
+      `http://api.ienergybook.com/api/Companies/?filter={"where":{"id":"${this.props.homeData.companyId}"}}&access_token=${this.props.homeData.accesToken}`,
       {
         method: "GET",
         headers: {

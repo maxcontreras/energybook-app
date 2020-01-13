@@ -5,7 +5,8 @@ const initialState = {
   company_id: "",
   meter_id: "",
   city: "",
-  company_name: ""
+  company_name: "",
+  tipoTarif: ""
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -18,6 +19,7 @@ const adminReducer = (state = initialState, action) => {
         : "";
       newState.city = action.json[0].city ? action.json[0].city : "";
       newState.company_name = action.json[0].company_name;
+      newState.tipoTarif = action.json[0].tipoTarif;
       break;
   }
   return newState;
