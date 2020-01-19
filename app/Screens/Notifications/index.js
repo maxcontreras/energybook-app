@@ -208,7 +208,7 @@ export default class Notifications extends Component {
                       ))}
                     </View>
                     <Text style={[styles.mensajeText, styles.mensajeTextadd1]}>
-                      {device.Fecha}
+                      {device.Fecha.substr(0, 10)}
                     </Text>
                   </View>
                 </View>
@@ -255,7 +255,7 @@ export default class Notifications extends Component {
                       ))}
                     </View>
                     <Text style={[styles.mensajeText, styles.mensajeTextadd1]}>
-                      {device.Fecha}
+                      {device.Fecha.substr(0, 10)}
                     </Text>
                   </View>
                 </View>
@@ -316,7 +316,8 @@ const styles = StyleSheet.create({
   mensajeTextadd1: {
     fontSize: 10,
     fontStyle: "italic",
-    textAlignVertical: "bottom"
+    textAlignVertical: "bottom",
+    paddingHorizontal: 5
   },
   notificationTopView: {
     flexDirection: "row",

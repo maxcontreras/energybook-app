@@ -95,7 +95,6 @@ class Generation extends Component {
             values: JSON.parse(value)
           },
           () => {
-            this.getCardsData();
             this.getChartData();
           }
         );
@@ -109,12 +108,14 @@ class Generation extends Component {
       indicator: true,
       cards: false
     });
-    var url = `http://api.ienergybook.com/api/DesignatedMeters/generation?company_id=${(this.props.adminIds = !""
-      ? this.props.adminIds.company_id
-      : this.state.values.companyId)}&${
-      this.state.cService ? "service" : "device"
-    }_name=${
-      this.state.cDevice ? this.state.cardDevice : this.state.cardService
+    const url = `http://api.ienergybook.com/api/DesignatedMeters/generation?company_id=${
+      this.props.adminIds.company_id != ""
+        ? this.props.adminIds.company_id
+        : this.state.values.companyId
+    }&${this.state.cService ? "service" : "device"}_name=${
+      this.state.cDevice
+        ? this.state.cardDevice
+        : this.state.cardService.replace(" ", "%20")
     }&access_token=${this.state.values.accesToken}`;
     console.log(url);
     fetch(url, {
@@ -146,16 +147,21 @@ class Generation extends Component {
       });
   }
   getChartData() {
-    //console.log(this.state.id);
-    console.log(this.state.device);
-    console.log(this.state.service);
-    console.log(this.state.filter);
-    console.log(this.state.variable);
-    console.log(this.state.interval);
-    console.log(this.state.customdates);
     this.setState({
       indicator: true
     });
+    const id =
+      this.props.adminIds.meter_id != ""
+        ? this.props.adminIds.meter_id
+        : this.props.readings.meterId;
+    console.log(id);
+    console.log(this.state.device);
+    console.log(this.state.service);
+    console.log(this.state.filter);
+    console.log(this.state.interval);
+    console.log(this.state.variable);
+    console.log(this.state.customdates);
+
     fetch(
       `http://api.ienergybook.com/api/Meters/generationReadings?access_token=${this.state.values.accesToken}`,
       {
@@ -216,18 +222,21 @@ class Generation extends Component {
                   .substr(8, 2)
                   .concat(puntos.concat(array1[i].date.substr(10, 2)));
         }
-        this.setValues(array, fechas);
+
+        this.setState(
+          {
+            arrayWithData: array,
+            dates: fechas,
+            indicator: false
+          },
+          () => {
+            this.getCardsData();
+          }
+        );
       })
       .catch(err => {
         console.log("no  se pudo");
       });
-  }
-  setValues(array, fechas) {
-    this.setState({
-      arrayWithData: array,
-      dates: fechas,
-      indicator: false
-    });
   }
   setInitial(date) {
     this.setState({
@@ -292,11 +301,10 @@ class Generation extends Component {
               cardDevice: arrayNameDevices[getIndex],
               cDevice: true,
               cService: false,
-              service: "",
+              service: null,
               device: arrayNameDevices[getIndex]
             },
             () => {
-              this.getCardsData();
               this.getChartData();
             }
           );
@@ -310,7 +318,6 @@ class Generation extends Component {
               device: ""
             },
             () => {
-              this.getCardsData();
               this.getChartData();
             }
           );

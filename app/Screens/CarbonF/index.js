@@ -94,7 +94,6 @@ class Carbon extends Component {
             values: JSON.parse(value)
           },
           () => {
-            this.getCardsData();
             this.getChartData();
           }
         );
@@ -109,13 +108,16 @@ class Carbon extends Component {
       indicator: true,
       cards: false
     });
-    var serv = "Servicio%201";
-    var url = `http://api.ienergybook.com/api/DesignatedMeters/carbonFootprint?company_id=${(this.props.adminIds = !""
-      ? this.props.adminIds.company_id
-      : this.state.values.companyId)}&service_name=${
-      this.state.cDevice ? this.state.cardDevice : serv
+    const url = `http://api.ienergybook.com/api/DesignatedMeters/carbonFootprint?company_id=${
+      this.props.adminIds.company_id != ""
+        ? this.props.adminIds.company_id
+        : this.state.values.companyId
+    }&service_name=${
+      this.state.cDevice
+        ? this.state.cardDevice
+        : this.state.cardService.replace(" ", "%20")
     }&access_token=${this.state.values.accesToken}`;
-
+    console.log(url);
     fetch(url, {
       method: "GET",
       headers: {
@@ -129,11 +131,14 @@ class Carbon extends Component {
         return Promise.all([this.state.statusCode, data]);
       })
       .then(json => {
-        this.setState({
-          indicator: false,
-          response: json[1].response,
-          cards: true
-        });
+        this.setState(
+          {
+            indicator: false,
+            response: json[1].response,
+            cards: true
+          },
+          () => {}
+        );
       })
       .catch(err => {
         console.log("no  se pudo");
@@ -147,6 +152,14 @@ class Carbon extends Component {
     this.setState({
       indicator: true
     });
+    console.log("CHART DATA: ");
+    console.log(this.state.values.accesToken);
+    const id =
+      this.props.adminIds.meter_id != ""
+        ? this.props.adminIds.meter_id
+        : this.props.readings.meterId;
+    console.log(id);
+
     fetch(
       `http://api.ienergybook.com/api/Meters/co2e?access_token=${this.state.values.accesToken}`,
       {
@@ -210,6 +223,7 @@ class Carbon extends Component {
           dates: fechas,
           indicator: false
         });
+        this.getCardsData();
       })
       .catch(err => {
         console.log("no  se pudo");
@@ -296,7 +310,6 @@ class Carbon extends Component {
               device: arrayNameDevices[getIndex]
             },
             () => {
-              this.getCardsData();
               this.getChartData();
             }
           );
@@ -310,7 +323,6 @@ class Carbon extends Component {
               device: ""
             },
             () => {
-              this.getCardsData();
               this.getChartData();
             }
           );
@@ -342,7 +354,6 @@ class Carbon extends Component {
       () => {
         if (filtro != -1) {
           this.getChartData();
-          this.getCardsData();
         }
       }
     );
@@ -365,11 +376,6 @@ class Carbon extends Component {
         });
       }
     }
-    const uno = screenHeight;
-    const dos = screenWidth;
-
-    const unou = screenWidth;
-    const dosd = screenHeight;
     return (
       <SafeAreaView>
         <ScrollView>

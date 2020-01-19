@@ -24,11 +24,16 @@ import Register from "./app/Screens/Register";
 import FirstScreen from "./app/Screens/FirstScreen";
 import PasswordChange from "./app/Screens/PasswordChange";
 import PrincipalScreen from "./app/Screens/PrincipalScreen";
+import Help from "./app/Screens/Help";
+
+import HelpSvg from "./app/Assets/Svg/Help.svg";
+import HelpS from "./app/Assets/Svg/HelpS.svg";
 
 import InfoSvg from "./app/Assets/Svg/Info.svg";
 import ProfileSvg from "./app/Assets/Svg/Perfil.svg";
 import NotificationSvg from "./app/Assets/Svg/Noti.svg";
 import DashSvg from "./app/Assets/Svg/Dash.svg";
+import Icon from "react-native-vector-icons/Ionicons";
 
 import DashSelect from "./app/Assets/Svg/dashS.svg";
 import ProfileSelect from "./app/Assets/Svg/perfilS.svg";
@@ -92,6 +97,20 @@ export default class App extends Component {
                 <InfoSelect style={styles.icon} />
               ) : (
                 <InfoSvg style={styles.icon} />
+              );
+              return iconName;
+            }
+          }
+        },
+        Help: {
+          screen: Help,
+          navigationOptions: {
+            tabBarLabel: "Ayuda",
+            tabBarIcon: ({ focused, tintColor }) => {
+              const iconName = focused ? (
+                <HelpS style={styles.icon} />
+              ) : (
+                <HelpSvg style={styles.icon} />
               );
               return iconName;
             }

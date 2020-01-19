@@ -45,7 +45,7 @@ export default class Colors extends Component {
             margin: 5
           }}
         ></View>
-        <Text> Punta </Text>
+        <Text> Base </Text>
         <View
           style={{
             backgroundColor: "#25CEBC",
