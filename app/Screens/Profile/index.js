@@ -20,6 +20,7 @@ import ProfileMaps from "../../Components/ProfileMaps";
 import Sesion from "../../Assets/Svg/sesion.svg";
 import SesionS from "../../Assets/Svg/sesionS.svg";
 import RNRestart from "react-native-restart";
+import OneSignal from "react-native-onesignal";
 
 const screenHeight = Math.round(Dimensions.get("window").height);
 const screenWidth = Math.round(Dimensions.get("window").width);
@@ -65,6 +66,12 @@ class Profile extends Component {
   };
 
   _signOutAsync = async () => {
+    OneSignal.getTags(receivedTags => {
+      console.log(receivedTags);
+    });
+    console.log(this.state.values.company);
+
+    OneSignal.deleteTag(this.state.values.company);
     this.setState(
       {
         inCaseKey: this.state.values.accesToken
@@ -92,6 +99,15 @@ class Profile extends Component {
   }
 
   render() {
+    var data = [
+      { titulo: "Nombre", valor: this.state.values.company },
+      { titulo: "Teléfono", valor: this.state.values.company_phone },
+      { titulo: "Tamaño de la empresa", valor: this.state.values.size },
+      { titulo: "Puesto", valor: this.state.values.puesto },
+      { titulo: "Giro", valor: this.state.values.giro },
+      { titulo: "Ubicación", valor: this.state.values.direccion }
+    ];
+
     return (
       <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
         <SafeAreaView>
@@ -129,40 +145,22 @@ class Profile extends Component {
                   </Text>
                 </View>
               </View>
+
               <Text style={styles.categoryText}>Email</Text>
               <View style={styles.textView}>
                 <Text style={styles.infoText}>{this.state.values.email}</Text>
               </View>
               <Text style={styles.companyText}>Mi compañía</Text>
-              <Text style={styles.categoryText}>Nombre</Text>
-              <View style={styles.textView}>
-                <Text style={styles.infoText}>{this.state.values.company}</Text>
+              <View>
+                {data.map(file => (
+                  <View>
+                    <Text style={styles.categoryText}>{file.titulo}</Text>
+                    <View style={styles.textView}>
+                      <Text style={styles.infoText}>{file.valor}</Text>
+                    </View>
+                  </View>
+                ))}
               </View>
-              <Text style={styles.categoryText}>Teléfono</Text>
-              <View style={styles.textView}>
-                <Text style={styles.infoText}>
-                  {this.state.values.company_phone}
-                </Text>
-              </View>
-              <Text style={styles.categoryText}>Tamaño de la empresa</Text>
-              <View style={styles.textView}>
-                <Text style={styles.infoText}>{this.state.values.size}</Text>
-              </View>
-              <Text style={styles.categoryText}>Puesto</Text>
-              <View style={styles.textView}>
-                <Text style={styles.infoText}>{this.state.values.puesto}</Text>
-              </View>
-              <Text style={styles.categoryText}>Giro</Text>
-              <View style={styles.textView}>
-                <Text style={styles.infoText}>{this.state.values.giro}</Text>
-              </View>
-              <Text style={styles.categoryText}>Ubicación</Text>
-              <View style={styles.textView}>
-                <Text style={styles.infoText}>
-                  {this.state.values.direccion}
-                </Text>
-              </View>
-
               <View style={styles.button}>
                 <TouchableOpacity
                   onPress={() => this._signOutAsync()}

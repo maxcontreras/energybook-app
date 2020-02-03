@@ -17,6 +17,7 @@ import Logotip from "../../Assets/Images/Logotip.png";
 import LoginFondo from "../../Assets/Images/LoginFondo.jpg";
 import LoginFondoLS from "../../Assets/Images/LoginFondoLS.jpg";
 import Orientation from "react-native-orientation";
+import OneSignal from "react-native-onesignal";
 import { connect } from "react-redux";
 import {
   getUserInfo,
@@ -90,6 +91,7 @@ class Home extends Component {
         return Promise.all([this.state.statusCode, data]);
       })
       .then(json => {
+        console.log(json);
         this.props.dispatch(getUserInfo(json));
         if (this.state.statusCode == 200) {
           this.getCompany();
@@ -162,6 +164,7 @@ class Home extends Component {
         console.log(this.props);
         this._removeKey();
         if (this.props.homeData.companyId) {
+          OneSignal.sendTag(this.props.homeData.company, "1");
           this.Navigate();
         }
       })

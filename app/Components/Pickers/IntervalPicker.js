@@ -111,7 +111,7 @@ export default IntervalPicker;
 
 const styles = StyleSheet.create({
   Picker: {
-    height: 35,
+    height: 30,
     backgroundColor: "white",
     marginLeft: 5,
     borderWidth: 1,
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#737373",
     borderRadius: 20,
-    height: 35,
+    height: 30,
     justifyContent: "center",
     alignItems: "center",
     marginLeft: 5
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     fontSize: 10
   },
   insidePicker: {
-    height: 35,
+    height: 30,
     justifyContent: "center",
     alignItems: "center"
   }

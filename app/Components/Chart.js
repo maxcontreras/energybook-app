@@ -50,7 +50,12 @@ export default class Chart extends Component {
             numberprefix: " ",
             yAxisValueFontSize: "9",
             theme: Platform.OS == "ios" ? "ocean" : "fusion",
-            rotatelabels: "1",
+            labelDisplay: "rotate",
+            labelStep: this.props.numSteps,
+            plottooltext:
+              this.props.screen == "Costs"
+                ? "<div id='divTable'><table id='dataTable' width='200px'><tr class=''><th>Costo total:</th><td>$seriesname</td></tr><tr><th>Base:</th><td>$ydataValue</td></tr><tr><th>Media:</th><td>$xdataValue</td></tr><tr><th>Punta:</th><td>$ydataValue</td></tr></table></div>"
+                : null,
             showValues: "0",
             labelFontSize: "9"
           },

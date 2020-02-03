@@ -129,7 +129,11 @@ class Data extends Component {
     return (
       <View style={styles.container}>
         <Card
-          title={"Precios  CFE del periodo"}
+          title={
+            <View style={styles.titleContainer}>
+              <Text>Precios CFE del periodo</Text>
+            </View>
+          }
           containerStyle={[
             styles.containerCard,
 
@@ -142,13 +146,28 @@ class Data extends Component {
         >
           <View style={styles.innerCard}>
             {data.map(datos => (
-              <View key={key++} style={{ flex: datos.title != " " ? 1 : 0 }}>
+              <View
+                key={key++}
+                style={[
+                  { flex: datos.title != " " ? 1 : 0 },
+                  {
+                    flex:
+                      datos.title == "Base" ||
+                      datos.title == "Media" ||
+                      datos.title == "Punta"
+                        ? 0.8
+                        : 1
+                  }
+                ]}
+              >
                 {datos.title != " " && (
                   <View style={[styles.textPart]}>
                     <Text style={[styles.middleText, styles.titleWeight]}>
                       {datos.title}
                     </Text>
-                    <Text style={styles.middleText}>{datos.price}</Text>
+                    <Text style={[styles.middleText, { fontSize: 10 }]}>
+                      ${(datos.price.slice(1) * 1).toFixed(2)}
+                    </Text>
                   </View>
                 )}
               </View>
@@ -196,21 +215,29 @@ const styles = StyleSheet.create({
       }
     })
   },
-  middleText: { fontSize: 12, marginBottom: 10 },
+  middleText: { fontSize: 11, marginBottom: 10 },
   innerCard: {
     alignItems: "center",
     flexDirection: "row",
-    height: 60,
+    height: 70,
     borderRadius: 10,
-    padding: 10
+    paddingVertical: 10
   },
   textPart: {
     justifyContent: "center",
     flex: 1,
-    height: 60,
-    paddingBottom: 20,
-    padding: 10,
-    alignItems: "flex-start"
+    height: 70,
+    alignItems: "center",
+    paddingVertical: 10
+  },
+  titleContainer: {
+    height: "auto",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#CDCBCB"
   },
   titleWeight: {
     fontWeight: "bold"

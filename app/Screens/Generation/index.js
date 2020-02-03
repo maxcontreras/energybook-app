@@ -19,6 +19,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import FilterPicker from "../../Components/Pickers/FilterPicker.js";
 import ActivityI from "../../Components/ActivityIndicator";
 import DatePicker from "../../Components/Pickers/DatePicker";
+import moment from "moment/min/moment-with-locales";
 
 const mapStateToProps = state => ({
   userData: state.initialValues,
@@ -44,6 +45,8 @@ class Generation extends Component {
       cDevice: false,
       arrayWithData: [],
       dates: [],
+      dias: [],
+      horas: [],
       device: "",
       service: "Servicio 1",
       variable: 0,
@@ -80,7 +83,7 @@ class Generation extends Component {
       header: (
         <SafeAreaView>
           <View style={styles.header}>
-            <HeaderMenu selected={"gene"} />
+            <HeaderMenu selected={"Generation"} />
           </View>
         </SafeAreaView>
       )
@@ -147,14 +150,11 @@ class Generation extends Component {
       });
   }
   getChartData() {
-    this.setState({
-      indicator: true
-    });
-    const id =
+    console.log(
       this.props.adminIds.meter_id != ""
         ? this.props.adminIds.meter_id
-        : this.props.readings.meterId;
-    console.log(id);
+        : this.props.readings.meterId
+    );
     console.log(this.state.device);
     console.log(this.state.service);
     console.log(this.state.filter);
@@ -162,6 +162,13 @@ class Generation extends Component {
     console.log(this.state.variable);
     console.log(this.state.customdates);
 
+    this.setState({
+      indicator: true
+    });
+    const id =
+      this.props.adminIds.meter_id != ""
+        ? this.props.adminIds.meter_id
+        : this.props.readings.meterId;
     fetch(
       `http://api.ienergybook.com/api/Meters/generationReadings?access_token=${this.state.values.accesToken}`,
       {
@@ -205,29 +212,28 @@ class Generation extends Component {
         var array1 = json[1];
         var fechas = [];
         var array = [];
+        var horas = [];
+        var dias = [];
         const puntos = ":";
         for (var i = 0; i < array1.length; i++) {
           array[i] = array1[i];
-          fechas[i] =
-            this.state.filter == 4
-              ? `${array1[i].date.substr(8, 2)}:${array1[i].date.substr(
-                  10,
-                  2
-                )} ${array1[i].date.substr(0, 2)}/${array1[i].date.substr(
-                  2,
-                  2
-                )}/${array1[i].date.substr(6, 2)} 
-        `
-              : array1[i].date
-                  .substr(8, 2)
-                  .concat(puntos.concat(array1[i].date.substr(10, 2)));
+          horas[i] = array1[i].date
+            .substr(8, 2)
+            .concat(puntos.concat(array1[i].date.substr(10, 2)));
+          dias[i] = array1[i].date
+            .substr(4, 4)
+            .concat("-")
+            .concat(array1[i].date.substr(2, 2))
+            .concat("-")
+            .concat(array1[i].date.substr(0, 2));
         }
 
         this.setState(
           {
             arrayWithData: array,
-            dates: fechas,
-            indicator: false
+            indicator: false,
+            dias: dias,
+            horas: horas
           },
           () => {
             this.getCardsData();
@@ -301,7 +307,7 @@ class Generation extends Component {
               cardDevice: arrayNameDevices[getIndex],
               cDevice: true,
               cService: false,
-              service: null,
+              service: "",
               device: arrayNameDevices[getIndex]
             },
             () => {
@@ -326,25 +332,28 @@ class Generation extends Component {
     );
   }
   setFilter(value, texto) {
-    if (value == "Calendario" || texto == "Calendario") {
-      var filtro = -1;
-    } else if (value == "Hoy" || texto == "Hoy") {
-      var filtro = 0;
-    } else if (value == "Ayer" || texto == "Ayer") {
-      var filtro = 1;
-    } else if (value == "Esta semana" || texto == "Esta semana") {
-      var filtro = 2;
-    } else if (value == "Este mes" || texto == "Este mes") {
-      var filtro = 3;
-    } else if (value == "Este año" || texto == "Este año") {
-      var filtro = 4;
+    var steps = this.state.numSteps;
+    var data = [
+      { filterS: "Calendario", filter: -1, steps: steps },
+      { filterS: "Hoy", filter: 0, steps: "1" },
+      { filterS: "Ayer", filter: 1, steps: "1" },
+      { filterS: "Esta Semana", filter: 2, steps: "24" },
+      { filterS: "Este mes", filter: 3, steps: "24" },
+      { filterS: "Este año", filter: 4, steps: "1" }
+    ];
+    for (i in data) {
+      if (value == data[i].filterS || texto == data[i].filterS) {
+        var filtro = data[i].filter;
+        steps = data[i].steps;
+      }
     }
     this.setState(
       {
         filter: filtro,
         customdates: { from: null, until: null },
         calendar: filtro == -1 ? true : false,
-        pickerFValue: value
+        pickerFValue: texto,
+        numSteps: steps
       },
       () => {
         if (filtro != -1) {
@@ -356,17 +365,11 @@ class Generation extends Component {
   setVariabe(value, texto) {
     this.setState(
       {
-        variable: value
+        variable: value,
+        caption: texto
       },
       () => {
-        this.setState(
-          {
-            caption: texto
-          },
-          () => {
-            this.getChartData();
-          }
-        );
+        this.getChartData();
       }
     );
   }
@@ -376,15 +379,66 @@ class Generation extends Component {
     };
     if (this.state.arrayWithData) {
       for (var i in this.state.arrayWithData) {
+        var stringDia = `${moment(this.state.dias[i])
+          .locale("es")
+          .format("dddd")} ${this.state.dias[i].substr(
+          8,
+          this.state.dias[i].length
+        )}`;
+
+        var stringDia1 = stringDia.charAt(0).toUpperCase() + stringDia.slice(1);
+        var stringDia2 = stringDia1.concat(", ").concat(this.state.horas[i]);
+        var stringMonth1 = moment(this.state.dias[i])
+          .locale("es")
+          .format("MMMM");
         var item = this.state.arrayWithData[i];
-        var item2 = this.state.dates[i];
+        var item2 = stringDia2;
+        var item3 = stringMonth1;
 
         chartAxis.data.push({
           label: item2,
+          date: stringMonth1
+            .concat(" ")
+            .concat(this.state.dias[i].substr(0, 4)),
           value: item.value,
-          color: "#1CD6BF"
+          month: stringMonth1,
+          color: "#1CD6BF",
+          toolText: `<div id='divTable'><table id='dataTable' width='100px'><tr class=''><td>${stringDia2}</td></tr><tr><th>${
+            this.state.caption
+          }</th><td>${item.value.toFixed(2)} kWh</td></tr></table></div>`
         });
       }
+      let group = chartAxis.data.reduce((r, a) => {
+        r[a.month] = [...(r[a.month] || []), a];
+        return r;
+      }, {});
+      var group2 = {
+        data: []
+      };
+      for (i in group) {
+        group2.data.push(group[i]);
+      }
+      var arrayPerYear = {
+        data: []
+      };
+      group2.data.forEach(element => {
+        var value = [];
+        for (i in element) {
+          value.push(element[i].value);
+        }
+        var total_year = value.reduce((a, b) => a + b, 0);
+
+        arrayPerYear.data.push({
+          label:
+            element[i].date.charAt(0).toUpperCase() + element[i].date.slice(1),
+          value: total_year,
+          color: element[i].color,
+          toolText: `<div id='divTable'><table id='dataTable' width='100px'><tr class=''><td style="background-color:#1CD6BF;"><th>${
+            this.state.caption
+          }</th><td>${total_year.toFixed(2)} kWh</td></tr></table></div>`
+        });
+      });
+      console.log(arrayPerYear.data);
     }
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -438,7 +492,7 @@ class Generation extends Component {
                     />
                     <CSButtons
                       setFunction={this.setFilter}
-                      texto={"Este Mes"}
+                      texto={"Este mes"}
                       selected={this.state.filter}
                       filter={3}
                     />
@@ -468,7 +522,7 @@ class Generation extends Component {
                 />
                 <CSButtons
                   setFunction={this.setVariabe}
-                  texto={"AutoConsumo"}
+                  texto={"Autoconsumo"}
                   selected={this.state.caption}
                   filter={1}
                   generacion={true}
@@ -496,7 +550,10 @@ class Generation extends Component {
                 <Chart
                   type={"column2d"}
                   caption={this.state.caption}
-                  data={chartAxis.data}
+                  data={
+                    this.state.filter == 4 ? arrayPerYear.data : chartAxis.data
+                  }
+                  numSteps={this.state.numSteps}
                 />
               )}
             </View>
@@ -545,19 +602,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     flexDirection: "row",
-    padding: 10
+    padding: 10,
+    paddingBottom: 5
   },
   topView: {
-    height: 120,
+    height: "auto",
     justifyContent: "center"
   },
   variableView: {
     flexDirection: "row",
-    padding: 10
+    padding: 10,
+    paddingTop: 0
   },
   chart: {
     justifyContent: "center",
-    paddingTop: 5,
     height: "auto"
   },
   scroll: {

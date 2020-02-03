@@ -20,19 +20,19 @@ export default class CardsCompP extends Component {
           value={"kwh"}
           numero={"3"}
           pantalla={this.props.screen}
-          values={this.state.response}
+          values={this.props.response}
         />
         <GenerationCard
           value={this.props.screen == "generacion" ? "$" : "t"}
           numero={this.props.screen == "generacion" ? "3" : "1"}
           pantalla={this.props.screen}
-          values={this.state.response}
+          values={this.props.response}
         />
         <GenerationCard
           value={this.props.screen == "generacion" ? "$" : " "}
           numero={"2"}
           pantalla={this.props.screen}
-          values={this.state.response}
+          values={this.props.response}
         />
       </View>
     );

@@ -19,6 +19,7 @@ import CSButtons from "../../Components/CSButtons.js";
 import FilterPicker from "../../Components/Pickers/FilterPicker";
 import IntervalPicker from "../../Components/Pickers/IntervalPicker";
 import ActivityI from "../../Components/ActivityIndicator";
+import moment from "moment/min/moment-with-locales";
 const screenHeight = Math.round(Dimensions.get("window").height);
 const screenWidth = Math.round(Dimensions.get("window").width);
 
@@ -40,9 +41,11 @@ class ChartScreen extends Component {
       pickerIValue: "15 minutos",
       indicator: false,
       calendar: false,
+      numSteps: "4",
       arrayWithData: [],
       dates: [],
       insents: [],
+      dias: [],
       device: "",
       service: "Servicio 1",
       variable: "EPimp",
@@ -74,7 +77,7 @@ class ChartScreen extends Component {
       header: (
         <SafeAreaView>
           <View style={styles.header}>
-            <HeaderMenu selected={"charts"} />
+            <HeaderMenu selected={"Charts"} />
           </View>
         </SafeAreaView>
       )
@@ -154,24 +157,34 @@ class ChartScreen extends Component {
         var array1 = json[1];
         var fechas = [];
         var array = [];
+        var dias = [];
         const puntos = ":";
         for (var i = 0; i < array1.length; i++) {
           array[i] = array1[i];
           fechas[i] = array1[i].date
             .substr(8, 2)
             .concat(puntos.concat(array1[i].date.substr(10, 2)));
+          dias[i] = array1[i].date
+            .substr(4, 4)
+            .concat("-")
+            .concat(array1[i].date.substr(2, 2))
+            .concat("-")
+            .concat(array1[i].date.substr(0, 2));
         }
-        this.setValues(array, fechas);
+        console.log(dias);
+
+        this.setValues(array, fechas, dias);
       })
       .catch(err => {
         console.log("no se pudo");
       });
   }
-  setValues(array, fechas) {
+  setValues(array, fechas, dias) {
     this.setState({
       arrayWithData: array,
       dates: fechas,
-      indicator: false
+      indicator: false,
+      dias: dias
     });
   }
   setInitial(date) {
@@ -224,7 +237,11 @@ class ChartScreen extends Component {
         if (value == "DP") {
           this.setState(
             {
-              caption: "Demanda"
+              caption: "Demanda",
+              interval: 900,
+              pickerIValue: "15 minutos",
+              numSteps:
+                this.state.filter == 0 || this.state.filter == 1 ? "4" : "96"
             },
             () => {
               this.getChartData();
@@ -243,20 +260,56 @@ class ChartScreen extends Component {
       }
     );
   }
+
   setInterval(value, texto) {
+    var steps = this.state.numSteps;
+    var numSteps = [
+      {
+        filter: -1,
+        min5: this.state.steps,
+        min15: this.state.steps,
+        min30: this.state.steps,
+        hr: this.state.steps
+      },
+      { filter: 0, min5: "12", min15: "4", min30: "2", hr: "1" },
+      { filter: 1, min5: "12", min15: "4", min30: "2", hr: "1" },
+      { filter: 2, min5: "288", min15: "96", min30: "48", hr: "24" },
+      { filter: 3, min5: "288", min15: "96", min30: "48", hr: "24" }
+    ];
     if (value == "15 minutos" || texto == "15 minutos") {
       var intervalo = 900;
+      for (i in numSteps) {
+        if (this.state.filter == numSteps[i].filter) {
+          steps = numSteps[i].min15;
+        }
+      }
     } else if (value == "30 minutos" || texto == "30 minutos") {
       var intervalo = 1800;
+      for (i in numSteps) {
+        if (this.state.filter == numSteps[i].filter) {
+          steps = numSteps[i].min30;
+        }
+      }
     } else if (value == "1 hora" || texto == "1 hora") {
       var intervalo = 3600;
+      for (i in numSteps) {
+        if (this.state.filter == numSteps[i].filter) {
+          steps = numSteps[i].hr;
+        }
+      }
     } else if (value == "5 minutos" || texto == "5 minutos") {
       var intervalo = 300;
+      for (i in numSteps) {
+        if (this.state.filter == numSteps[i].filter) {
+          steps = numSteps[i].min5;
+        }
+      }
     }
     this.setState(
       {
         interval: intervalo,
-        pickerIValue: texto
+        pickerIValue: texto,
+        numSteps: steps
       },
       () => {
         this.getChartData();
@@ -265,23 +318,53 @@ class ChartScreen extends Component {
   }
 
   setFilter(value, texto) {
+    var steps = this.state.numSteps;
+    var numSteps = [
+      { interval: 300, steps1: "12", steps2: "288" },
+      { interval: 900, steps1: "4", steps2: "96" },
+      { interval: 1800, steps1: "2", steps2: "48" },
+      { interval: 3600, steps1: "1", steps2: "24" }
+    ];
+
     if (value == "Calendario" || texto == "Calendario") {
       var filtro = -1;
+      steps = this.state.numSteps;
     } else if (value == "Hoy" || texto == "Hoy") {
       var filtro = 0;
+      for (i in numSteps) {
+        if (this.state.interval == numSteps[i].interval) {
+          steps = numSteps[i].steps1;
+        }
+      }
     } else if (value == "Ayer" || texto == "Ayer") {
       var filtro = 1;
-    } else if (value == "Esta semana" || texto == "Esta semana") {
+      for (i in numSteps) {
+        if (this.state.interval == numSteps[i].interval) {
+          steps = numSteps[i].steps1;
+        }
+      }
+    } else if (value == "Esta Semana" || texto == "Esta Semana") {
       var filtro = 2;
+      for (i in numSteps) {
+        if (this.state.interval == numSteps[i].interval) {
+          steps = numSteps[i].steps2;
+        }
+      }
     } else if (value == "Este mes" || texto == "Este mes") {
       var filtro = 3;
+      for (i in numSteps) {
+        if (this.state.interval == numSteps[i].interval) {
+          steps = numSteps[i].steps2;
+        }
+      }
     }
     this.setState(
       {
         filter: filtro,
         customdates: null,
         calendar: filtro == -1 ? true : false,
-        pickerFValue: value
+        pickerFValue: texto,
+        numSteps: steps
       },
       () => {
         if (filtro != -1) {
@@ -329,17 +412,82 @@ class ChartScreen extends Component {
       }
     );
   }
+
   render() {
+    const data1 = [
+      {
+        titulo: "Calendario",
+        selected: this.state.filter,
+        function: this.Calendario,
+        filter: -1
+      },
+      {
+        titulo: "Hoy",
+        selected: this.state.filter,
+        function: this.setFilter,
+        filter: 0
+      },
+      {
+        titulo: "Ayer",
+        selected: this.state.filter,
+        function: this.setFilter,
+        filter: 1
+      },
+      {
+        titulo: "Esta Semana",
+        selected: this.state.filter,
+        function: this.setFilter,
+        filter: 2
+      },
+      {
+        titulo: "Este mes",
+        selected: this.state.filter,
+        function: this.setFilter,
+        filter: 3
+      }
+    ];
+    const data2 = [
+      {
+        titulo: "1 hora",
+        filter: 3600
+      },
+      {
+        titulo: "30 minutos",
+        filter: 1800
+      },
+      {
+        titulo: "15 minutos",
+        filter: 900
+      },
+      {
+        titulo: "5 minutos",
+        filter: 300
+      }
+    ];
+    var key = 0;
     var chartAxis = {
       data: []
     };
     if (this.state.arrayWithData) {
       for (var i in this.state.arrayWithData) {
+        var stringDia = `${moment(this.state.dias[i])
+          .locale("es")
+          .format("dddd")} ${this.state.dias[i].substr(
+          8,
+          this.state.dias[i].length
+        )}`;
+
+        var stringDia1 = stringDia.charAt(0).toUpperCase() + stringDia.slice(1);
+        var stringDia2 = stringDia1.concat(", ").concat(this.state.dates[i]);
+
         var item = this.state.arrayWithData[i];
         var item2 = this.state.dates[i];
         chartAxis.data.push({
-          label: item2,
-          value: item.value
+          label: stringDia2,
+          value: item.value,
+          toolText: `<div id='divTable'><table id='dataTable' width='100px'><tr class=''><td>${stringDia2}</td></tr><tr ><th>${
+            this.state.caption
+          }</th><td>${item.value.toFixed(2)}</td></tr></table></div>`
         });
       }
     }
@@ -358,13 +506,14 @@ class ChartScreen extends Component {
                   </View>
 
                   <View style={styles.outsideTB}>
-                    {this.state.orientation == "portrait" && (
-                      <IntervalPicker
-                        function={this.setInterval.bind(this)}
-                        selectedValue={this.state.pickerIValue}
-                        screen={"charts"}
-                      />
-                    )}
+                    {this.state.orientation == "portrait" &&
+                      this.state.caption == "Consumo" && (
+                        <IntervalPicker
+                          function={this.setInterval.bind(this)}
+                          selectedValue={this.state.pickerIValue}
+                          screen={"charts"}
+                        />
+                      )}
                     {this.state.orientation == "landscape" && (
                       <View
                         style={{
@@ -373,30 +522,15 @@ class ChartScreen extends Component {
                           justifyContent: "flex-end"
                         }}
                       >
-                        <CSButtons
-                          setFunction={this.setInterval}
-                          texto={"1 hora"}
-                          selected={this.state.interval}
-                          filter={3600}
-                        />
-                        <CSButtons
-                          setFunction={this.setInterval}
-                          texto={"30 minutos"}
-                          selected={this.state.interval}
-                          filter={1800}
-                        />
-                        <CSButtons
-                          setFunction={this.setInterval}
-                          texto={"15 minutos"}
-                          selected={this.state.interval}
-                          filter={900}
-                        />
-                        <CSButtons
-                          setFunction={this.setInterval}
-                          texto={"5 minutos"}
-                          selected={this.state.interval}
-                          filter={300}
-                        />
+                        {data2.map(boton => (
+                          <CSButtons
+                            key={key++}
+                            setFunction={this.setInterval}
+                            texto={boton.titulo}
+                            selected={this.state.interval}
+                            filter={boton.filter}
+                          />
+                        ))}
                       </View>
                     )}
                   </View>
@@ -421,40 +555,20 @@ class ChartScreen extends Component {
                       <FilterPicker
                         function={this.setFilter.bind(this)}
                         selectedValue={this.state.pickerFValue}
+                        screen={"charts"}
                       />
                     )}
                     {this.state.orientation == "landscape" && (
                       <View style={{ flex: 1, flexDirection: "row" }}>
-                        <CSButtons
-                          setFunction={this.Calendario}
-                          texto={"Calendario"}
-                          selected={this.state.filter}
-                          filter={-1}
-                        />
-                        <CSButtons
-                          setFunction={this.setFilter}
-                          texto={"Hoy"}
-                          selected={this.state.filter}
-                          filter={0}
-                        />
-                        <CSButtons
-                          setFunction={this.setFilter}
-                          texto={"Ayer"}
-                          selected={this.state.filter}
-                          filter={1}
-                        />
-                        <CSButtons
-                          setFunction={this.setFilter}
-                          texto={"Esta semana"}
-                          selected={this.state.filter}
-                          filter={2}
-                        />
-                        <CSButtons
-                          setFunction={this.setFilter}
-                          texto={"Este mes"}
-                          selected={this.state.filter}
-                          filter={3}
-                        />
+                        {data1.map(boton => (
+                          <CSButtons
+                            key={key++}
+                            setFunction={boton.function}
+                            texto={boton.titulo}
+                            selected={boton.selected}
+                            filter={boton.filter}
+                          />
+                        ))}
                       </View>
                     )}
                   </View>
@@ -475,6 +589,7 @@ class ChartScreen extends Component {
                     type={"line"}
                     caption={this.state.caption}
                     data={chartAxis.data}
+                    numSteps={this.state.numSteps}
                   />
                 )}
               </View>
@@ -527,7 +642,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "row",
-    marginTop: 20
+    marginTop: 5
   },
   variableButtons: {
     justifyContent: "space-between",

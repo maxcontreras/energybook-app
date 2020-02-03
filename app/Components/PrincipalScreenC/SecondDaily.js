@@ -59,7 +59,12 @@ export default class Daily extends Component {
 
     return (
       <Card
-        title={fecha}
+        title={
+          <View style={styles.titleContainer}>
+            <Text>Hoy</Text>
+            <Text>{fecha}</Text>
+          </View>
+        }
         containerStyle={[
           styles.containerCard,
           {
@@ -74,7 +79,111 @@ export default class Daily extends Component {
         titleStyle={styles.titleStyle}
         wrapperStyle={{ borderRadius: 10 }}
       >
-        <View style={styles.innerCard}>
+        <View>
+          <View style={{ flexDirection: "row", paddingTop: 10 }}>
+            <View
+              style={{
+                flex: 0.5,
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <Icono style={styles.icon} />
+            </View>
+            <View
+              style={{
+                flex: 0.5,
+                justifyContent: "center",
+                alignItems: "flex-start"
+              }}
+            >
+              <Text style={{ fontWeight: "bold", fontSize: 15 }}>
+                {this.props.title}
+              </Text>
+              <Text style={{ fontSize: 12 }}>{this.props.valuekwh}</Text>
+            </View>
+
+            <View
+              style={{
+                flex: 0.75,
+                justifyContent: "flex-end",
+                alignItems: "flex-start"
+              }}
+            >
+              <Text style={{ fontSize: 12 }}>{this.props.valuePrice}</Text>
+            </View>
+          </View>
+
+          <View style={{ flex: 1, flexDirection: "row" }}>
+            <View style={{ flex: 1 }}></View>
+
+            <View
+              style={{
+                flex: 0.75,
+                padding: 10
+              }}
+            >
+              <Text style={{ fontSize: 10 }}>
+                Última actualización: {this.props.ultima}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </Card>
+    );
+  }
+}
+
+var screenHeight = Math.round(Dimensions.get("window").height);
+var screenWidth = Math.round(Dimensions.get("window").width);
+
+const styles = StyleSheet.create({
+  header: {
+    height: 60,
+    justifyContent: "center"
+  },
+  titleStyle: {
+    color: "black",
+    fontSize: 10,
+    fontWeight: "normal",
+    margin: 10,
+    textAlign: "right",
+    height: "auto",
+    justifyContent: "center"
+  },
+  containerCard: {
+    height: 120,
+    padding: 0,
+    borderRadius: 10,
+    ...Platform.select({
+      ios: {
+        shadowRadius: 5,
+        shadowColor: "black",
+        shadowOffset: { width: 5, height: 5 },
+        shadowOpacity: 0.2
+      },
+      android: {
+        elevation: 5
+      }
+    })
+  },
+
+  icon: {
+    height: 35,
+    width: 35
+  },
+  titleContainer: {
+    height: "auto",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#CDCBCB"
+  }
+});
+
+/*  <View style={styles.innerCard}>
           <View style={styles.iconPart}>
             <Icono style={styles.icon} />
           </View>
@@ -92,105 +201,4 @@ export default class Daily extends Component {
               Última actualización: {this.props.ultima}
             </Text>
           </View>
-        </View>
-      </Card>
-    );
-  }
-}
-
-var screenHeight = Math.round(Dimensions.get("window").height);
-var screenWidth = Math.round(Dimensions.get("window").width);
-
-const styles = StyleSheet.create({
-  header: {
-    height: 60,
-    justifyContent: "center"
-  },
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  titleStyle: {
-    color: "black",
-    fontSize: 10,
-    fontWeight: "normal",
-    margin: 10,
-    textAlign: "right",
-    height: "auto",
-    justifyContent: "center"
-  },
-
-  containerCard: {
-    height: 110,
-    padding: 0,
-    borderRadius: 10,
-    ...Platform.select({
-      ios: {
-        shadowRadius: 5,
-        shadowColor: "black",
-        shadowOffset: { width: 5, height: 5 },
-        shadowOpacity: 0.2
-      },
-      android: {
-        elevation: 5
-      }
-    })
-  },
-  middleText: { fontSize: 12 },
-  innerCard: {
-    alignItems: "center",
-    flexDirection: "row",
-    height: 60,
-    borderRadius: 10
-  },
-  iconPart: {
-    justifyContent: "space-between",
-    alignItems: "center",
-    flex: 0.75,
-    height: 60,
-    paddingBottom: 12
-  },
-  textPart: {
-    justifyContent: "space-between",
-    flex: 1,
-    height: 60,
-    paddingBottom: 20,
-    paddingTop: 10
-  },
-  valuePart: {
-    justifyContent: "flex-end",
-    flex: 1,
-    height: 60,
-    paddingBottom: 20,
-    paddingTop: 10,
-    alignItems: "center"
-  },
-  icon: {
-    height: 35,
-    width: 35
-  },
-  priceText: {
-    fontSize: 12,
-    marginRight: 10,
-    textAlign: "right"
-  },
-  ultimaAcualizacion: {
-    justifyContent: "flex-end",
-    flex: 1.7,
-    height: 60,
-    paddingBottom: 20,
-    paddingTop: 10,
-    alignItems: "center"
-  },
-  titleWeight: {
-    fontWeight: "bold"
-  },
-  lastText: {
-    fontSize: 10,
-    marginRight: 10
-  },
-  marginMiddle: {
-    marginTop: 10
-  }
-});
+        </View>*/

@@ -14,6 +14,7 @@ import {
 import RNLocation from "react-native-location";
 const repoUrl = "https://github.com/timfpark/react-native-location";
 import AsyncStorage from "@react-native-community/async-storage";
+import GetLocation from "react-native-get-location";
 
 import Cloudy from "../Assets/WeatherSvg/Cloudy.svg";
 import CloudyDay1 from "../Assets/WeatherSvg/CloudyDay1.svg";
@@ -63,55 +64,40 @@ class Weather extends Component {
     }
   };
 
-  componentWillUnmount() {
-    this._isMounted = false;
-    this._stopUpdatingLocation();
-  }
+  componentWillUnmount() {}
   componentWillMount() {
-    this._isMounted = true;
     this._retrieveData();
-    RNLocation.configure({
-      distanceFilter: 5.0
-    });
-    RNLocation.requestPermission({
-      ios: "whenInUse",
-      android: {
-        detail: "fine",
-        rationale: {
-          title: "Location permission",
-          message: "We use your location to demo the library",
-          buttonPositive: "OK",
-          buttonNegative: "Cancel"
-        }
-      }
-    }).then(granted => {
-      if (granted) {
-        this._startUpdatingLocation();
-      }
-    });
-  }
-  _startUpdatingLocation = () => {
-    this.locationSubscription = RNLocation.subscribeToLocationUpdates(
-      locations => {
-        this.setState({ location: locations[0] }, () => {
-          fetch(`http://api.ienergybook.com/api/DesignatedMeters/getWeather`, {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              lat: this.state.location.latitude,
-              lon: this.state.location.longitude
-            })
-          })
-            .then(res => {
-              this.state.statusCode = res.status;
-              const data = res.json();
-              return Promise.all([this.state.statusCode, data]);
-            })
-            .then(json => {
-              if (this._isMounted) {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 15000
+    })
+      .then(location => {
+        console.log(location);
+        this.setState(
+          {
+            location: location
+          },
+          () => {
+            fetch(
+              `http://api.ienergybook.com/api/DesignatedMeters/getWeather`,
+              {
+                method: "POST",
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                  lat: this.state.location.latitude,
+                  lon: this.state.location.longitude
+                })
+              }
+            )
+              .then(res => {
+                this.state.statusCode = res.status;
+                const data = res.json();
+                return Promise.all([this.state.statusCode, data]);
+              })
+              .then(json => {
                 this.props.dispatch(getWeather(json));
                 this.props.dispatch(
                   setFTcoords(
@@ -119,29 +105,25 @@ class Weather extends Component {
                     this.state.location.longitude
                   )
                 );
-              }
-            })
-            .catch(err => {});
-        });
-      }
-    );
-  };
-  _stopUpdatingLocation = () => {
-    this.locationSubscription && this.locationSubscription();
-    this.setState({ location: null });
-  };
-  _openRepoUrl = () => {
-    Linking.openURL(repoUrl).catch(err =>
-      console.error("An error occurred", err)
-    );
-  };
+              })
+              .catch(err => {});
+          }
+        );
+      })
+      .catch(error => {
+        const { code, message } = error;
+        console.warn(code, message);
+      });
+  }
 
   render() {
-    const { location } = this.state;
+    //const { location } = this.state;
     console.log(this.props);
+    console.log(this.state.location);
+
     return (
       <View style={styles.container}>
-        {location && this.props.datosClima && (
+        {this.state.location && this.props.datosClima && (
           <View style={styles.weather}>
             <View
               style={{
@@ -207,12 +189,15 @@ class Weather extends Component {
                 )}
               </View>
               <Text style={styles.degrees}>
-                {this.props.datosClima.datos.temp}º C
+                {Math.trunc(this.props.datosClima.datos.temp)}º C
               </Text>
             </View>
-            <Text style={styles.description}>
-              {this.props.datosClima.clima}
-            </Text>
+            {this.props.datosClima && (
+              <Text style={styles.description}>
+                {this.props.datosClima.clima.charAt(0).toUpperCase() +
+                  this.props.datosClima.clima.slice(1)}
+              </Text>
+            )}
             {this.props.screen != "SuperAdmin" && (
               <Text style={[styles.description, styles.description2]}>
                 {this.props.adminIds.company_name != ""

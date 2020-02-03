@@ -163,6 +163,7 @@ class Data extends Component {
     const data = [
       {
         title: "Consumo",
+        Icon: Consumo,
         value: this.props.readings.monthlyReadings.consumption
           ? this.props.readings.monthlyReadings.consumption + " kwh"
           : "0 kwh",
@@ -170,6 +171,7 @@ class Data extends Component {
       },
       {
         title: "Distribución",
+        Icon: Distribucion,
         value: this.props.readings.monthlyReadings.distribution
           ? this.props.readings.monthlyReadings.distribution + " kwh"
           : "0 kwh",
@@ -180,6 +182,7 @@ class Data extends Component {
       },
       {
         title: "Capacidad",
+        Icon: Capacidad,
         value: this.props.readings.monthlyReadings.capacity
           ? this.props.readings.monthlyReadings.capacity + " kwh"
           : "0 kwh",
@@ -189,6 +192,7 @@ class Data extends Component {
       },
       {
         title: "FP",
+        Icon: Fp,
         value: this.props.readings.fp ? this.props.readings.fp + " %" : "0%",
         price: " "
       }
@@ -203,7 +207,12 @@ class Data extends Component {
         ]}
       >
         <Card
-          title={fecha}
+          title={
+            <View style={styles.titleContainer}>
+              <Text>Periodo de facturación</Text>
+              <Text>{fecha}</Text>
+            </View>
+          }
           containerStyle={[
             styles.containerCard,
             {
@@ -219,27 +228,52 @@ class Data extends Component {
           wrapperStyle={{ borderRadius: 10 }}
         >
           <View style={styles.innerCard}>
-            <View style={styles.iconPart}>
-              <Consumo style={styles.icon} />
-              <Distribucion style={styles.icon} />
-              <Capacidad style={styles.icon} />
-              <Fp style={styles.icon} />
-            </View>
-            <View style={styles.textPart}>
+            <View>
               {data.map(datos => (
-                <View key={key++}>
-                  <Text style={[styles.middleText, styles.titleWeight]}>
-                    {datos.title}
-                  </Text>
-                  <Text style={styles.middleText}>{datos.value}</Text>
+                <View
+                  key={key++}
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    width:
+                      this.state.orientation == "portrait"
+                        ? Math.min(screenWidth, screenHeight) - 20
+                        : Platform.OS == "android"
+                        ? insetsAndroid
+                        : insetsIos
+                  }}
+                >
+                  <View
+                    style={{
+                      flex: 0.5,
+                      justifyContent: "center",
+                      alignItems: "center"
+                    }}
+                  >
+                    <datos.Icon style={styles.icon} />
+                  </View>
+                  <View
+                    style={{
+                      flex: 0.5,
+                      justifyContent: "center",
+                      alignItems: "flex-start"
+                    }}
+                  >
+                    <Text style={[styles.middleText, styles.titleWeight]}>
+                      {datos.title}
+                    </Text>
+                    <Text style={styles.middleText}>{datos.value}</Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 0.75,
+                      justifyContent: "flex-end",
+                      alignItems: "flex-start"
+                    }}
+                  >
+                    <Text style={styles.priceText}>{datos.price}</Text>
+                  </View>
                 </View>
-              ))}
-            </View>
-            <View style={styles.valuePart}>
-              {data.map(datos => (
-                <Text key={key++} style={styles.priceText}>
-                  {datos.price}
-                </Text>
               ))}
             </View>
           </View>
@@ -268,7 +302,15 @@ const styles = StyleSheet.create({
     height: "auto",
     justifyContent: "center"
   },
-
+  titleContainer: {
+    height: "auto",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#CDCBCB"
+  },
   containerCard: {
     height: 290,
     padding: 0,
@@ -290,61 +332,26 @@ const styles = StyleSheet.create({
   innerCard: {
     alignItems: "center",
     flexDirection: "row",
-    height: 230,
-    borderRadius: 10
-  },
-  iconPart: {
-    justifyContent: "space-between",
-    alignItems: "center",
-    flex: 1,
-    height: 230,
-    paddingTop: 5,
-    paddingBottom: 17
-  },
-  textPart: {
-    justifyContent: "space-between",
-    flex: 1.4,
-    height: 230,
-    paddingBottom: 20,
-    paddingTop: 10,
-    alignItems: "flex-start"
-  },
-  valuePart: {
-    justifyContent: "center",
-    flex: 3,
-    height: 230,
-    alignItems: "flex-start",
+    height: 240,
+    borderRadius: 10,
     paddingTop: 10
   },
+
   icon: {
     height: 35,
     width: 35
   },
   priceText: {
     fontSize: 12,
-    marginRight: 10,
-    textAlign: "right",
-    margin: 17,
-    marginLeft: 15
+    marginBottom: 10,
+    textAlign: "right"
   },
-  ultimaAcualizacion: {
-    justifyContent: "flex-end",
-    flex: 1.7,
-    height: 230,
-    paddingBottom: 20,
-    paddingTop: 10,
-    alignItems: "center"
-  },
+
   titleWeight: {
-    fontWeight: "bold"
+    fontWeight: "bold",
+    fontSize: 15
   },
-  lastText: {
-    fontSize: 10,
-    marginRight: 10
-  },
-  marginMiddle: {
-    marginTop: 10
-  },
+
   pLandscape: {
     paddingBottom: 20
   }

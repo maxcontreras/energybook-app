@@ -18,6 +18,7 @@ import CardsCompL from "../../Components/CardsCompL";
 import AsyncStorage from "@react-native-community/async-storage";
 import ActivityI from "../../Components/ActivityIndicator";
 import DatePicker from "../../Components/Pickers/DatePicker";
+import moment from "moment/min/moment-with-locales";
 
 const mapStateToProps = state => ({
   userData: state.initialValues,
@@ -42,8 +43,11 @@ class Carbon extends Component {
       cService: true,
       cardDevice: null,
       cDevice: false,
+      numSteps: "1",
       arrayWithData: [],
       dates: [],
+      dias: [],
+      horas: [],
       device: "",
       service: "Servicio 1",
       filter: 0,
@@ -78,7 +82,7 @@ class Carbon extends Component {
       header: (
         <SafeAreaView>
           <View style={styles.header}>
-            <HeaderMenu selected={"carbon"} />
+            <HeaderMenu selected={"CarbonF"} />
           </View>
         </SafeAreaView>
       )
@@ -201,27 +205,27 @@ class Carbon extends Component {
         var array1 = json[1];
         var fechas = [];
         var array = [];
+        var horas = [];
+        var dias = [];
+
         const puntos = ":";
         for (var i = 0; i < array1.length; i++) {
           array[i] = array1[i];
-          fechas[i] =
-            this.state.filter == 4
-              ? `${array1[i].date.substr(8, 2)}:${array1[i].date.substr(
-                  10,
-                  2
-                )} ${array1[i].date.substr(0, 2)}/${array1[i].date.substr(
-                  2,
-                  2
-                )}/${array1[i].date.substr(6, 2)} 
-            `
-              : array1[i].date
-                  .substr(8, 2)
-                  .concat(puntos.concat(array1[i].date.substr(10, 2)));
+          horas[i] = array1[i].date
+            .substr(8, 2)
+            .concat(puntos.concat(array1[i].date.substr(10, 2)));
+          dias[i] = array1[i].date
+            .substr(4, 4)
+            .concat("-")
+            .concat(array1[i].date.substr(2, 2))
+            .concat("-")
+            .concat(array1[i].date.substr(0, 2));
         }
         this.setState({
           arrayWithData: array,
-          dates: fechas,
-          indicator: false
+          indicator: false,
+          dias: dias,
+          horas: horas
         });
         this.getCardsData();
       })
@@ -330,26 +334,35 @@ class Carbon extends Component {
       }
     );
   }
+
   setFilter(value, texto) {
+    var steps = this.state.numSteps;
     if (value == "Calendario" || texto == "Calendario") {
       var filtro = -1;
+      steps = steps;
     } else if (value == "Hoy" || texto == "Hoy") {
       var filtro = 0;
+      steps = "1";
     } else if (value == "Ayer" || texto == "Ayer") {
       var filtro = 1;
-    } else if (value == "Esta semana" || texto == "Esta semana") {
+      steps = "1";
+    } else if (value == "Esta Semana" || texto == "Esta Semana") {
       var filtro = 2;
+      steps = "24";
     } else if (value == "Este mes" || texto == "Este mes") {
       var filtro = 3;
+      steps = "24";
     } else if (value == "Este año" || texto == "Este año") {
       var filtro = 4;
+      steps = "1";
     }
     this.setState(
       {
         filter: filtro,
         customdates: { from: null, until: null },
         calendar: filtro == -1 ? true : false,
-        pickerFValue: value
+        pickerFValue: texto,
+        numSteps: steps
       },
       () => {
         if (filtro != -1) {
@@ -360,30 +373,117 @@ class Carbon extends Component {
   }
 
   render() {
+    const data1 = [
+      {
+        titulo: "Calendario",
+        selected: this.state.filter,
+        function: this.Calendario,
+        filter: -1
+      },
+      {
+        titulo: "Hoy",
+        selected: this.state.filter,
+        function: this.setFilter,
+        filter: 0
+      },
+      {
+        titulo: "Ayer",
+        selected: this.state.filter,
+        function: this.setFilter,
+        filter: 1
+      },
+      {
+        titulo: "Esta Semana",
+        selected: this.state.filter,
+        function: this.setFilter,
+        filter: 2
+      },
+      {
+        titulo: "Este mes",
+        selected: this.state.filter,
+        function: this.setFilter,
+        filter: 3
+      },
+      {
+        titulo: "Este año",
+        selected: this.state.filter,
+        function: this.setFilter,
+        filter: 4
+      }
+    ];
     var chartAxis = {
       data: []
     };
     if (this.state.arrayWithData) {
       for (var i in this.state.arrayWithData) {
+        var stringDia = `${moment(this.state.dias[i])
+          .locale("es")
+          .format("dddd")} ${this.state.dias[i].substr(
+          8,
+          this.state.dias[i].length
+        )}`;
+
+        var stringDia1 = stringDia.charAt(0).toUpperCase() + stringDia.slice(1);
+        var stringDia2 = stringDia1.concat(", ").concat(this.state.horas[i]);
+        var stringMonth1 = moment(this.state.dias[i])
+          .locale("es")
+          .format("MMMM");
         var item = this.state.arrayWithData[i];
-        var item2 = this.state.dates[i];
+        var item2 = stringDia2;
+        var item3 = stringMonth1;
 
         chartAxis.data.push({
           label: item2,
+          month: stringMonth1,
+          date: stringMonth1
+            .concat(" ")
+            .concat(this.state.dias[i].substr(0, 4)),
           value: item.co2e,
           color: "#1CD6BF",
-          showLabel: 1
+          toolText: `<div id='divTable'><table id='dataTable' width='100px'><tr class=''><td>${stringDia2}</td></tr><tr ><th>Emisiones: </th><td>${item.co2e.toFixed(
+            2
+          )}</td></tr></table></div>`
         });
       }
+      let group = chartAxis.data.reduce((r, a) => {
+        r[a.month] = [...(r[a.month] || []), a];
+        return r;
+      }, {});
+      var group2 = {
+        data: []
+      };
+      for (i in group) {
+        group2.data.push(group[i]);
+      }
+      var arrayPerYear = {
+        data: []
+      };
+      group2.data.forEach(element => {
+        var co2e = [];
+        for (i in element) {
+          co2e.push(element[i].value);
+        }
+        var total_year = co2e.reduce((a, b) => a + b, 0);
+
+        arrayPerYear.data.push({
+          label:
+            element[i].date.charAt(0).toUpperCase() + element[i].date.slice(1),
+          value: total_year,
+          color: element[i].color,
+          toolText: `<div id='divTable'><table id='dataTable' width='100px'><tr class=''><td style="background-color:#1CD6BF;"><th>Emisiones: </th><td>${total_year.toFixed(
+            2
+          )} T</td></tr></table></div>`
+        });
+      });
     }
+    var key = 0;
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{ flex: 1 }}>
         <ScrollView>
           <View style={styles.container}>
             <View
               style={[
                 styles.topView,
-
                 this.state.orientation == "portrait"
                   ? {
                       width: Math.min(screenWidth, screenHeight),
@@ -413,52 +513,17 @@ class Carbon extends Component {
 
               {this.state.orientation == "landscape" && (
                 <View
-                  style={[
-                    styles.optionButtonsView,
-                    this.state.orientation == "portrait"
-                      ? {
-                          width: Math.min(screenWidth, screenHeight),
-                          justifyContent: "space-between"
-                        }
-                      : { width: null, flex: 1.5 }
-                  ]}
+                  style={[styles.optionButtonsView, { width: null, flex: 1.5 }]}
                 >
-                  <CSButtons
-                    setFunction={this.Calendario}
-                    texto={"Calendario"}
-                    selected={this.state.filter}
-                    filter={-1}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Hoy"}
-                    selected={this.state.filter}
-                    filter={0}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Ayer"}
-                    selected={this.state.filter}
-                    filter={1}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Esta Semana"}
-                    selected={this.state.filter}
-                    filter={2}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Este Mes"}
-                    selected={this.state.filter}
-                    filter={3}
-                  />
-                  <CSButtons
-                    setFunction={this.setFilter}
-                    texto={"Este año"}
-                    selected={this.state.filter}
-                    filter={4}
-                  />
+                  {data1.map(boton => (
+                    <CSButtons
+                      key={key++}
+                      setFunction={boton.function}
+                      texto={boton.titulo}
+                      selected={boton.selected}
+                      filter={boton.filter}
+                    />
+                  ))}
                 </View>
               )}
             </View>
@@ -476,7 +541,10 @@ class Carbon extends Component {
                 <Chart
                   type={"column2d"}
                   caption={this.state.caption}
-                  data={chartAxis.data}
+                  data={
+                    this.state.filter == 4 ? arrayPerYear.data : chartAxis.data
+                  }
+                  numSteps={this.state.numSteps}
                 />
               )}
             </View>
@@ -509,7 +577,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white"
   },
   optionButtonsView: {
-    height: 60,
+    height: "auto",
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "flex-end",

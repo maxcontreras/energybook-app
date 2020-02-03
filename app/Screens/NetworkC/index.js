@@ -20,6 +20,7 @@ import CSButtons from "../../Components/CSButtons.js";
 import FilterPicker from "../../Components/Pickers/FilterPicker.js";
 import VariablePicker from "../../Components/Pickers/VariablePicker.js";
 import ActivityI from "../../Components/ActivityIndicator";
+import moment from "moment/min/moment-with-locales";
 const mapStateToProps = state => ({
   userData: state.initialValues,
   readings: state.dailyReducer,
@@ -40,6 +41,8 @@ class Codes extends Component {
       valores2: [],
       valores3: [],
       horas: null,
+      numSteps: "1",
+      dias: [],
       indicator: false,
       pickerFValue: "Hoy",
       pickerValue: this.props.readings.devices
@@ -81,7 +84,7 @@ class Codes extends Component {
       header: (
         <SafeAreaView>
           <View style={styles.header}>
-            <HeaderMenu selected={"codigo"} />
+            <HeaderMenu selected={"NetworkC"} />
           </View>
         </SafeAreaView>
       )
@@ -173,6 +176,7 @@ class Codes extends Component {
           json[1].Vca || json[1].Ic || json[1].THDIc || json[1].FPc || null;
         const puntos = ":";
         var horas = [];
+        var dias = [];
         this.setState(
           {
             lenght: variable1.length
@@ -183,6 +187,12 @@ class Codes extends Component {
               horas[i] = variable1[i].date
                 .substr(8, 2)
                 .concat(puntos.concat(variable1[i].date.substr(10, 2)));
+              dias[i] = variable1[i].date
+                .substr(4, 4)
+                .concat("-")
+                .concat(variable1[i].date.substr(2, 2))
+                .concat("-")
+                .concat(variable1[i].date.substr(0, 2));
             }
           }
         );
@@ -192,7 +202,8 @@ class Codes extends Component {
             valores1: variable1,
             horas: horas,
             valores2: variable2,
-            valores3: variable3
+            valores3: variable3,
+            dias: dias
           },
           () => {
             this.setValues();
@@ -247,9 +258,49 @@ class Codes extends Component {
     }
   }
   setInterval(value) {
+    var steps = this.state.numSteps;
+    var numSteps = [
+      {
+        filter: -1,
+        min5: this.state.steps,
+        min15: this.state.steps,
+        min30: this.state.steps,
+        hr: this.state.steps
+      },
+      { filter: 0, min5: "12", min15: "4", min30: "2", hr: "1" },
+      { filter: 1, min5: "12", min15: "4", min30: "2", hr: "1" },
+      { filter: 2, min5: "288", min15: "96", min30: "48", hr: "24" }
+    ];
+    if (value == 900) {
+      for (i in numSteps) {
+        if (this.state.filter == numSteps[i].filter) {
+          steps = numSteps[i].min15;
+        }
+      }
+    } else if (value == 1800) {
+      for (i in numSteps) {
+        if (this.state.filter == numSteps[i].filter) {
+          steps = numSteps[i].min30;
+        }
+      }
+    } else if (value == 3600) {
+      for (i in numSteps) {
+        if (this.state.filter == numSteps[i].filter) {
+          steps = numSteps[i].hr;
+        }
+      }
+    } else if (value == 300) {
+      for (i in numSteps) {
+        if (this.state.filter == numSteps[i].filter) {
+          steps = numSteps[i].min5;
+        }
+      }
+    }
+
     this.setState(
       {
-        interval: value
+        interval: value,
+        numSteps: steps
       },
       () => {
         this.getChartData();
@@ -268,23 +319,46 @@ class Codes extends Component {
     );
   }
   setFilter(value, texto) {
+    var steps = this.state.numSteps;
+    var numSteps = [
+      { interval: 300, steps1: "12", steps2: "288" },
+      { interval: 900, steps1: "4", steps2: "96" },
+      { interval: 1800, steps1: "2", steps2: "48" },
+      { interval: 3600, steps1: "1", steps2: "24" }
+    ];
+
     if (value == "Calendario" || texto == "Calendario") {
       var filtro = -1;
+      steps = this.state.numSteps;
     } else if (value == "Hoy" || texto == "Hoy") {
       var filtro = 0;
+      for (i in numSteps) {
+        if (this.state.interval == numSteps[i].interval) {
+          steps = numSteps[i].steps1;
+        }
+      }
     } else if (value == "Ayer" || texto == "Ayer") {
       var filtro = 1;
-    } else if (value == "Esta semana" || texto == "Esta semana") {
+      for (i in numSteps) {
+        if (this.state.interval == numSteps[i].interval) {
+          steps = numSteps[i].steps1;
+        }
+      }
+    } else if (value == "Esta Semana" || texto == "Esta Semana") {
       var filtro = 2;
-    } else if (value == "Este mes" || texto == "Este mes") {
-      var filtro = 3;
+      for (i in numSteps) {
+        if (this.state.interval == numSteps[i].interval) {
+          steps = numSteps[i].steps2;
+        }
+      }
     }
     this.setState(
       {
         filter: filtro,
         customdates: null,
         calendar: filtro == -1 ? true : false,
-        pickerFValue: value
+        pickerFValue: texto,
+        numSteps: steps
       },
       () => {
         if (filtro != -1) {
@@ -347,8 +421,17 @@ class Codes extends Component {
       }
     }
     for (i = 0; i < this.state.lenght; i++) {
+      var stringDia = `${moment(this.state.dias[i])
+        .locale("es")
+        .format("dddd")} ${this.state.dias[i].substr(
+        8,
+        this.state.dias[i].length
+      )}`;
+
+      var stringDia1 = stringDia.charAt(0).toUpperCase() + stringDia.slice(1);
+      var stringDia2 = stringDia1.concat(", ").concat(this.state.horas[i]);
       dataHoras.data.push({
-        label: this.state.horas[i]
+        label: stringDia2
       });
     }
     this.setState(
@@ -375,9 +458,9 @@ class Codes extends Component {
         drawcrossline: "1",
         theme: Platform.OS == "ios" ? "ocean" : "fusion",
         setAdaptiveYMin: "1",
-        labelDisplay: "Auto",
+        labelDisplay: "rotate",
         useEllipsesWhenOverflow: "0",
-        rotatelabels: "1",
+        labelStep: this.state.numSteps,
         showValues: "0"
       },
       categories: [
@@ -402,11 +485,6 @@ class Codes extends Component {
         }
       ]
     };
-    const uno = screenHeight;
-    const dos = screenWidth;
-
-    const unou = screenWidth;
-    const dosd = screenHeight;
     return (
       <SafeAreaView>
         <ScrollView>
@@ -482,8 +560,7 @@ class Codes extends Component {
                       style={{
                         justifyContent: "center",
                         alignItems: "center",
-                        width: "100%",
-                        paddingTop: 10
+                        width: "100%"
                       }}
                     >
                       <VariablePicker
@@ -600,7 +677,7 @@ const styles = StyleSheet.create({
   pickers: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingBottom: 10
+    paddingBottom: 5
   },
   container: {
     flex: 1,
@@ -620,9 +697,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   calendarView: {
-    flex: 1,
-    backgroundColor: "white",
-    justifyContent: "space-between"
+    flex: 1
   },
   timeButtons: {
     height: "auto",

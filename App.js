@@ -102,20 +102,6 @@ export default class App extends Component {
             }
           }
         },
-        Help: {
-          screen: Help,
-          navigationOptions: {
-            tabBarLabel: "Ayuda",
-            tabBarIcon: ({ focused, tintColor }) => {
-              const iconName = focused ? (
-                <HelpS style={styles.icon} />
-              ) : (
-                <HelpSvg style={styles.icon} />
-              );
-              return iconName;
-            }
-          }
-        },
         Profile: {
           screen: Profile,
           navigationOptions: {
@@ -171,3 +157,19 @@ const styles = StyleSheet.create({
     width: 24
   }
 });
+
+/*
+        Help: {
+          screen: Help,
+          navigationOptions: {
+            tabBarLabel: "Ayuda",
+            tabBarIcon: ({ focused, tintColor }) => {
+              const iconName = focused ? (
+                <HelpS style={styles.icon} />
+              ) : (
+                <HelpSvg style={styles.icon} />
+              );
+              return iconName;
+            }
+          }
+        },*/

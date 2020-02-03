@@ -17,6 +17,7 @@ import {
   getPrices,
   getFinalPrices
 } from "../../../Actions/Actions.js";
+import Swiper from "react-native-web-swiper";
 
 const mapStateToProps = state => ({
   readings: state.dailyReducer,
@@ -212,7 +213,7 @@ class Daily extends Component {
       this.props.readings.dailyReadings.distribution;
 
     const ultimaActualizacion = this.props.readings.dailyReadings.lastUpdated
-      ? this.props.readings.dailyReadings.lastUpdated.substr(0, 10)
+      ? this.props.readings.dailyReadings.lastUpdated.substr(11, 5)
       : " ";
 
     const data = [
@@ -262,32 +263,25 @@ class Daily extends Component {
 
     const insetsAndroid = Math.max(screenHeight, screenWidth) / 2;
     return (
-      <ScrollView
-        horizontal={true}
-        pagingEnabled={true}
-        showsHorizontalScrollIndicator={true}
-      >
-        {data.map(datos => (
-          <View
-            key={key++}
-            style={[
-              styles.VCstyle,
-              this.state.orientation == "portrait"
-                ? { width: Math.min(screenWidth, screenHeight) }
-                : {
-                    width: Platform.OS == "android" ? insetsAndroid : insetsIos
-                  }
-            ]}
-          >
-            <SecondDaily
-              title={datos.title}
-              valuekwh={datos.valuekwh}
-              valuePrice={datos.valuePrice}
-              ultima={datos.ultima}
-            />
-          </View>
-        ))}
-      </ScrollView>
+      <View style={styles.container}>
+        <Swiper
+          controlsProps={{
+            dotsTouchable: true,
+            nextTitle: ">"
+          }}
+        >
+          {data.map(datos => (
+            <View key={key++} style={[styles.slideContainer, styles.slide1]}>
+              <SecondDaily
+                title={datos.title}
+                valuekwh={datos.valuekwh}
+                valuePrice={datos.valuePrice}
+                ultima={datos.ultima}
+              />
+            </View>
+          ))}
+        </Swiper>
+      </View>
     );
   }
 }
@@ -302,15 +296,20 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     width: screenWidth,
-    height: 150,
+    height: 160,
     paddingTop: 10,
     backgroundColor: "white",
     paddingBottom: 10
   },
-  width: {
-    width: screenWidth
+  container: {
+    height: 180
   },
-  height: {
-    width: screenHeight
+  slideContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 160
+  },
+  slide1: {
+    backgroundColor: "white"
   }
 });

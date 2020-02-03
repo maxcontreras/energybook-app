@@ -50,7 +50,12 @@ class CSButtons extends Component {
           [selected ? styles.selectedButtton : styles.unselectedButton],
           [this.props.generacion ? styles.geneWidth : null],
           this.state.orientation == "portrait"
-            ? { marginLeft: null }
+            ? {
+                marginLeft: null,
+                marginRight: this.props.extraPadding
+                  ? this.props.extraPadding
+                  : null
+              }
             : { marginLeft: 10 }
         ]}
       >
@@ -89,7 +94,7 @@ const styles = StyleSheet.create({
     fontSize: 10
   },
   buttonG: {
-    height: 35,
+    height: 30,
     justifyContent: "center",
     alignItems: "center",
     width: 70

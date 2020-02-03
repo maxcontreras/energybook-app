@@ -56,23 +56,23 @@ export default class GenerationCard extends Component {
         var Icono3 = Inyeccion;
         if (this.props.value == "kwh") {
           var valor1 = this.props.values
-            ? this.props.values.generation.toFixed(3) + " kwh"
+            ? this.props.values.generation.toFixed(2) + " kwh"
             : "0 kwh";
           var valor2 = this.props.values
-            ? this.props.values.selfConsumption.toFixed(3) + " kwh"
+            ? this.props.values.selfConsumption.toFixed(2) + " kwh"
             : "0 kwh";
           var valor3 = this.props.values
-            ? this.props.values.networkInjection.toFixed(3) + " kwh"
+            ? this.props.values.networkInjection.toFixed(2) + " kwh"
             : "0 kwh";
         } else if (this.props.value == "$") {
           var valor1 = this.props.values
-            ? "$ " + this.props.values.generationValue.toFixed(3)
+            ? "$ " + this.props.values.generationValue.toFixed(2)
             : "$0";
           var valor2 = this.props.values
-            ? "$ " + this.props.values.selfConsumptionValue.toFixed(3)
+            ? "$ " + this.props.values.selfConsumptionValue.toFixed(2)
             : "$0";
           var valor3 = this.props.values
-            ? "$ " + this.props.values.networkInjectionValue.toFixed(3)
+            ? "$ " + this.props.values.networkInjectionValue.toFixed(2)
             : "$0";
         }
       } else if (this.props.numero == "2") {
@@ -82,10 +82,10 @@ export default class GenerationCard extends Component {
         var Icono1 = Eco2E;
         var Icono2 = Fe;
         var valor1 = this.props.values
-          ? this.props.values.co2e.toFixed(3) + " " + "t"
+          ? this.props.values.co2e.toFixed(2) + " " + "t"
           : "0 t";
         var valor2 = this.props.values
-          ? this.props.values.emissionFactor.toFixed(3)
+          ? this.props.values.emissionFactor.toFixed(2)
           : 0;
       }
     } else if (this.props.pantalla == "carbon") {
@@ -97,13 +97,13 @@ export default class GenerationCard extends Component {
         var Icono2 = GenIcon;
         var Icono3 = TotalIcon;
         var valor1 = this.props.values
-          ? this.props.values.consumption.toFixed(3) + " kwh"
+          ? this.props.values.consumption.toFixed(2) + " kwh"
           : "0 kwh";
         var valor2 = this.props.values
-          ? this.props.values.generation.toFixed(3) + " kwh"
+          ? this.props.values.generation.toFixed(2) + " kwh"
           : "0 kwh";
         var valor3 = this.props.values
-          ? this.props.values.total.toFixed(3) + " kwh"
+          ? this.props.values.total.toFixed(2) + " kwh"
           : "0 kwh";
       } else if (this.props.numero == "2") {
         var variable1 = "FE";
@@ -112,10 +112,10 @@ export default class GenerationCard extends Component {
         var Icono1 = Fe;
         var Icono2 = LimiteIcon;
         var valor1 = this.props.values
-          ? this.props.values.emissionFactor.toFixed(3)
+          ? this.props.values.emissionFactor.toFixed(2)
           : 0;
         var valor2 = this.props.values
-          ? this.props.values.co2Limit.toFixed(3)
+          ? this.props.values.co2Limit.toFixed(2)
           : 0;
       } else if (this.props.numero == "1") {
         var variable1 = "Eco2e";
@@ -123,7 +123,7 @@ export default class GenerationCard extends Component {
         var variable3 = " ";
         var Icono1 = Eco2E;
         var valor1 = this.props.values
-          ? this.props.values.cO2Emissions.toFixed(3) + " t"
+          ? this.props.values.cO2Emissions.toFixed(2) + " t"
           : "0 t";
       }
     }
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
       }
     })
   },
-  middleText: { fontSize: 12 },
+  middleText: { fontSize: 10 },
   innerCard: {
     alignItems: "center",
     flexDirection: "row",
@@ -248,35 +248,28 @@ const styles = StyleSheet.create({
   },
   textPart: {
     justifyContent: "space-between",
-    flex: 1.5,
+    flex: 1,
     height: 130,
     paddingBottom: 20,
     paddingTop: 10
   },
   valuePart: {
     justifyContent: "space-between",
-    flex: 1,
+    flex: 1.5,
     height: 130,
     paddingBottom: 20,
-    paddingTop: 10,
-    alignItems: "center"
+    paddingTop: 10
   },
   icon: {
     height: 35,
     width: 35
   },
   priceText: {
-    fontSize: 12,
-    marginRight: 10,
+    fontSize: 10,
+    marginRight: 20,
     textAlign: "right"
   },
   height2bottom: {
     height: 100
-  },
-  width: {
-    width: screenHeight / 3.2
-  },
-  height: {
-    width: screenWidth / 3.2
   }
 });

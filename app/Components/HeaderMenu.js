@@ -75,75 +75,59 @@ class HeaderMenu extends Component {
 
   render() {
     console.log("HEADER" + this.props);
+    const data = [
+      {
+        screen: "Charts",
+        Icon: Charts,
+        IconS: ChartSelect,
+        titulo: "Gráficas"
+      },
+      { screen: "Costs", Icon: Costs, IconS: CostSelect, titulo: "Costos" },
+      {
+        screen: "NetworkC",
+        Icon: Code,
+        IconS: CodeSelect,
+        titulo: "Código de red"
+      },
+      {
+        screen: "Record",
+        Icon: Histo,
+        IconS: HistoSelect,
+        titulo: "Historial"
+      },
+      {
+        screen: "CarbonF",
+        Icon: CarbonF,
+        IconS: CarbonSelect,
+        titulo: "Huella de Carbono"
+      },
+      {
+        screen: "Generation",
+        Icon: Generation,
+        IconS: GenerationSelect,
+        titulo: "Generación"
+      }
+    ];
+    var key = 0;
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.menu}>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("Charts")}
-            style={styles.btn}
-          >
-            {this.props.selected == "charts" ? (
-              <ChartSelect style={styles.imageB} />
-            ) : (
-              <Charts style={styles.imageB} />
-            )}
-            <Text style={styles.btnTxt}>Gráficas</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("Costs")}
-            style={styles.btn}
-          >
-            {this.props.selected == "costos" ? (
-              <CostSelect style={styles.imageB} />
-            ) : (
-              <Costs style={styles.imageB} />
-            )}
-            <Text style={styles.btnTxt}>Costos</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("NetworkC")}
-            style={styles.btn}
-          >
-            {this.props.selected == "codigo" ? (
-              <CodeSelect style={styles.imageB} />
-            ) : (
-              <Code style={styles.imageB} />
-            )}
-            <Text style={styles.btnTxt}>Cógido de red</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("Record")}
-            style={styles.btn}
-          >
-            {this.props.selected == "record" ? (
-              <HistoSelect style={styles.imageB} />
-            ) : (
-              <Histo style={styles.imageB} />
-            )}
-            <Text style={styles.btnTxt}>Historial</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("CarbonF")}
-            style={styles.btn}
-          >
-            {this.props.selected == "carbon" ? (
-              <CarbonSelect style={styles.imageB} />
-            ) : (
-              <CarbonF style={styles.imageB} />
-            )}
-            <Text style={styles.btnTxt}>Huella de Carbono</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("Generation")}
-            style={styles.btn}
-          >
-            {this.props.selected == "gene" ? (
-              <GenerationSelect style={styles.imageB} />
-            ) : (
-              <Generation style={styles.imageB} />
-            )}
-            <Text style={styles.btnTxt}>Generación</Text>
-          </TouchableOpacity>
+          {data.map(screens => (
+            <TouchableOpacity
+              onPress={() => this.props.navigation.navigate(screens.screen)}
+              style={styles.btn}
+              key={key++}
+            >
+              {screens.screen == this.props.selected ? (
+                <screens.IconS style={styles.imageB} />
+              ) : (
+                <screens.Icon style={styles.imageB} />
+              )}
+              {screens.screen == this.props.selected && (
+                <Text style={styles.btnTxt}>{screens.titulo}</Text>
+              )}
+            </TouchableOpacity>
+          ))}
         </View>
       </SafeAreaView>
     );
@@ -152,13 +136,9 @@ class HeaderMenu extends Component {
 
 const styles = StyleSheet.create({
   btn: {
-    height: 40,
-    alignItems: "center"
-  },
-  btnLandscape: {
-    height: 40,
+    height: "auto",
     alignItems: "center",
-    transform: [{ rotate: "90deg" }]
+    justifyContent: "center"
   },
   menu: {
     flex: 1,
@@ -168,7 +148,9 @@ const styles = StyleSheet.create({
     borderBottomColor: "#EEEEEE",
     borderBottomWidth: 2,
     width: "auto",
-    padding: 10
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    height: "auto"
   },
   btnTxt: {
     color: "#000000",
@@ -176,8 +158,8 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   imageB: {
-    height: 24,
-    width: 24
+    height: 30,
+    width: 30
   }
 });
 

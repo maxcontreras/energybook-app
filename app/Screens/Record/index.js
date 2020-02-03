@@ -46,7 +46,7 @@ class Record extends Component {
       header: (
         <SafeAreaView>
           <View style={styles.header}>
-            <HeaderMenu selected={"record"} />
+            <HeaderMenu selected={"Record"} />
           </View>
         </SafeAreaView>
       )

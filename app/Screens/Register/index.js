@@ -83,6 +83,26 @@ class Register extends Component {
 
   Registrarse(values) {
     console.log(values);
+    var datos1 = {
+      name: values.name,
+      lastname: values.lastname,
+      email: values.email,
+      password: values.confirmPassword,
+      contact_data: {
+        full_name: `${values.name} ${values.lastname}`,
+        company_name: values.company,
+        business_line: values.businessR,
+        state: values.state,
+        size: values.size,
+        phone: values.phone
+      },
+      free_trial: true,
+      phone: values.phone,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    console.log(JSON.stringify(datos1));
 
     if (this.state.checked == false) {
       Alert.alert("Error", "Favor de aceptar el aviso de privacidad.", [
@@ -109,7 +129,7 @@ class Register extends Component {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
-      fetch("http://192.168.8.44:3000/api/eUsers", {
+      fetch("http://api.ienergybook.com/api/eUsers", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -127,8 +147,14 @@ class Register extends Component {
           if (this.state.statusCode == 200) {
             Alert.alert("Registro completo!", "Por favor, inicia sesión", [
               {
-                text: "Okay",
+                text: "Ok",
                 onPress: () => this.props.navigation.navigate("Home")
+              }
+            ]);
+          } else if (this.state.statusCode == 422) {
+            Alert.alert("Lo sentimos", "Ese correo ya está registrado.", [
+              {
+                text: "Ok"
               }
             ]);
           } else {
@@ -137,7 +163,7 @@ class Register extends Component {
               "Hubo un error al registrar tus datos.",
               [
                 {
-                  text: "Okay"
+                  text: "Ok"
                 }
               ]
             );

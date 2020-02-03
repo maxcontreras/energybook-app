@@ -33,19 +33,20 @@ class FilterPicker extends Component {
     Dimensions.removeEventListener("change");
   }
   render() {
+    var FILTERS = [];
     if (this.props.screen == "network") {
-      var FILTERS = ["Calendario", "Hoy", "Ayer", "Esta semana"];
+      var FILTERS = ["Hoy", "Ayer", "Esta Semana", "Calendario"];
     } else if (this.props.screen == "carbon" || this.props.screen == "gene") {
       var FILTERS = [
-        "Calendario",
         "Hoy",
         "Ayer",
-        "Esta semana",
+        "Esta Semana",
         "Este mes",
-        "Este año"
+        "Este año",
+        "Calendario"
       ];
     } else {
-      var FILTERS = ["Calendario", "Hoy", "Ayer", "Esta semana", "Este mes"];
+      var FILTERS = ["Hoy", "Ayer", "Esta Semana", "Este mes", "Calendario"];
     }
 
     let nextKey = 0;
@@ -99,7 +100,7 @@ class FilterPicker extends Component {
               selectedValue={this.props.selectedValue}
               onValueChange={(itemValue, itemIndex) => {
                 console.log(itemValue);
-                this.props.function(itemValue);
+                this.props.function(itemIndex, itemValue);
               }}
             >
               {FILTERS.map(item => (
@@ -122,7 +123,7 @@ export default FilterPicker;
 
 const styles = StyleSheet.create({
   Picker: {
-    height: 35,
+    height: 30,
     backgroundColor: "white",
     marginLeft: 5,
     borderWidth: 1,
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#737373",
     borderRadius: 20,
-    height: 35,
+    height: 30,
     justifyContent: "center",
     alignItems: "center",
     marginLeft: 5
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
     fontSize: 10
   },
   insidePicker: {
-    height: 35,
+    height: 30,
     justifyContent: "center",
     alignItems: "center"
   }

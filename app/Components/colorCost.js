@@ -25,45 +25,42 @@ export default class Colors extends Component {
   }
 
   render() {
+    const datos1 = [
+      { titulo: "Base", color: "#EDDC44" },
+      { titulo: "Intermedia", color: "#25CEBC" },
+      { titulo: "Punta", color: "#DE3E10" }
+    ];
+    const datos2 = [
+      {
+        titulo: "Diario",
+        color: "#F68C42"
+      }
+    ];
+    var key = 0;
+
+    var array = this.props.color == "Cada Hora" ? datos1 : datos2;
     return (
       <View
         style={[
           styles.container,
           this.state.orientation == "portrait"
-            ? { width: Math.min(screenWidth, screenHeight) }
-            : { width: Math.max(screenWidth, screenHeight) },
-          this.state.orientation == "landscape"
-            ? { marginBottom: 20 }
-            : { marginBottom: null }
+            ? { width: Math.min(screenWidth, screenHeight), marginBottom: null }
+            : { width: Math.max(screenWidth, screenHeight), marginBottom: 20 }
         ]}
       >
-        <View
-          style={{
-            backgroundColor: "#EDDC44",
-            width: 20,
-            height: 20,
-            margin: 5
-          }}
-        ></View>
-        <Text> Base </Text>
-        <View
-          style={{
-            backgroundColor: "#25CEBC",
-            width: 20,
-            height: 20,
-            margin: 5
-          }}
-        ></View>
-        <Text> Intermedia </Text>
-        <View
-          style={{
-            backgroundColor: "#DE3E10",
-            width: 20,
-            height: 20,
-            margin: 5
-          }}
-        ></View>
-        <Text> Punta </Text>
+        {array.map(datos => (
+          <View key={key++} style={styles.innerView}>
+            <View
+              style={[
+                styles.colorSquare,
+                {
+                  backgroundColor: datos.color
+                }
+              ]}
+            ></View>
+            <Text>{datos.titulo}</Text>
+          </View>
+        ))}
       </View>
     );
   }
@@ -75,5 +72,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: "auto",
     backgroundColor: "white"
+  },
+  colorSquare: {
+    width: 20,
+    height: 20,
+    margin: 5
+  },
+  innerView: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 5
   }
 });

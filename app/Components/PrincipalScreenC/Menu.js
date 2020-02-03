@@ -70,7 +70,6 @@ class Menu extends Component {
                 style={styles.btn}
               >
                 <screens.Icon style={styles.imageB} />
-                <Text style={styles.btnTxt}>{screens.titulo}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -109,7 +108,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2
   },
   btn: {
-    height: 40,
+    height: "auto",
+    justifyContent: "center",
     alignItems: "center"
   },
   weather: {
@@ -126,7 +126,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "#EEEEEE",
     borderBottomWidth: 2,
     width: "auto",
-    padding: 10
+    paddingVertical: 10,
+    paddingHorizontal: 20
   },
   scroll: {
     flex: 0,
@@ -139,8 +140,8 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   imageB: {
-    height: 24,
-    width: 24
+    height: 30,
+    width: 30
   }
 });
 

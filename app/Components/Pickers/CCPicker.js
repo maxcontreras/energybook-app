@@ -145,7 +145,7 @@ export default connect(mapStateToProps)(PickerAndroid);
 
 const styles = StyleSheet.create({
   Picker: {
-    height: 35,
+    height: 30,
     backgroundColor: "white",
     borderWidth: 1,
     borderColor: "#737373",
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#737373",
     borderRadius: 20,
-    height: 35,
+    height: 30,
     justifyContent: "center",
     alignItems: "center"
   },
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     fontSize: 10
   },
   insidePicker: {
-    height: 35,
+    height: 30,
     fontSize: 10
   }
 });

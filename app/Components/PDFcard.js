@@ -80,7 +80,7 @@ export default class PDFcard extends Component {
                       </View>
                     </View>
                     <View style={styles.infoContainer2}>
-                      <View style={[styles.infoSeccion, { height: 60 }]}>
+                      <View style={[styles.infoSeccion, { height: "auto" }]}>
                         <Text style={{ fontSize: 10 }}>
                           {`ULTIMA ACTUALIZACIÓN: ${file.date.substr(0, 10)}`}
                         </Text>
@@ -95,7 +95,7 @@ export default class PDFcard extends Component {
                     </View>
                   </View>
                 </Card>
-                <View style={[styles.infoSeccion, { height: 60 }]}>
+                <View style={[styles.infoSeccion, { height: "auto" }]}>
                   <TouchableOpacity
                     style={styles.blueButton}
                     onPress={() => this.goToLink(file.pdfFile)}
@@ -125,7 +125,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    padding: 20,
     justifyContent: "center",
     alignItems: "center",
     borderBottomWidth: 0.2
@@ -133,7 +132,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     height: "auto",
-    paddingBottom: 20,
     backgroundColor: "white"
   },
   tableHeader: {
@@ -179,16 +177,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
-    width: "100%"
+    width: "100%",
+    paddingHorizontal: 10
   },
   infoSeccion: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 10
+    padding: 5
   },
   blueButton: {
-    height: 40,
+    height: 35,
     width: 100,
     borderRadius: 10,
     padding: 10,

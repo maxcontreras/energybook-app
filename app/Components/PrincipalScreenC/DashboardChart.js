@@ -293,7 +293,6 @@ const defaultStyles = StyleSheet.create({
     flex: 0.2,
     flexDirection: "row",
     justifyContent: "space-between",
-    height: 10,
     width: 300,
     backgroundColor: "white"
   },
@@ -323,14 +322,5 @@ const defaultStyles = StyleSheet.create({
   },
   cardLS: {
     height: 50
-  },
-  exteriorV: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "red",
-    paddingBottom: 10
-  },
-  exteriorLS: {
-    padding: 10
   }
 });
