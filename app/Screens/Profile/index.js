@@ -10,13 +10,15 @@ import {
   Dimensions,
   Button,
   TouchableOpacity,
-  RefreshControl
+  RefreshControl,
+  ImageBackground
 } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import Orientation from "react-native-orientation";
 import { connect } from "react-redux";
 import ProfilePic from "../../Assets/Images/temporayProfile.png";
 import ProfileMaps from "../../Components/ProfileMaps";
+import profileBack from "../../Assets/Images/profileBack.jpg";
 import Sesion from "../../Assets/Svg/sesion.svg";
 import SesionS from "../../Assets/Svg/sesionS.svg";
 import RNRestart from "react-native-restart";
@@ -64,7 +66,30 @@ class Profile extends Component {
       }
     } catch (error) {}
   };
-
+  logOut() {
+    fetch(
+      `http://api.ienergybook.com/api/eUsers/logout?access_token=${this.state.values.accesToken}`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ accessToken: this.state.values.accesToken })
+      }
+    )
+      .then(res => {
+        this.state.statusCode = res.status;
+        const data = res.json();
+        return Promise.all([this.state.statusCode, data]);
+      })
+      .then(json => {
+        console.log(json);
+      })
+      .catch(err => {
+        console.log("no se pudo");
+      });
+  }
   _signOutAsync = async () => {
     OneSignal.getTags(receivedTags => {
       console.log(receivedTags);
@@ -77,6 +102,7 @@ class Profile extends Component {
         inCaseKey: this.state.values.accesToken
       },
       async () => {
+        this.logOut();
         await AsyncStorage.clear();
         try {
           await AsyncStorage.setItem("inCaseKey", this.state.inCaseKey, () => {
@@ -113,7 +139,7 @@ class Profile extends Component {
         <SafeAreaView>
           <KeyboardAvoidingView enabled>
             <View style={styles.container}>
-              <View style={styles.userView}>
+              <ImageBackground style={styles.userView} source={profileBack}>
                 <Image style={styles.logo} source={ProfilePic} />
                 <Text
                   style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
@@ -123,7 +149,7 @@ class Profile extends Component {
                 <Text style={{ color: "white", fontSize: 15 }}>
                   {this.state.values.company}
                 </Text>
-              </View>
+              </ImageBackground>
               {this.state.values && (
                 <ProfileMaps
                   lat={
@@ -262,14 +288,13 @@ const styles = StyleSheet.create({
   },
   userView: {
     //  width: screenWidth,
-    height: 350,
-    backgroundColor: "#586365",
+    height: 300,
     justifyContent: "center",
     alignItems: "center"
   },
   logo: {
-    width: 150,
-    height: 150,
+    width: 120,
+    height: 120,
     resizeMode: "contain"
   },
   logoutButton: {

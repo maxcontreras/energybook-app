@@ -84,7 +84,7 @@ class ProfileMaps extends Component {
                 title={this.state.values.company}
                 coordinate={region}
               >
-                <PinGoogleMaps width={60} height={60} />
+                <PinGoogleMaps width={50} height={50} />
               </MapView.Marker>
             </MapView>
           )}
@@ -95,7 +95,7 @@ class ProfileMaps extends Component {
               initialRegion={region}
             >
               <Marker title={this.state.values.company} coordinate={region}>
-                <PinGoogleMaps width={60} height={60} />
+                <PinGoogleMaps width={50} height={50} />
               </Marker>
             </MapView>
           )}
@@ -109,7 +109,7 @@ export default connect(mapStateToProps)(ProfileMaps);
 
 const styles = StyleSheet.create({
   container: {
-    height: 250,
+    height: 200,
     justifyContent: "flex-end",
     alignItems: "center",
     width: "100%"

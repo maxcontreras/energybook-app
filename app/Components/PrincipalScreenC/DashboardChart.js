@@ -157,7 +157,7 @@ class SemiCircleProgress extends Component {
   render() {
     const styles = this.getStyles();
     //console.log(this.props);
-    const insents =
+    const insentsIos =
       (Math.max(screenHeight, screenWidth) -
         (Math.max(
           StaticSafeAreaInsets.safeAreaInsetsTop,

@@ -16,6 +16,7 @@ import Data from "../../Components/PrincipalScreenC/Monthly.js";
 import Menu from "../../Components/PrincipalScreenC/Menu.js";
 import PrecioCFE from "../../Components/PrincipalScreenC/PrecioCFEPeriodo.js";
 import Orientation from "react-native-orientation";
+import PieChart from "../../Components/PrincipalScreenC/PieChart.js";
 import AsyncStorage from "@react-native-community/async-storage";
 
 import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
@@ -146,6 +147,11 @@ class Role2Dashboard extends Component {
                     >
                       <Text style={{ fontSize: 10 }}>kW</Text>
                     </SemiCircleProgress>
+                    <View style={{ flex: 1, height: "auto" }}>
+                      {this.props.adminIds.meter_id != null && (
+                        <PieChart adminMeterId={this.props.adminIds.meter_id} />
+                      )}
+                    </View>
                     <PrecioCFE />
                   </View>
                 )}

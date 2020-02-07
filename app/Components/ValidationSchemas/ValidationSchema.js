@@ -12,7 +12,7 @@ export const validationSchema = yup.object({
     .min(5, "Tu contraseña parece un poco corta"),
   confirmPassword: yup
     .string()
-    .required()
+    .required("Confirmar la contraseña es necesario.")
     .test("passwords-match", "Las contraseñas deben coincidir", function(
       value
     ) {

@@ -189,7 +189,7 @@ class Weather extends Component {
                 )}
               </View>
               <Text style={styles.degrees}>
-                {Math.trunc(this.props.datosClima.datos.temp)}º C
+                {this.props.datosClima.temp}º C
               </Text>
             </View>
             {this.props.datosClima && (

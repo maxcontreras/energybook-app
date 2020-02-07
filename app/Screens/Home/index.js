@@ -82,7 +82,8 @@ class Home extends Component {
       },
       body: JSON.stringify({
         email: this.state.username,
-        password: this.state.password
+        password: this.state.password,
+        ttl: 3600
       })
     })
       .then(res => {
@@ -111,36 +112,47 @@ class Home extends Component {
       })
       .catch(err => {});
   }
-  getCompany() {
+
+  getCompany = async () => {
     console.log(this.props);
-    fetch(
-      `http://api.ienergybook.com/api/eUsers/?filter={"where":{"id":"${this.props.homeData.userId}"}}&access_token=${this.props.homeData.accesToken}`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "appliscation/json"
+
+    const accesToken = await this.props.homeData.accesToken;
+
+    try {
+      var url = `http://api.ienergybook.com/api/eUsers/?filter={"where":{"id":"${this.props.homeData.userId}"}}&access_token=${accesToken}`;
+      console.log(url);
+
+      fetch(
+        `http://api.ienergybook.com/api/eUsers/?filter={"where":{"id":"${this.props.homeData.userId}"}}&access_token=${accesToken}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          }
         }
-      }
-    )
-      .then(res => {
-        this.state.statusCode = res.status;
-        const data = res.json();
-        return Promise.all([this.state.statusCode, data]);
-      })
-      .then(json => {
-        console.log(json);
-        this.props.dispatch(getCompanyId(json));
-        if (this.props.homeData.companyId) {
-          this.getCompanyData();
-        } else {
-          this.Navigate();
-        }
-      })
-      .catch(err => {
-        console.log("no se pudo");
-      });
-  }
+      )
+        .then(res => {
+          this.state.statusCode = res.status;
+          const data = res.json();
+          return Promise.all([this.state.statusCode, data]);
+        })
+        .then(json => {
+          console.log(json);
+          if (this.state.statusCode == 200) {
+            this.props.dispatch(getCompanyId(json));
+            if (this.props.homeData.companyId) {
+              this.getCompanyData();
+            } else {
+              this.Navigate();
+            }
+          }
+        })
+        .catch(err => {
+          console.log("no se pudo");
+        });
+    } catch (exception) {}
+  };
   getCompanyData() {
     console.log(this.props.homeData.companyId);
     fetch(
@@ -259,13 +271,13 @@ class Home extends Component {
               <TextInput
                 style={styles.input}
                 onChangeText={text => this.setState({ username: text })}
-                underlineColorAndroid="#889093"
+                underlineColorAndroid="#ffffff"
                 autoCapitalize="none"
                 returnKeyType="done"
               />
               <Text style={styles.usPassText}>CONTRASEÑA</Text>
               <TextInput
-                underlineColorAndroid="#889093"
+                underlineColorAndroid="#ffffff"
                 secureTextEntry
                 returnKeyType="go"
                 style={styles.input}
@@ -396,6 +408,6 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: "#586365",
     paddingLeft: 10,
-    color: "#889093"
+    color: "#ffffff"
   }
 });

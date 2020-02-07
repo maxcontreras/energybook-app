@@ -27,6 +27,21 @@ import RegisterPicker from "../../Components/Pickers/RegisterPicker";
 import AvisoDePrivacidad from "../../Components/AvisoDePrivacidad";
 import { Overlay } from "react-native-elements";
 
+const data = [
+  { label: "Nombre", formikKey: "name", placeholder: "Nombre" },
+  { label: "Apellido", formikKey: "lastname", placeholder: "Apellido" },
+  { label: "Email", formikKey: "email", placeholder: "Email" },
+  { label: "Contraseña", formikKey: "password", placeholder: "Contraseña" },
+  {
+    label: "Confirmacion",
+    formikKey: "confirmPassword",
+    placeholder: "Confirma tu contraseña"
+  },
+  { label: "Compañia", formikKey: "company", placeholder: "Compañia" },
+  { label: "Telefono", formikKey: "phone", placeholder: "Telefono" },
+  { label: "Estado", formikKey: "state", placeholder: "Estado" }
+];
+
 const StyledInput = ({
   label,
   formikProps,
@@ -83,26 +98,23 @@ class Register extends Component {
 
   Registrarse(values) {
     console.log(values);
-    var datos1 = {
+    const contactData = {
+      full_name: `${values.name} ${values.lastname}`,
+      company_name: values.company,
+      business_line: values.businessR,
+      state: values.state,
+      size: values.size,
+      phone: values.phone
+    };
+    const newUser = {
       name: values.name,
       lastname: values.lastname,
       email: values.email,
       password: values.confirmPassword,
-      contact_data: {
-        full_name: `${values.name} ${values.lastname}`,
-        company_name: values.company,
-        business_line: values.businessR,
-        state: values.state,
-        size: values.size,
-        phone: values.phone
-      },
-      free_trial: true,
-      phone: values.phone,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      phone: values.phone
     };
 
-    console.log(JSON.stringify(datos1));
+    console.log({ contactData, newUser });
 
     if (this.state.checked == false) {
       Alert.alert("Error", "Favor de aceptar el aviso de privacidad.", [
@@ -111,31 +123,13 @@ class Register extends Component {
         }
       ]);
     } else if (this.state.checked == true) {
-      var datos = {
-        name: values.name,
-        lastname: values.lastname,
-        email: values.email,
-        password: values.confirmPassword,
-        contact_data: {
-          full_name: `${values.name} ${values.lastname}`,
-          company_name: values.company,
-          business_line: values.businessR,
-          state: values.state,
-          size: values.size,
-          phone: values.phone
-        },
-        free_trial: true,
-        phone: values.phone,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-      fetch("http://api.ienergybook.com/api/eUsers", {
+      fetch("http://api.ienergybook.com/api/Companies/register", {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(datos)
+        body: JSON.stringify({ contactData: contactData, user: newUser })
       })
         .then(res => {
           this.state.statusCode = res.status;
@@ -225,58 +219,30 @@ class Register extends Component {
               >
                 {formikProps => (
                   <React.Fragment>
-                    <StyledInput
-                      label="Nombre"
-                      formikProps={formikProps}
-                      formikKey={"name"}
-                      placeholder="Nombre"
-                    />
-
-                    <StyledInput
-                      label="Apellido"
-                      formikProps={formikProps}
-                      formikKey={"lastname"}
-                      placeholder="Apellido"
-                    />
-                    <StyledInput
-                      label="Email"
-                      formikProps={formikProps}
-                      formikKey={"email"}
-                      placeholder="Email"
-                    />
-                    <StyledInput
-                      label="Contraseña"
-                      formikProps={formikProps}
-                      formikKey={"password"}
-                      placeholder="Contraseña"
-                      secureTextEntry
-                    />
-                    <StyledInput
-                      label="Confirmacion"
-                      formikProps={formikProps}
-                      formikKey={"confirmPassword"}
-                      placeholder="Confirma tu contraseña"
-                      secureTextEntry
-                    />
-                    <StyledInput
-                      label="Compañia"
-                      formikProps={formikProps}
-                      formikKey={"company"}
-                      placeholder="Compañia"
-                    />
-                    <StyledInput
-                      label="Telefono"
-                      formikProps={formikProps}
-                      formikKey={"phone"}
-                      placeholder="Telefono"
-                      keyboardType="phone-pad"
-                    />
-                    <StyledInput
-                      label="Estado"
-                      formikProps={formikProps}
-                      formikKey={"state"}
-                      placeholder="Estado"
-                    />
+                    {data.map(input => (
+                      <StyledInput
+                        label={input.label}
+                        formikProps={formikProps}
+                        formikKey={input.formikKey}
+                        placeholder={input.placeholder}
+                        secureTextEntry={
+                          input.label == "Contraseña" ||
+                          input.label == "Confirmacion"
+                            ? true
+                            : false
+                        }
+                        autoCapitalize={
+                          input.label == "Estado" ||
+                          input.label == "Nombre" ||
+                          input.label == "Apellido"
+                            ? "sentences"
+                            : "none"
+                        }
+                        keyboardType={
+                          input.label == "Telefono" ? "phone-pad" : "default"
+                        }
+                      />
+                    ))}
                     <View style={styles.container2}>
                       <Text style={{ padding: 10 }}>Giro de tu empresa</Text>
                       <RegisterPicker
