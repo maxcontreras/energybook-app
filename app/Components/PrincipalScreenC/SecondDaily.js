@@ -1,5 +1,12 @@
 import React, { Component, PropTypes } from "react";
-import { View, Text, StyleSheet, Dimensions, Platform } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  Platform,
+  PixelRatio
+} from "react-native";
 import { date, n, mes } from "../Fecha.js";
 import Consumo from "../../Assets/Svg/Consumo.svg";
 import Distribucion from "../../Assets/Svg/Distribucion.svg";
@@ -56,6 +63,23 @@ export default class Daily extends Component {
           ))) /
       2.2;
     const insetsAndroid = Math.max(screenHeight, screenWidth) / 2.2;
+    var titleWeight = 12;
+    var valueWeight = 12;
+
+    if (PixelRatio.get() <= 1) {
+      titleWeight = 12;
+      valueWeight = 11;
+    } else if (PixelRatio.get() <= 2) {
+      titleWeight = 13;
+      valueWeight = 12;
+    } else if (PixelRatio.get() <= 3) {
+      titleWeight = 14;
+      valueWeight = 13;
+    } else if (PixelRatio.get() <= 3.5) {
+      titleWeight = 15;
+      valueWeight = 14;
+    }
+    console.log(PixelRatio.get());
 
     return (
       <Card
@@ -81,48 +105,27 @@ export default class Daily extends Component {
       >
         <View>
           <View style={{ flexDirection: "row", paddingTop: 10 }}>
-            <View
-              style={{
-                flex: 0.5,
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-            >
+            <View style={styles.iconView}>
               <Icono style={styles.icon} />
             </View>
-            <View
-              style={{
-                flex: 0.5,
-                justifyContent: "center",
-                alignItems: "flex-start"
-              }}
-            >
-              <Text style={{ fontWeight: "bold", fontSize: 15 }}>
+            <View style={styles.view1}>
+              <Text style={{ fontWeight: "bold", fontSize: titleWeight }}>
                 {this.props.title}
               </Text>
               <Text style={{ fontSize: 12 }}>{this.props.valuekwh}</Text>
             </View>
 
-            <View
-              style={{
-                flex: 0.75,
-                justifyContent: "flex-end",
-                alignItems: "flex-start"
-              }}
-            >
-              <Text style={{ fontSize: 12 }}>{this.props.valuePrice}</Text>
+            <View style={styles.view2}>
+              <Text style={{ fontSize: valueWeight }}>
+                {this.props.valuePrice}
+              </Text>
             </View>
           </View>
 
           <View style={{ flex: 1, flexDirection: "row" }}>
             <View style={{ flex: 1 }}></View>
 
-            <View
-              style={{
-                flex: 0.75,
-                padding: 10
-              }}
-            >
+            <View style={styles.uaView}>
               <Text style={{ fontSize: 10 }}>
                 Última actualización: {this.props.ultima}
               </Text>
@@ -167,7 +170,6 @@ const styles = StyleSheet.create({
       }
     })
   },
-
   icon: {
     height: 35,
     width: 35
@@ -180,25 +182,25 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderBottomWidth: 0.5,
     borderBottomColor: "#CDCBCB"
+  },
+  iconView: {
+    flex: 0.5,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  view1: {
+    flex: 0.5,
+    justifyContent: "center",
+    alignItems: "flex-start"
+  },
+  view2: {
+    flex: 0.75,
+    justifyContent: "flex-end",
+    alignItems: "flex-start"
+  },
+
+  uaView: {
+    flex: 0.75,
+    padding: 10
   }
 });
-
-/*  <View style={styles.innerCard}>
-          <View style={styles.iconPart}>
-            <Icono style={styles.icon} />
-          </View>
-          <View style={styles.textPart}>
-            <Text style={[styles.middleText, styles.titleWeight]}>
-              {this.props.title}
-            </Text>
-            <Text style={styles.middleText}>{this.props.valuekwh}</Text>
-          </View>
-          <View style={styles.valuePart}>
-            <Text style={styles.priceText}>{this.props.valuePrice}</Text>
-          </View>
-          <View style={styles.ultimaAcualizacion}>
-            <Text style={styles.lastText}>
-              Última actualización: {this.props.ultima}
-            </Text>
-          </View>
-        </View>*/

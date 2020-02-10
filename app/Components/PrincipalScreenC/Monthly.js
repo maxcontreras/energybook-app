@@ -8,7 +8,8 @@ import {
   RefreshControl,
   Dimensions,
   Image,
-  Platform
+  Platform,
+  PixelRatio
 } from "react-native";
 import Hour from "../Hour.js";
 import { date, n, mes } from "../Fecha.js";
@@ -160,6 +161,22 @@ class Data extends Component {
           ))) /
       2.2;
     const insetsAndroid = Math.max(screenHeight, screenWidth) / 2.2;
+    var titleWeight = 12;
+    var valueWeight = 12;
+
+    if (PixelRatio.get() <= 1) {
+      titleWeight = 11;
+      valueWeight = 10;
+    } else if (PixelRatio.get() <= 2) {
+      titleWeight = 12;
+      valueWeight = 11;
+    } else if (PixelRatio.get() <= 3) {
+      titleWeight = 13;
+      valueWeight = 12;
+    } else if (PixelRatio.get() <= 3.5) {
+      titleWeight = 14;
+      valueWeight = 13;
+    }
     const data = [
       {
         title: "Consumo",
@@ -259,10 +276,20 @@ class Data extends Component {
                       alignItems: "flex-start"
                     }}
                   >
-                    <Text style={[styles.middleText, styles.titleWeight]}>
+                    <Text
+                      style={[
+                        styles.middleText,
+                        styles.titleWeightt,
+                        { fontSize: titleWeight }
+                      ]}
+                    >
                       {datos.title}
                     </Text>
-                    <Text style={styles.middleText}>{datos.value}</Text>
+                    <Text
+                      style={[styles.middleText, { fontSize: valueWeight }]}
+                    >
+                      {datos.value}
+                    </Text>
                   </View>
                   <View
                     style={{
@@ -271,7 +298,9 @@ class Data extends Component {
                       alignItems: "flex-start"
                     }}
                   >
-                    <Text style={styles.priceText}>{datos.price}</Text>
+                    <Text style={[styles.priceText, { fontSize: valueWeight }]}>
+                      {datos.price}
+                    </Text>
                   </View>
                 </View>
               ))}
@@ -347,9 +376,8 @@ const styles = StyleSheet.create({
     textAlign: "right"
   },
 
-  titleWeight: {
-    fontWeight: "bold",
-    fontSize: 15
+  titleWeightt: {
+    fontWeight: "bold"
   },
 
   pLandscape: {

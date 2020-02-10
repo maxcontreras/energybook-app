@@ -5,7 +5,8 @@ import {
   Dimensions,
   Platform,
   SafeAreaView,
-  Text
+  Text,
+  ActivityIndicator
 } from "react-native";
 import FusionCharts from "react-native-fusioncharts";
 import { Card } from "react-native-elements";
@@ -17,42 +18,10 @@ import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
 
 const mapStateToProps = state => ({
   readings: state.dailyReducer.devices,
-  meterId: state.dailyReducer.meterId,
+  //meterId: state.dailyReducer.meterId,
   adminIds: state.adminReducer
 });
 
-const dataSource = {
-  type: "pie2d",
-  width: 300,
-  height: 300,
-  dataFormat: "json",
-  chart: {
-    plottooltext: "<b>$percentValue</b> of web servers run on $label servers",
-    showlegend: "1",
-    showpercentvalues: "1",
-    legendposition: "bottom",
-    usedataplotcolorforlabels: "1",
-    theme: "fusion"
-  },
-  data: [
-    {
-      label: "Apache",
-      value: "32647479"
-    },
-    {
-      label: "Microsoft",
-      value: "22100932"
-    },
-    {
-      label: "Zeus",
-      value: "14376"
-    },
-    {
-      label: "Other",
-      value: "18674221"
-    }
-  ]
-};
 class PieChart extends Component {
   constructor(props) {
     const isPortrait = () => {
@@ -63,6 +32,10 @@ class PieChart extends Component {
     this.state = {
       values: [],
       valores: [],
+      totalito: {},
+      indicator: true,
+      meterId: "",
+      noData: false,
       orientation: isPortrait() ? "portrait" : "landscape"
     };
     this.libraryPath = Platform.select({
@@ -80,40 +53,37 @@ class PieChart extends Component {
     this._retrieveData();
   }
 
-  componentWillUpdate() {
-    this._getdata();
-  }
   _retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem("@MySuperStore:key");
       if (value !== null) {
-        this.setState({
-          values: JSON.parse(value)
-        });
+        this.setState(
+          {
+            values: JSON.parse(value)
+          },
+          () => {
+            this._getdata();
+          }
+        );
       }
     } catch (error) {}
   };
 
-  _getdata = async () => {
-    console.log("ENTRO A FUNCION");
-    console.log(this.props.readings);
+  _getdata() {
+    console.log("ENTRO A LA FUNCION");
+    console.log(this.state.values.accesToken);
+    console.log(this.props.meterId);
+    console.log("SHIT");
 
     var array = {
       data: []
     };
-
-    for (var i = 1; i < this.props.readings.length; i++) {
-      array.data.push(this.props.readings[i]);
+    for (var i = 1; i < this.props.devices.length; i++) {
+      array.data.push(this.props.devices[i]);
     }
-
     var PieChart = {
       data: []
     };
-
-    var totalito = {
-      data: []
-    };
-
     array.data.forEach(element => {
       fetch(
         `http://api.ienergybook.com/api/Meters/standardReadings?access_token=${this.state.values.accesToken}`,
@@ -144,39 +114,43 @@ class PieChart extends Component {
         })
         .then(json => {
           console.log(json);
-          console.log(json[1]);
           var consumo = {
             data: []
           };
           for (i in json[1]) {
             consumo.data.push(json[1][i].value);
           }
-          console.log(consumo.data);
-          var totalC = consumo.data
-            .reduce((a, b) => a + b, 0)
-            .toFixed(2)
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-          console.log(totalC);
-
-          totalito.data.push({
+          var totalC = consumo.data.reduce((a, b) => a + b, 0).toFixed(2);
+          PieChart.data.push({
             label: element.description,
             value: totalC
           });
-          console.log(totalito.data);
+          this.setState({
+            totalito: PieChart,
+            indicator: false
+          });
+          if (this.state.statusCode != 200) {
+            this.setState({
+              noData: true
+            });
+          }
         })
         .catch(err => {
           console.log("no se pudo");
+          this.setState({
+            noData: true,
+            indicator: false
+          });
         });
     });
-  };
+  }
+
   componentWillUnmount() {
     Dimensions.removeEventListener("change");
   }
   render() {
-    console.log(this.state.valores);
-
     const insetsAndroid = Math.max(screenHeight, screenWidth) / 2.2;
-    const insents =
+    const insetsIos =
       (Math.max(screenHeight, screenWidth) -
         (Math.max(
           StaticSafeAreaInsets.safeAreaInsetsTop,
@@ -187,6 +161,30 @@ class PieChart extends Component {
             StaticSafeAreaInsets.safeAreaInsetsLeft
           ))) /
       2.2;
+    const dataSource = {
+      type: "pie2d",
+      width: Platform.OS == "android" ? insetsAndroid - 10 : insetsIos - 10,
+      height: 300,
+      dataFormat: "json",
+      chart: {
+        plottooltext: "$label : $value",
+        showlegend: "1",
+        legendposition: "bottom",
+        legendItemFontSize: "10",
+        theme: "fusion",
+        valueFontSize: "10",
+        showNames: "0",
+        pieRadius: "0",
+        showZeroPies: "0",
+        showPercentValues: "0",
+        showPercentInToolTip: "0",
+        showLabels: "0",
+        paletteColors: "#229957, #3598DB",
+        labelDistance: "10"
+      },
+      data: this.state.totalito.data
+    };
+
     return (
       <Card
         containerStyle={[
@@ -199,14 +197,27 @@ class PieChart extends Component {
         ]}
       >
         <View style={styles.chartContainer}>
-          <FusionCharts
-            type={dataSource.type}
-            width={dataSource.width}
-            height={dataSource.height}
-            dataFormat={dataSource.dataFormat}
-            dataSource={dataSource}
-            libraryPath={this.libraryPath} // set the libraryPath property
-          />
+          {this.state.indicator && (
+            <ActivityIndicator size="small" color="#586365" />
+          )}
+          {!this.state.indicator && this.state.noData && (
+            <Text style={styles.error}>
+              Error al obtener lecturas del medidor
+            </Text>
+          )}
+          {!this.state.indicator && !this.state.noData && (
+            <FusionCharts
+              style={{ borderRadius: 10 }}
+              showNames={"0"}
+              showValues={"0"}
+              type={dataSource.type}
+              width={dataSource.width}
+              height={dataSource.height}
+              dataFormat={dataSource.dataFormat}
+              dataSource={dataSource}
+              libraryPath={this.libraryPath} // set the libraryPath property
+            />
+          )}
         </View>
       </Card>
     );
@@ -228,7 +239,8 @@ const styles = StyleSheet.create({
   chartContainer: {
     height: 300,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    borderRadius: 10
   },
   cardStyle: {
     padding: 0,
@@ -244,5 +256,9 @@ const styles = StyleSheet.create({
         elevation: 5
       }
     })
+  },
+  error: {
+    color: "black",
+    fontSize: 10
   }
 });

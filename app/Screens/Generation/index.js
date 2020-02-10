@@ -150,18 +150,6 @@ class Generation extends Component {
       });
   }
   getChartData() {
-    console.log(
-      this.props.adminIds.meter_id != ""
-        ? this.props.adminIds.meter_id
-        : this.props.readings.meterId
-    );
-    console.log(this.state.device);
-    console.log(this.state.service);
-    console.log(this.state.filter);
-    console.log(this.state.interval);
-    console.log(this.state.variable);
-    console.log(this.state.customdates);
-
     this.setState({
       indicator: true
     });

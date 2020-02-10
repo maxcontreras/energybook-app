@@ -50,7 +50,19 @@ class Role2Dashboard extends Component {
   };
   componentWillMount() {
     this._isMounted = true;
+    this._retrieveData();
   }
+
+  _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("meterId");
+      if (value !== null) {
+        this.setState({
+          values: JSON.parse(value)
+        });
+      }
+    } catch (error) {}
+  };
 
   componentDidMount() {
     Orientation.unlockAllOrientations();
@@ -62,6 +74,8 @@ class Role2Dashboard extends Component {
   }
 
   render() {
+    console.log(this.state.values);
+
     const insetsIos =
       (Math.max(screenHeight, screenWidth) -
         (Math.max(
@@ -99,7 +113,10 @@ class Role2Dashboard extends Component {
                       ? { width: Math.min(screenHeight, screenWidth) }
                       : {
                           width:
-                            Platform.OS == "android" ? insetsAndroid : insetsIos
+                            Platform.OS == "android"
+                              ? insetsAndroid
+                              : insetsIos,
+                          justifyContent: "space-between"
                         }
                   ]}
                 >
@@ -120,6 +137,7 @@ class Role2Dashboard extends Component {
                       }
                     />
                   )}
+                  {this.state.orientation == "landscape" && <PrecioCFE />}
                 </View>
                 {this.props.readings && (
                   <View
@@ -147,12 +165,23 @@ class Role2Dashboard extends Component {
                     >
                       <Text style={{ fontSize: 10 }}>kW</Text>
                     </SemiCircleProgress>
-                    <View style={{ flex: 1, height: "auto" }}>
-                      {this.props.adminIds.meter_id != null && (
-                        <PieChart adminMeterId={this.props.adminIds.meter_id} />
-                      )}
+                    <View
+                      style={{
+                        flex: 1,
+                        justifyContent: "flex-end",
+                        paddingBottom: 20
+                      }}
+                    >
+                      {this.props.adminIds.meter_id != null &&
+                        this.props.readings.meterId != "" && (
+                          <PieChart
+                            adminMeterId={this.props.adminIds.meter_id}
+                            devices={this.props.readings.devices}
+                            meterId={this.props.readings.meterId}
+                          />
+                        )}
                     </View>
-                    <PrecioCFE />
+                    {this.state.orientation == "portrait" && <PrecioCFE />}
                   </View>
                 )}
               </View>
@@ -177,8 +206,7 @@ const styles = StyleSheet.create({
   charts: {
     flex: 1,
     paddingTop: 10,
-    alignItems: "center",
-    paddingBottom: 10
+    alignItems: "center"
   },
   container: {
     flex: 1,

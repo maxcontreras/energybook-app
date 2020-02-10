@@ -17,6 +17,9 @@ import { connect } from "react-redux";
 
 import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
 
+const screenHeight = Math.round(Dimensions.get("window").height);
+const screenWidth = Math.round(Dimensions.get("window").width);
+
 const mapStateToProps = state => ({
   userData: state.initialValues,
   //companyId
@@ -26,6 +29,19 @@ const mapStateToProps = state => ({
   prices: state.costReducer[1],
   readings: state.dailyReducer
 });
+
+const insentsIos =
+  (Math.max(screenHeight, screenWidth) -
+    (Math.max(
+      StaticSafeAreaInsets.safeAreaInsetsTop,
+      StaticSafeAreaInsets.safeAreaInsetsRight
+    ) +
+      Math.max(
+        StaticSafeAreaInsets.safeAreaInsetsBottom,
+        StaticSafeAreaInsets.safeAreaInsetsLeft
+      ))) /
+  2.2;
+const insetsAndroid = Math.max(screenHeight, screenWidth) / 2.2;
 
 class SemiCircleProgress extends Component {
   static propTypes = {
@@ -47,7 +63,7 @@ class SemiCircleProgress extends Component {
     progressShadowColor: "silver",
     progressColor: "black",
     interiorCircleColor: "white",
-    circleRadius: 150,
+    circleRadius: 120,
     progressWidth: 60,
     animationSpeed: 2,
     initialPercentage: 0
@@ -157,18 +173,7 @@ class SemiCircleProgress extends Component {
   render() {
     const styles = this.getStyles();
     //console.log(this.props);
-    const insentsIos =
-      (Math.max(screenHeight, screenWidth) -
-        (Math.max(
-          StaticSafeAreaInsets.safeAreaInsetsTop,
-          StaticSafeAreaInsets.safeAreaInsetsRight
-        ) +
-          Math.max(
-            StaticSafeAreaInsets.safeAreaInsetsBottom,
-            StaticSafeAreaInsets.safeAreaInsetsLeft
-          ))) /
-      2.2;
-    const insetsAndroid = Math.max(screenHeight, screenWidth) / 2.2;
+
     return (
       <Card
         containerStyle={[
@@ -243,8 +248,6 @@ class SemiCircleProgress extends Component {
     );
   }
 }
-var screenHeight = Math.round(Dimensions.get("window").height);
-var screenWidth = Math.round(Dimensions.get("window").width);
 
 export default connect(mapStateToProps)(SemiCircleProgress);
 
@@ -287,13 +290,13 @@ const defaultStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "white",
-    width: 300
+    width: 240
   },
   maxMinLandscape: {
     flex: 0.2,
     flexDirection: "row",
     justifyContent: "space-between",
-    width: 300,
+    width: 240,
     backgroundColor: "white"
   },
   view: {

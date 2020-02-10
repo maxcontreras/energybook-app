@@ -5,7 +5,8 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
-  Platform
+  Platform,
+  PixelRatio
 } from "react-native";
 import SecondDaily from "./SecondDaily";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -188,7 +189,8 @@ class Daily extends Component {
 
   _storeData = async () => {
     let datos = {
-      meterId: this.props.meterId
+      meterId: this.props.meterId,
+      devices: this.props.readings.devices
     };
     try {
       await AsyncStorage.setItem("meterId", JSON.stringify(datos), () => {
@@ -262,6 +264,7 @@ class Daily extends Component {
       2;
 
     const insetsAndroid = Math.max(screenHeight, screenWidth) / 2;
+
     return (
       <View style={styles.container}>
         <Swiper

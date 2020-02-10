@@ -82,8 +82,7 @@ class Home extends Component {
       },
       body: JSON.stringify({
         email: this.state.username,
-        password: this.state.password,
-        ttl: 3600
+        password: this.state.password
       })
     })
       .then(res => {
