@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -28,6 +29,7 @@
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		141CA233EEFB479FAEB611F8 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DC5B21B6F21C4BCBA41E3DB9 /* Foundation.ttf */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+		15EB52A6DF3B4DAFAC76CB58 /* libReactNativeGetLocationLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8526665C07647288C3603CB /* libReactNativeGetLocationLibrary.a */; };
 		16B652CC569848FE95A17F69 /* libRNGestureHandler-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8966BB18F7C420EB87BE771 /* libRNGestureHandler-tvOS.a */; };
 		17144891C2A04AD3B2287192 /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86B1E430A44F4DE3B38CF36E /* FontAwesome5_Regular.ttf */; };
 		1AB35545ED764D1186362296 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F69A24BFBEC349C2AEFDB8AC /* Entypo.ttf */; };
@@ -79,7 +81,6 @@
 		ED2971652150620600B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED2971642150620600B7C4FE /* JavaScriptCore.framework */; };
 		F579539D5F9B43DD84A4EE76 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3B6D392015EA4230BC80F575 /* Ionicons.ttf */; };
 		F61B298E8EA24D5D84B7FECE /* libRNStaticSafeAreaInsets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F52B1F8BECC4A4B98E1D67B /* libRNStaticSafeAreaInsets.a */; };
-		15EB52A6DF3B4DAFAC76CB58 /* libReactNativeGetLocationLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8526665C07647288C3603CB /* libReactNativeGetLocationLibrary.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -468,6 +469,13 @@
 			remoteGlobalIDString = 3245CDED1BFEE35C00EABF68;
 			remoteInfo = RCTRestart;
 		};
+		CEBC8E8123F1D18500305BC7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 45AB2D198D4B489EA89268DF /* ReactNativeGetLocation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A5AF7CE21FAA17C900C5BDC0;
+			remoteInfo = ReactNativeGetLocationLibrary;
+		};
 		CEF9931C23A0902500A64B3E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 48D79A6C4E32491983147211 /* RCTOneSignal.xcodeproj */;
@@ -535,6 +543,7 @@
 		39D412AE5F284F2CB2C82481 /* libRNSVG-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNSVG-tvOS.a"; sourceTree = "<group>"; };
 		3B6D392015EA4230BC80F575 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		3FAAFA5BFFD24CB281B457B9 /* libRNLocation.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNLocation.a; sourceTree = "<group>"; };
+		45AB2D198D4B489EA89268DF /* ReactNativeGetLocation.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeGetLocation.xcodeproj; path = "../node_modules/react-native-get-location/ios/ReactNativeGetLocation.xcodeproj"; sourceTree = "<group>"; };
 		48430058916D4E08BE95308F /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		48D79A6C4E32491983147211 /* RCTOneSignal.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTOneSignal.xcodeproj; path = "../node_modules/react-native-onesignal/ios/RCTOneSignal.xcodeproj"; sourceTree = "<group>"; };
 		4BD2375C639B4E2198306F78 /* RNLocation.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNLocation.xcodeproj; path = "../node_modules/react-native-location/ios/RNLocation.xcodeproj"; sourceTree = "<group>"; };
@@ -572,6 +581,7 @@
 		CE943AAA23A160F8000B8106 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		CE943AAC23A16108000B8106 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		CE9D3B502384413800249733 /* AirMaps.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirMaps.xcodeproj; path = "../node_modules/react-native-maps/lib/ios/AirMaps.xcodeproj"; sourceTree = "<group>"; };
+		D8526665C07647288C3603CB /* libReactNativeGetLocationLibrary.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libReactNativeGetLocationLibrary.a; sourceTree = "<group>"; };
 		DA463ECC2AE746B68D37F5CB /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		DC5B21B6F21C4BCBA41E3DB9 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		E52C3308C4664869A97879FD /* libRNVectorIcons-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNVectorIcons-tvOS.a"; sourceTree = "<group>"; };
@@ -583,8 +593,6 @@
 		F69A24BFBEC349C2AEFDB8AC /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		FA0D716856734F6FBBC1596C /* RCTOrientation.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTOrientation.xcodeproj; path = "../node_modules/react-native-orientation/iOS/RCTOrientation.xcodeproj"; sourceTree = "<group>"; };
 		FB450997095646DC958E01C5 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
-		45AB2D198D4B489EA89268DF /* ReactNativeGetLocation.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativeGetLocation.xcodeproj"; path = "../node_modules/react-native-get-location/ios/ReactNativeGetLocation.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		D8526665C07647288C3603CB /* libReactNativeGetLocationLibrary.a */ = {isa = PBXFileReference; name = "libReactNativeGetLocationLibrary.a"; path = "libReactNativeGetLocationLibrary.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -954,6 +962,7 @@
 				14F70C22DF944CA094105F01 /* libRNFetchBlob.a */,
 				4F52B1F8BECC4A4B98E1D67B /* libRNStaticSafeAreaInsets.a */,
 				F19743CBFFFF4E59B2BB6FDB /* libRCTRestart.a */,
+				D8526665C07647288C3603CB /* libReactNativeGetLocationLibrary.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -1055,6 +1064,14 @@
 			isa = PBXGroup;
 			children = (
 				CEAB4DBE23CCDCFC00B847B3 /* libRCTRestart.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CEBC8E7E23F1D18500305BC7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CEBC8E8223F1D18500305BC7 /* libReactNativeGetLocationLibrary.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1282,6 +1299,10 @@
 				{
 					ProductGroup = 146834001AC3E56700842450 /* Products */;
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+				},
+				{
+					ProductGroup = CEBC8E7E23F1D18500305BC7 /* Products */;
+					ProjectRef = 45AB2D198D4B489EA89268DF /* ReactNativeGetLocation.xcodeproj */;
 				},
 				{
 					ProductGroup = CE9D3B1E2384281200249733 /* Products */;
@@ -1700,6 +1721,13 @@
 			remoteRef = CEAB4DBD23CCDCFC00B847B3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		CEBC8E8223F1D18500305BC7 /* libReactNativeGetLocationLibrary.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libReactNativeGetLocationLibrary.a;
+			remoteRef = CEBC8E8123F1D18500305BC7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		CEF9931D23A0902500A64B3E /* libRCTOneSignal.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1904,7 +1932,7 @@
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)/../node_modules/react-native-static-safe-area-insets/ios",
 					"$(SRCROOT)..\node_modules\neact-native-restartiosRCTRestart",
-					"$(SRCROOT)\..\node_modules\react-native-get-location\ios\ReactNativeGetLocationLibrary",
+					"$(SRCROOT)..\node_modules\neact-native-get-locationiosReactNativeGetLocationLibrary",
 				);
 				INFOPLIST_FILE = IenergybookTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -1949,7 +1977,7 @@
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)/../node_modules/react-native-static-safe-area-insets/ios",
 					"$(SRCROOT)..\node_modules\neact-native-restartiosRCTRestart",
-					"$(SRCROOT)\..\node_modules\react-native-get-location\ios\ReactNativeGetLocationLibrary",
+					"$(SRCROOT)..\node_modules\neact-native-get-locationiosReactNativeGetLocationLibrary",
 				);
 				INFOPLIST_FILE = IenergybookTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -2020,7 +2048,7 @@
 					"eact-native-restartiosRCTRestart",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/RCTOneSignal/**",
-					"$(SRCROOT)\..\node_modules\react-native-get-location\ios\ReactNativeGetLocationLibrary",
+					"$(SRCROOT)..\node_modules\neact-native-get-locationiosReactNativeGetLocationLibrary",
 				);
 				INFOPLIST_FILE = Ienergybook/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -2081,7 +2109,7 @@
 					"eact-native-restartiosRCTRestart",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/RCTOneSignal/**",
-					"$(SRCROOT)\..\node_modules\react-native-get-location\ios\ReactNativeGetLocationLibrary",
+					"$(SRCROOT)..\node_modules\neact-native-get-locationiosReactNativeGetLocationLibrary",
 				);
 				INFOPLIST_FILE = Ienergybook/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -2124,7 +2152,7 @@
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)/../node_modules/react-native-static-safe-area-insets/ios",
 					"$(SRCROOT)..\node_modules\neact-native-restartiosRCTRestart",
-					"$(SRCROOT)\..\node_modules\react-native-get-location\ios\ReactNativeGetLocationLibrary",
+					"$(SRCROOT)..\node_modules\neact-native-get-locationiosReactNativeGetLocationLibrary",
 				);
 				INFOPLIST_FILE = "Ienergybook-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -2177,7 +2205,7 @@
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)/../node_modules/react-native-static-safe-area-insets/ios",
 					"$(SRCROOT)..\node_modules\neact-native-restartiosRCTRestart",
-					"$(SRCROOT)\..\node_modules\react-native-get-location\ios\ReactNativeGetLocationLibrary",
+					"$(SRCROOT)..\node_modules\neact-native-get-locationiosReactNativeGetLocationLibrary",
 				);
 				INFOPLIST_FILE = "Ienergybook-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -2229,7 +2257,7 @@
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)/../node_modules/react-native-static-safe-area-insets/ios",
 					"$(SRCROOT)..\node_modules\neact-native-restartiosRCTRestart",
-					"$(SRCROOT)\..\node_modules\react-native-get-location\ios\ReactNativeGetLocationLibrary",
+					"$(SRCROOT)..\node_modules\neact-native-get-locationiosReactNativeGetLocationLibrary",
 				);
 				INFOPLIST_FILE = "Ienergybook-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -2281,7 +2309,7 @@
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)/../node_modules/react-native-static-safe-area-insets/ios",
 					"$(SRCROOT)..\node_modules\neact-native-restartiosRCTRestart",
-					"$(SRCROOT)\..\node_modules\react-native-get-location\ios\ReactNativeGetLocationLibrary",
+					"$(SRCROOT)..\node_modules\neact-native-get-locationiosReactNativeGetLocationLibrary",
 				);
 				INFOPLIST_FILE = "Ienergybook-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";

@@ -219,6 +219,29 @@ class Register extends Component {
               >
                 {formikProps => (
                   <React.Fragment>
+                    <View style={styles.container2}>
+                      <Text style={{ padding: 10 }}>Giro de tu empresa</Text>
+                      <RegisterPicker
+                        tipo={"giro"}
+                        function={formikProps.handleChange}
+                        selectedValue={formikProps.values.businessR}
+                      />
+                      <Text style={styles.alert}>
+                        {formikProps.touched.businessR &&
+                          formikProps.errors.businessR}
+                      </Text>
+                      <Text style={{ padding: 10 }}>
+                        ¿Cuántas personas trabajan en tu empresa?
+                      </Text>
+                      <RegisterPicker
+                        tipo={"numPersonas"}
+                        function={formikProps.handleChange}
+                        selectedValue={formikProps.values.size}
+                      />
+                      <Text style={styles.alert}>
+                        {formikProps.touched.size && formikProps.errors.size}
+                      </Text>
+                    </View>
                     {data.map(input => (
                       <StyledInput
                         label={input.label}

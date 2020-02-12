@@ -485,6 +485,79 @@ class Codes extends Component {
         }
       ]
     };
+    const data1 = [
+      {
+        titulo: "Calendario",
+        selected: this.state.filter,
+        function: this.Calendario,
+        filter: -1
+      },
+      {
+        titulo: "Hoy",
+        selected: this.state.filter,
+        function: this.setFilter,
+        filter: 0
+      },
+      {
+        titulo: "Ayer",
+        selected: this.state.filter,
+        function: this.setFilter,
+        filter: 1
+      },
+      {
+        titulo: "Esta semana",
+        selected: this.state.filter,
+        function: this.setFilter,
+        filter: 2
+      }
+    ];
+    const data2 = [
+      {
+        titulo: "1 hora",
+        filter: 3600
+      },
+      {
+        titulo: "30 minutos",
+        filter: 1800
+      },
+      {
+        titulo: "15 minutos",
+        filter: 900
+      },
+      {
+        titulo: "5 minutos",
+        filter: 300
+      }
+    ];
+    const data3 = [
+      {
+        titulo: "Voltaje",
+
+        filter: ["Vab", "Vbc", "Vca"]
+      },
+      {
+        titulo: "Amperaje",
+        filter: ["Ia", "Ib", "Ic"]
+      },
+      {
+        titulo: "THD",
+        filter: ["THDIa", "THDIb", "THDIc"]
+      },
+      {
+        titulo: "Desbalance",
+        filter: ["Vunbl", "Iunbl"]
+      },
+      {
+        titulo: "kVA",
+        filter: ["Ssist"]
+      },
+      {
+        titulo: "FP",
+        filter: ["FPa", "FPb", "FPc"]
+      }
+    ];
+
+    var key = 0;
     return (
       <SafeAreaView>
         <ScrollView>
@@ -506,43 +579,17 @@ class Codes extends Component {
                   )}
                   {this.state.orientation == "landscape" && (
                     <View style={[styles.variableView]}>
-                      <CSButtons
-                        setFunction={this.setVariabe}
-                        texto={"Voltaje"}
-                        selected={this.state.caption}
-                        filter={["Vab", "Vbc", "Vca"]}
-                      />
-                      <CSButtons
-                        setFunction={this.setVariabe}
-                        texto={"Amperaje"}
-                        selected={this.state.caption}
-                        filter={["Ia", "Ib", "Ic"]}
-                      />
-                      <CSButtons
-                        setFunction={this.setVariabe}
-                        texto={"THD"}
-                        selected={this.state.caption}
-                        filter={["THDIa", "THDIb", "THDIc"]}
-                      />
-                      <CSButtons
-                        setFunction={this.setVariabe}
-                        texto={"Desbalance"}
-                        selected={this.state.caption}
-                        //Vunbl y Iunbl
-                        filter={["Vunbl", "Iunbl"]}
-                      />
-                      <CSButtons
-                        setFunction={this.setVariabe}
-                        texto={"kVA"}
-                        selected={this.state.caption}
-                        filter={["Ssist"]}
-                      />
-                      <CSButtons
-                        setFunction={this.setVariabe}
-                        texto={"FP"}
-                        selected={this.state.caption}
-                        filter={["FPa", "FPb", "FPc"]}
-                      />
+                      {data3.map(boton => (
+                        <CSButtons
+                          key={key++}
+                          setFunction={this.setVariabe}
+                          texto={boton.titulo}
+                          selected={this.state.caption}
+                          filter={boton.filter}
+                          width={Math.min(screenWidth, screenHeight) / 5.5}
+                          marginLeft={5}
+                        />
+                      ))}
                     </View>
                   )}
                 </View>
@@ -571,30 +618,16 @@ class Codes extends Component {
                   )}
                   {this.state.orientation == "landscape" && (
                     <View style={styles.optionButtonsView}>
-                      <CSButtons
-                        setFunction={this.Calendario}
-                        texto={"Calendario"}
-                        selected={this.state.filter}
-                        filter={-1}
-                      />
-                      <CSButtons
-                        setFunction={this.setFilter}
-                        texto={"Hoy"}
-                        selected={this.state.filter}
-                        filter={0}
-                      />
-                      <CSButtons
-                        setFunction={this.setFilter}
-                        texto={"Ayer"}
-                        selected={this.state.filter}
-                        filter={1}
-                      />
-                      <CSButtons
-                        setFunction={this.setFilter}
-                        texto={"Esta Semana"}
-                        selected={this.state.filter}
-                        filter={2}
-                      />
+                      {data1.map(boton => (
+                        <CSButtons
+                          setFunction={boton.function}
+                          texto={boton.titulo}
+                          selected={boton.selected}
+                          filter={boton.filter}
+                          width={Math.min(screenWidth, screenHeight) / 5.5}
+                          marginLeft={5}
+                        />
+                      ))}
                     </View>
                   )}
                 </View>
@@ -627,30 +660,17 @@ class Codes extends Component {
               )}
             </View>
             <View style={[styles.timeButtons]}>
-              <CSButtons
-                setFunction={this.setInterval}
-                texto={"1 Hora"}
-                selected={this.state.interval}
-                filter={3600}
-              />
-              <CSButtons
-                setFunction={this.setInterval}
-                texto={"30 minutos"}
-                selected={this.state.interval}
-                filter={1800}
-              />
-              <CSButtons
-                setFunction={this.setInterval}
-                texto={"15 minutos"}
-                selected={this.state.interval}
-                filter={900}
-              />
-              <CSButtons
-                setFunction={this.setInterval}
-                texto={"5 minutos"}
-                selected={this.state.interval}
-                filter={300}
-              />
+              {data2.map(boton => (
+                <CSButtons
+                  key={key++}
+                  setFunction={this.setInterval}
+                  texto={boton.titulo}
+                  selected={this.state.interval}
+                  filter={boton.filter}
+                  width={Math.min(screenWidth, screenHeight) / 5.5}
+                  marginLeft={5}
+                />
+              ))}
             </View>
           </View>
         </ScrollView>

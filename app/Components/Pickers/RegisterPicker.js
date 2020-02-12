@@ -6,7 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Picker,
-  Platform, 
+  Platform,
   ActionSheetIOS
 } from "react-native";
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -45,11 +45,11 @@ class RegisterPicker extends Component {
                 ActionSheetIOS.showActionSheetWithOptions(
                   {
                     options: FILTERS.concat("Cancelar"),
-                    cancelButtonIndex: FILTERS.length 
+                    cancelButtonIndex: FILTERS.length
                   },
                   buttonIndex => {
                     if (buttonIndex != FILTERS.indexOf("Cancelar")) {
-                      this.props.function(FILTERS[buttonIndex]);
+                      this.props.function(handleChange);
                     }
                   }
                 )

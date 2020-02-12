@@ -37,6 +37,10 @@ class IntervalPicker extends Component {
       this.props.screen == "charts"
         ? ["15 minutos", "5 minutos", "30 minutos", "1 hora"]
         : ["15 minutos", "30 minutos", "1 hora"];
+    const VARIABLES =
+      this.props.screen == "charts"
+        ? [900, 300, 1800, 3600]
+        : [900, 1800, 3600];
     let nextKey = 0;
     return (
       <View>
@@ -51,7 +55,10 @@ class IntervalPicker extends Component {
                   },
                   buttonIndex => {
                     if (buttonIndex != FILTERS.indexOf("Cancelar")) {
-                      this.props.function(FILTERS[buttonIndex]);
+                      this.props.function(
+                        VARIABLES[buttonIndex],
+                        FILTERS[buttonIndex]
+                      );
                     }
                   }
                 )

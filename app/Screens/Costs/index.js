@@ -474,13 +474,16 @@ class Costs extends Component {
                       texto={"Cada Hora"}
                       selected={this.state.newInterval}
                       filter={-1}
-                      extraPadding={10}
+                      width={Math.min(screenWidth, screenHeight) / 5.6}
+                      marginLeft={5}
                     />
                     <CSButtons
                       setFunction={this.setNewInterval.bind(this)}
                       texto={"Cada Dia"}
                       selected={this.state.newInterval}
                       filter={0}
+                      width={Math.min(screenWidth, screenHeight) / 5.6}
+                      marginLeft={5}
                     />
                   </View>
                 )}
@@ -502,6 +505,8 @@ class Costs extends Component {
                     texto={boton.titulo}
                     selected={boton.selected}
                     filter={boton.filter}
+                    width={Math.min(screenWidth, screenHeight) / 5.6}
+                    marginLeft={boton.titulo == "Calendario" ? 0 : 5}
                   />
                 ))}
               </View>
@@ -516,12 +521,16 @@ class Costs extends Component {
                     texto={"Cada Hora"}
                     selected={this.state.newInterval}
                     filter={-1}
+                    width={Math.min(screenWidth, screenHeight) / 5.6}
+                    marginLeft={5}
                   />
                   <CSButtons
                     setFunction={this.setNewInterval.bind(this)}
                     texto={"Cada Dia"}
                     selected={this.state.newInterval}
                     filter={0}
+                    width={Math.min(screenWidth, screenHeight) / 5.6}
+                    marginLeft={5}
                   />
                 </View>
               </View>

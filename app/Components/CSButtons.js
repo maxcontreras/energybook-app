@@ -48,15 +48,9 @@ class CSButtons extends Component {
           styles.buttonG,
           styles.elevation,
           [selected ? styles.selectedButtton : styles.unselectedButton],
-          [this.props.generacion ? styles.geneWidth : null],
-          this.state.orientation == "portrait"
-            ? {
-                marginLeft: null,
-                marginRight: this.props.extraPadding
-                  ? this.props.extraPadding
-                  : null
-              }
-            : { marginLeft: 10 }
+          { width: this.props.width },
+          { marginLeft: this.props.marginLeft },
+          { marginRight: this.props.marginRight }
         ]}
       >
         <Text
@@ -87,17 +81,18 @@ const styles = StyleSheet.create({
   },
   unselectedButtonText: {
     color: "black",
-    fontSize: 10
+    fontSize: 10,
+    textAlign: "center"
   },
   selectedButttonText: {
     color: "#FFFFFF",
-    fontSize: 10
+    fontSize: 10,
+    textAlign: "center"
   },
   buttonG: {
     height: 30,
     justifyContent: "center",
-    alignItems: "center",
-    width: 70
+    alignItems: "center"
   },
   geneWidth: {
     width: 90

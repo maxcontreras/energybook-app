@@ -8,7 +8,8 @@ import {
   RefreshControl,
   Dimensions,
   Image,
-  Platform
+  Platform,
+  PixelRatio
 } from "react-native";
 import Orientation from "react-native-orientation";
 import { connect } from "react-redux";
@@ -59,7 +60,7 @@ class Data extends Component {
 
   render() {
     console.log(this.state.values.tipoTarifa);
-    const insetsIOS =
+    const insetsIos =
       (Math.max(screenHeight, screenWidth) -
         (Math.max(
           StaticSafeAreaInsets.safeAreaInsetsTop,
@@ -126,12 +127,30 @@ class Data extends Component {
     ];
 
     var key = 0;
+    var titleWeight = 12;
+    var valueWeight = 12;
+
+    if (PixelRatio.get() <= 1) {
+      titleWeight = 9;
+      valueWeight = 8;
+    } else if (PixelRatio.get() <= 2) {
+      titleWeight = 10;
+      valueWeight = 9;
+    } else if (PixelRatio.get() <= 3) {
+      titleWeight = 11;
+      valueWeight = 10;
+    } else if (PixelRatio.get() <= 3.5) {
+      titleWeight = 12;
+      valueWeight = 11;
+    }
     return (
       <View style={styles.container}>
         <Card
           title={
             <View style={styles.titleContainer}>
-              <Text>Precios CFE del periodo</Text>
+              <Text style={{ fontSize: valueWeight }}>
+                Precios CFE del periodo
+              </Text>
             </View>
           }
           containerStyle={[
@@ -162,10 +181,14 @@ class Data extends Component {
               >
                 {datos.title != " " && (
                   <View style={[styles.textPart]}>
-                    <Text style={[styles.middleText, styles.titleWeight]}>
+                    <Text
+                      style={[{ fontSize: valueWeight }, styles.titleWeight]}
+                    >
                       {datos.title}
                     </Text>
-                    <Text style={[styles.middleText, { fontSize: 10 }]}>
+                    <Text
+                      style={[styles.middleText, { fontSize: valueWeight }]}
+                    >
                       ${(datos.price.slice(1) * 1).toFixed(2)}
                     </Text>
                   </View>

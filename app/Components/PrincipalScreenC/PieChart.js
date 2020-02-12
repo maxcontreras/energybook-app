@@ -171,7 +171,7 @@ class PieChart extends Component {
         showlegend: "1",
         legendposition: "bottom",
         legendItemFontSize: "10",
-        theme: "fusion",
+        theme: Platform.OS == "ios" ? "ocean" : "fusion",
         valueFontSize: "10",
         showNames: "0",
         pieRadius: "0",

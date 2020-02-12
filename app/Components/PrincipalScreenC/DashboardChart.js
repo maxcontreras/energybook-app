@@ -30,7 +30,7 @@ const mapStateToProps = state => ({
   readings: state.dailyReducer
 });
 
-const insentsIos =
+const insetsIos =
   (Math.max(screenHeight, screenWidth) -
     (Math.max(
       StaticSafeAreaInsets.safeAreaInsetsTop,

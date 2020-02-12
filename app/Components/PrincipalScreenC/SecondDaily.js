@@ -67,17 +67,17 @@ export default class Daily extends Component {
     var valueWeight = 12;
 
     if (PixelRatio.get() <= 1) {
+      titleWeight = 11;
+      valueWeight = 10;
+    } else if (PixelRatio.get() <= 2) {
       titleWeight = 12;
       valueWeight = 11;
-    } else if (PixelRatio.get() <= 2) {
+    } else if (PixelRatio.get() <= 3) {
       titleWeight = 13;
       valueWeight = 12;
-    } else if (PixelRatio.get() <= 3) {
+    } else if (PixelRatio.get() <= 3.5) {
       titleWeight = 14;
       valueWeight = 13;
-    } else if (PixelRatio.get() <= 3.5) {
-      titleWeight = 15;
-      valueWeight = 14;
     }
     console.log(PixelRatio.get());
 
@@ -85,8 +85,8 @@ export default class Daily extends Component {
       <Card
         title={
           <View style={styles.titleContainer}>
-            <Text>Hoy</Text>
-            <Text>{fecha}</Text>
+            <Text style={{ fontSize: valueWeight }}>Hoy</Text>
+            <Text style={{ fontSize: valueWeight }}>{fecha}</Text>
           </View>
         }
         containerStyle={[
@@ -112,7 +112,9 @@ export default class Daily extends Component {
               <Text style={{ fontWeight: "bold", fontSize: titleWeight }}>
                 {this.props.title}
               </Text>
-              <Text style={{ fontSize: 12 }}>{this.props.valuekwh}</Text>
+              <Text style={{ fontSize: valueWeight }}>
+                {this.props.valuekwh}
+              </Text>
             </View>
 
             <View style={styles.view2}>

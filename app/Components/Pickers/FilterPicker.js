@@ -48,6 +48,14 @@ class FilterPicker extends Component {
     } else {
       var FILTERS = ["Hoy", "Ayer", "Esta Semana", "Este mes", "Calendario"];
     }
+    var VARIABLES = [];
+    if (this.props.screen == "network") {
+      var VARIABLES = [0, 1, 2, -1];
+    } else if (this.props.screen == "carbon" || this.props.screen == "gene") {
+      var VARIABLES = [0, 1, 2, 3, 4, -1];
+    } else {
+      var VARIABLES = [0, 1, 2, 3, -1];
+    }
 
     let nextKey = 0;
     return (
@@ -63,7 +71,10 @@ class FilterPicker extends Component {
                   },
                   buttonIndex => {
                     if (buttonIndex != FILTERS.indexOf("Cancelar")) {
-                      this.props.function(FILTERS[buttonIndex]);
+                      this.props.function(
+                        VARIABLES[buttonIndex],
+                        FILTERS[buttonIndex]
+                      );
                     }
                   }
                 )

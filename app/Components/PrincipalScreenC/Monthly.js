@@ -226,8 +226,8 @@ class Data extends Component {
         <Card
           title={
             <View style={styles.titleContainer}>
-              <Text>Periodo de facturación</Text>
-              <Text>{fecha}</Text>
+              <Text style={{fontSize: valueWeight}}>Periodo de facturación</Text>
+              <Text style={{fontSize: valueWeight}}>{fecha}</Text>
             </View>
           }
           containerStyle={[

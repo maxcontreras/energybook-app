@@ -522,6 +522,8 @@ class Carbon extends Component {
                       texto={boton.titulo}
                       selected={boton.selected}
                       filter={boton.filter}
+                      width={Math.min(screenWidth, screenHeight) / 5.5}
+                      marginLeft={5}
                     />
                   ))}
                 </View>

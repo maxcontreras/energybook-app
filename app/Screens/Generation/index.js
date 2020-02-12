@@ -428,6 +428,47 @@ class Generation extends Component {
       });
       console.log(arrayPerYear.data);
     }
+    const data1 = [
+      {
+        titulo: "Calendario",
+        filter: -1
+      },
+      {
+        titulo: "Hoy",
+        filter: 0
+      },
+      {
+        titulo: "Ayer",
+        filter: 1
+      },
+      {
+        titulo: "Esta Semana",
+        filter: 2
+      },
+      {
+        titulo: "Este mes",
+        filter: 3
+      },
+      {
+        titulo: "Este año",
+        filter: 4
+      }
+    ];
+    const data2 = [
+      {
+        titulo: "Generación",
+        filter: ["Vunbl", "Iunbl"]
+      },
+      {
+        titulo: "Autoconsumo",
+        filter: ["Ssist"]
+      },
+      {
+        titulo: `Inyección${"\n"}a la red`,
+        filter: ["FPa", "FPb", "FPc"]
+      }
+    ];
+    var key = 0;
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView style={styles.scroll} keyboardShouldPersistTaps="never">
@@ -454,42 +495,21 @@ class Generation extends Component {
                 )}
                 {this.state.orientation == "landscape" && (
                   <View style={styles.optionButtonsView}>
-                    <CSButtons
-                      setFunction={this.Calendario}
-                      texto={"Calendario"}
-                      selected={this.state.filter}
-                      filter={-1}
-                    />
-                    <CSButtons
-                      setFunction={this.setFilter}
-                      texto={"Hoy"}
-                      selected={this.state.filter}
-                      filter={0}
-                    />
-                    <CSButtons
-                      setFunction={this.setFilter}
-                      texto={"Ayer"}
-                      selected={this.state.filter}
-                      filter={1}
-                    />
-                    <CSButtons
-                      setFunction={this.setFilter}
-                      texto={"Esta Semana"}
-                      selected={this.state.filter}
-                      filter={2}
-                    />
-                    <CSButtons
-                      setFunction={this.setFilter}
-                      texto={"Este mes"}
-                      selected={this.state.filter}
-                      filter={3}
-                    />
-                    <CSButtons
-                      setFunction={this.setFilter}
-                      texto={"Este año"}
-                      selected={this.state.filter}
-                      filter={4}
-                    />
+                    {data1.map(boton => (
+                      <CSButtons
+                        key={key++}
+                        setFunction={
+                          boton.titulo == "Calendario"
+                            ? this.Calendario
+                            : this.setFilter
+                        }
+                        texto={boton.titulo}
+                        selected={this.state.filter}
+                        filter={boton.filter}
+                        width={Math.min(screenWidth, screenHeight) / 5}
+                        marginLeft={5}
+                      />
+                    ))}
                   </View>
                 )}
               </View>
@@ -501,27 +521,17 @@ class Generation extends Component {
                     : { alignItems: "flex-end", justifyContent: "flex-end" }
                 ]}
               >
-                <CSButtons
-                  setFunction={this.setVariabe}
-                  texto={"Generación"}
-                  selected={this.state.caption}
-                  filter={0}
-                  generacion={true}
-                />
-                <CSButtons
-                  setFunction={this.setVariabe}
-                  texto={"Autoconsumo"}
-                  selected={this.state.caption}
-                  filter={1}
-                  generacion={true}
-                />
-                <CSButtons
-                  setFunction={this.setVariabe}
-                  texto={"Inyección a la red"}
-                  selected={this.state.caption}
-                  filter={2}
-                  generacion={true}
-                />
+                {data2.map(boton => (
+                  <CSButtons
+                    key={key++}
+                    setFunction={this.setVariabe}
+                    texto={boton.titulo}
+                    selected={this.state.caption}
+                    filter={boton.filter}
+                    width={Math.min(screenWidth, screenHeight) / 5}
+                    marginLeft={5}
+                  />
+                ))}
               </View>
             </View>
             {this.state.calendar && (

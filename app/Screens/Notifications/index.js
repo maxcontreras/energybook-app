@@ -8,7 +8,8 @@ import {
   Platform,
   ScrollView,
   SafeAreaView,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  PixelRatio
 } from "react-native";
 import HeaderMenu from "../../Components/HeaderMenu.js";
 import OneSignal from "react-native-onesignal";
@@ -147,6 +148,22 @@ export default class Notifications extends Component {
   };
 
   render() {
+    var titleWeight = 12;
+    var valueWeight = 12;
+
+    if (PixelRatio.get() <= 1) {
+      titleWeight = 11;
+      valueWeight = 10;
+    } else if (PixelRatio.get() <= 2) {
+      titleWeight = 12;
+      valueWeight = 11;
+    } else if (PixelRatio.get() <= 3) {
+      titleWeight = 13;
+      valueWeight = 12;
+    } else if (PixelRatio.get() <= 3.5) {
+      titleWeight = 14;
+      valueWeight = 13;
+    }
     var key = 0;
     console.log(this.state.new_notifications.length);
     return (
@@ -173,17 +190,32 @@ export default class Notifications extends Component {
                 <View key={key++} style={styles.notificationView}>
                   <View style={styles.notificationTopView}>
                     {device.tipo == "Semanal" && (
-                      <Text style={styles.notificationTitle}>
+                      <Text
+                        style={[
+                          styles.notificationTitle,
+                          { fontSize: titleWeight }
+                        ]}
+                      >
                         Costo de consumo de la semana pasada!
                       </Text>
                     )}
                     {device.tipo == "Diaria" && (
-                      <Text style={styles.notificationTitle}>
+                      <Text
+                        style={[
+                          styles.notificationTitle,
+                          { fontSize: titleWeight }
+                        ]}
+                      >
                         Costo de consumo del día de ayer!
                       </Text>
                     )}
                     {device.tipo == "Mensual" && (
-                      <Text style={styles.notificationTitle}>
+                      <Text
+                        style={[
+                          styles.notificationTitle,
+                          { fontSize: titleWeight }
+                        ]}
+                      >
                         Costo de consumo del mes pasado!
                       </Text>
                     )}
@@ -197,7 +229,13 @@ export default class Notifications extends Component {
                   >
                     <View style={{ flex: 1, flexDirection: "column" }}>
                       {device.Servicios.map(mensaje => (
-                        <Text key={key++} style={styles.mensajeText}>
+                        <Text
+                          key={key++}
+                          style={[
+                            styles.mensajeText,
+                            { fontSize: valueWeight }
+                          ]}
+                        >
                           {mensaje.substr(0, 8) == "Servicio"
                             ? `${mensaje.substr(0, 10)}: $${mensaje.substr(
                                 11,
@@ -220,17 +258,32 @@ export default class Notifications extends Component {
                 <View key={key++} style={styles.notificationView}>
                   <View style={styles.notificationTopView}>
                     {device.tipo == "Semanal" && (
-                      <Text style={styles.notificationTitle}>
+                      <Text
+                        style={[
+                          styles.notificationTitle,
+                          { fontSize: titleWeight }
+                        ]}
+                      >
                         Costo de consumo de la semana pasada!
                       </Text>
                     )}
                     {device.tipo == "Diaria" && (
-                      <Text style={styles.notificationTitle}>
+                      <Text
+                        style={[
+                          styles.notificationTitle,
+                          { fontSize: titleWeight }
+                        ]}
+                      >
                         Costo de consumo del día de ayer!
                       </Text>
                     )}
                     {device.tipo == "Mensual" && (
-                      <Text style={styles.notificationTitle}>
+                      <Text
+                        style={[
+                          styles.notificationTitle,
+                          { fontSize: titleWeight }
+                        ]}
+                      >
                         Costo de consumo del mes pasado!
                       </Text>
                     )}
@@ -244,7 +297,13 @@ export default class Notifications extends Component {
                   >
                     <View style={{ flex: 1, flexDirection: "column" }}>
                       {device.Servicios.map(mensaje => (
-                        <Text key={key++} style={styles.mensajeText}>
+                        <Text
+                          key={key++}
+                          style={[
+                            styles.mensajeText,
+                            { fontSize: valueWeight }
+                          ]}
+                        >
                           {mensaje.substr(0, 8) == "Servicio"
                             ? `${mensaje.substr(0, 10)}: $${mensaje.substr(
                                 11,

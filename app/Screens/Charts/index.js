@@ -529,6 +529,8 @@ class ChartScreen extends Component {
                             texto={boton.titulo}
                             selected={this.state.interval}
                             filter={boton.filter}
+                            width={Math.min(screenWidth, screenHeight) / 5}
+                            marginLeft={5}
                           />
                         ))}
                       </View>
@@ -542,12 +544,15 @@ class ChartScreen extends Component {
                       texto={"Consumo"}
                       selected={this.state.caption}
                       filter={"EPimp"}
+                      width={Math.min(screenWidth, screenHeight) / 5}
+                      marginRight={5}
                     />
                     <CSButtons
                       setFunction={this.setVariabe}
                       texto={"Demanda"}
                       selected={this.state.caption}
                       filter={"DP"}
+                      width={Math.min(screenWidth, screenHeight) / 5}
                     />
                   </View>
                   <View style={styles.filterOptions}>
@@ -567,6 +572,8 @@ class ChartScreen extends Component {
                             texto={boton.titulo}
                             selected={boton.selected}
                             filter={boton.filter}
+                            width={Math.min(screenWidth, screenHeight) / 5}
+                            marginLeft={5}
                           />
                         ))}
                       </View>
