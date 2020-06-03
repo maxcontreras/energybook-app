@@ -1,0 +1,85 @@
+{
+  "_from": "fusioncharts",
+  "_id": "fusioncharts@3.14.0",
+  "_inBundle": false,
+  "_integrity": "sha512-vNMcALeAuS4lD3rAWqF8bDE7OCKx1T0TifBI3NygtTP3aCPzck3i8ec8M7DINA8WqHErAH3Da0+F/0o6Zl/6wA==",
+  "_location": "/fusioncharts",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "fusioncharts",
+    "name": "fusioncharts",
+    "escapedName": "fusioncharts",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/fusioncharts/-/fusioncharts-3.14.0.tgz",
+  "_shasum": "d11d014bdde81cc13192d892fafacfc27eaea3fb",
+  "_spec": "fusioncharts",
+  "_where": "C:\\Users\\Dell\\energybook-app",
+  "author": {
+    "name": "FusionCharts Technologies",
+    "email": "support@fusioncharts.com"
+  },
+  "bugs": {
+    "url": "http://www.fusioncharts.com/contact-support/"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "@babel/runtime": "7.4.5",
+    "@fusioncharts/charts": "^3.14.0",
+    "@fusioncharts/constructor": "^1.0.0",
+    "@fusioncharts/core": "^1.0.0",
+    "@fusioncharts/datatable": "^1.0.0",
+    "@fusioncharts/features": "^1.0.0",
+    "@fusioncharts/fusiontime": "^1.2.0",
+    "@fusioncharts/maps": "^3.14.0",
+    "@fusioncharts/powercharts": "^3.14.0",
+    "@fusioncharts/utils": "^1.0.0",
+    "@fusioncharts/widgets": "^3.14.0"
+  },
+  "deprecated": false,
+  "description": "FusionCharts JavaScript charting framework",
+  "devDependencies": {
+    "@babel/cli": "7.4.4",
+    "terser": "^4.0.2"
+  },
+  "gitHead": "ff0aca73a99afedc41675fe72bf8088f8cbd9e3c",
+  "homepage": "http://www.fusioncharts.com/",
+  "keywords": [
+    "fusioncharts",
+    "charts",
+    "dataviz",
+    "graphs",
+    "visualization",
+    "js-charts",
+    "javascript-charts",
+    "dashboards",
+    "data-stories",
+    "bar-charts",
+    "pie-charts",
+    "line-charts",
+    "area-charts",
+    "column-charts",
+    "gantt-chart"
+  ],
+  "license": "http://www.fusioncharts.com/buy/",
+  "main": "fusioncharts.js",
+  "name": "fusioncharts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fusioncharts/fusioncharts-dist.git"
+  },
+  "scripts": {
+    "postpublish": "./scripts/build/postpublish",
+    "prepublishOnly": "./scripts/build/prepublish",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "3.14.0"
+}
