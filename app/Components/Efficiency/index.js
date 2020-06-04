@@ -9,7 +9,7 @@ import CardChida from './CardChida';
 import TitleCard from './TitleCard';
 import BottomCard from './BottomCard';
 import DayInput from './DayInput';
-import MensualProd from './MensualProd';
+import MensualCard from './MensualCard';
 
 export {
   ChartView,
@@ -23,5 +23,5 @@ export {
   TitleCard,
   BottomCard,
   DayInput,
-  MensualProd,
+  MensualCard,
 };

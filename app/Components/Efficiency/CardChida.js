@@ -5,16 +5,9 @@ import {connect} from 'react-redux';
 import moment from 'moment/min/moment-with-locales';
 import AsyncStorage from '@react-native-community/async-storage';
 import {alert} from '../../Assets/Functions/setAlert';
-import {jsonChartData, jsonDP, returnArrayM, returnArrayD} from './Data';
-import {TitleCard, BottomCard} from './index';
-import {
-  isPortrait,
-  screenHeight,
-  screenWidth,
-  getCardWidth,
-} from '../../Assets/constants';
-import {RowText} from './index';
-const cardWidth = getCardWidth(2.2);
+import {jsonChartData, jsonDP, returnArrayD} from './Data';
+import {BottomCard, RowText, DailyDates} from './index';
+import {isPortrait, screenHeight, screenWidth} from '../../Assets/constants';
 const mapStateToProps = state => ({
   userData: state.initialValues,
   readings: state.dailyReducer,
@@ -59,7 +52,7 @@ class CardChida extends Component {
   UNSAFE_componentWillMount() {
     this._retrieveData();
   }
-  _retrieveData = async date => {
+  _retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem('@MySuperStore:key');
       if (value !== null) {
@@ -207,12 +200,13 @@ class CardChida extends Component {
     });
   }
   mostrarProduction() {
-    // For daily production
-    // Shows production after the user saves it.
+    //For daily production
+    //Shows production after the user saves it.
+    //Triggered by button (Bottom Card.js).
     this.setState({
       isProd: false,
     });
-    // check if there is an existing value for the day.
+    //Checks if there is an existing value for the day.
     fetch(
       `http://api.ienergybook.com/api/eficiencia?access_token=${
         this.state.values.accesToken
@@ -231,29 +225,22 @@ class CardChida extends Component {
         return Promise.all([this.state.statusCode, data]);
       })
       .then(json => {
-        console.log(json);
-        console.log(this.props.fecha.from);
-
+        let value = 0;
         for (i in json[1]) {
-          // If there is a matching day and user Id
+          //If there is a matching day and user Id
           if (
             json[1][i].UserId == this.state.values.userId &&
             json[1][i].Dia == this.props.fecha.from
           ) {
-            // set Production value in state
-            this.setState({
-              valorProduccion: json[1][i].valor,
-              isProd: true,
-              //formula1: this.props.data.readingEPimp / datos.data[j].valor,
-            });
-          } else {
-            // If no value exists
-            this.setState({
-              valorProduccion: 0,
-              isProd: true,
-            });
+            //Set Production value in state.
+            value = json[1][i].valor;
           }
         }
+        this.setState({
+          valorProduccion: value,
+          isProd: true,
+          //formula1: this.props.data.readingEPimp / datos.data[j].valor,
+        });
       })
       .catch(err => {
         console.log('no se pudo');
@@ -264,7 +251,6 @@ class CardChida extends Component {
   }
 
   render() {
-    let dataMensual = returnArrayM(this.props.data);
     let dataDiaria = returnArrayD({
       readingConsumo: this.state.readingConsumo,
       totalConsumo: this.state.totalConsumo,
@@ -275,40 +261,29 @@ class CardChida extends Component {
       <View style={styles.extrenalView}>
         <Card
           title={
-            <TitleCard
-              type={this.props.type}
+            <DailyDates
               data={this.props.data}
-              setCalendar={this.props.setCalendar}
-              mes={this.props.mes}
               date={this.props.fecha.from}
               setDayDates={this.props.setDayDates}
               dayFunctions={this._retrieveData.bind(this)}
             />
           }
-          containerStyle={[
-            this.state.orientation == 'portrait'
-              ? styles.containerCardP
-              : styles.containerCardL,
-          ]}
+          containerStyle={[styles.containerCard]}
           titleStyle={styles.titleStyle}
           wrapperStyle={styles.wrapperStyle}>
           <View style={styles.innerView}>
-            {this.state.isDP && (
+            {this.state.isProd && (
               <View style={styles.innerView}>
                 <RowText
-                  data={this.props.type == 'diario' ? dataDiaria : dataMensual}
+                  data={dataDiaria}
                   type={this.props.type}
-                  valorProduccion={this.props.valorProduccion}
                   dayProduction={this.state.inputProduccion}
                   valueDayProd={this.state.valorProduccion}
-                  date={this.props.fecha.from}
-                  ref={this.mySecondRef}
                   changeInput={this.changeInput.bind(this)}
                   showDayProd={this.mostrarProduction.bind(this)}
                 />
                 <BottomCard
                   type={this.props.type}
-                  formula1={this.props.formula1}
                   inputProduccion={this.state.inputProduccion}
                   date={this.props.fecha.from}
                   userId={this.state.values.userId}
@@ -323,7 +298,6 @@ class CardChida extends Component {
     );
   }
 }
-
 export default connect(mapStateToProps)(CardChida);
 const styles = StyleSheet.create({
   titleStyle: {
@@ -335,7 +309,7 @@ const styles = StyleSheet.create({
     height: 'auto',
     justifyContent: 'center',
   },
-  containerCardP: {
+  containerCard: {
     height: 350,
     padding: 0,
     borderRadius: 10,
@@ -351,23 +325,6 @@ const styles = StyleSheet.create({
       },
     }),
     width: Math.min(screenWidth, screenHeight) - 20,
-  },
-  containerCardL: {
-    height: 350,
-    padding: 0,
-    borderRadius: 10,
-    ...Platform.select({
-      ios: {
-        shadowRadius: 5,
-        shadowColor: 'black',
-        shadowOffset: {width: 5, height: 5},
-        shadowOpacity: 0.2,
-      },
-      android: {
-        elevation: 5,
-      },
-    }),
-    width: cardWidth,
   },
   titleView: {
     color: 'black',

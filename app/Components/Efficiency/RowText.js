@@ -1,11 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  ActivityIndicator,
-} from 'react-native';
+import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
 import {getFontSize} from '../../Assets/constants';
 import AsyncStorage from '@react-native-community/async-storage';
 let fontSize = getFontSize('large');
@@ -14,12 +8,8 @@ export default class RowText extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      inputProduccion: 0,
-      valorProduccion: this.props.valorProduccion,
       values: [],
       formula1: 0.0,
-      isExisting: false,
-      idPaCambiar: '',
     };
   }
 
@@ -72,6 +62,9 @@ export default class RowText extends Component {
                   showDayProd={this.props.showDayProd}
                   valueDayProd={this.props.valueDayProd}
                 />
+              )}
+              {this.props.type == 'mensual' && datos.title == 'Producción' && (
+                <Text style={styles.priceView}>{this.props.monthProd} tnl</Text>
               )}
             </View>
           </View>

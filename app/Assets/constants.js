@@ -136,6 +136,44 @@ export const EffSwiperOptions = {
 
 //DATA CONSTANTS -----------------------------
 
+//ESTADOS
+
+export const estados = [
+  'Selecciona',
+  'Aguascalientes',
+  'Baja California',
+  'Baja California Sur',
+  'Campeche',
+  'Chiapas',
+  'Chihuahua',
+  'Coahuila de Zaragoza',
+  'Colima',
+  'Ciudad de México',
+  'Durango',
+  'Guanajuato',
+  'Guerrero',
+  'Hidalgo',
+  'Jalisco',
+  'Mexico',
+  'Michoacan de Ocampo',
+  'Morelos',
+  'Nayarit',
+  'Nuevo Leon',
+  'Oaxaca',
+  'Puebla',
+  'Queretaro de Arteaga',
+  'Quintana Roo',
+  'San Luis Potosi',
+  'Sinaloa',
+  'Sonora',
+  'Tabasco',
+  'Tamaulipas',
+  'Tlaxcala',
+  'Veracruz',
+  'Yucatan',
+  'Zacatecas',
+];
+
 //  F I L T E R S
 
 export const filtersGeneration = [
@@ -331,7 +369,6 @@ export const inputsRegister = [
   },
   {secure: false, cap: 'sentences', key: 'company', placeholder: 'Compañia'},
   {secure: false, cap: 'sentences', key: 'phone', placeholder: 'Telefono'},
-  {secure: false, cap: 'sentences', key: 'state', placeholder: 'Estado'},
 ];
 
 export const formIndications =

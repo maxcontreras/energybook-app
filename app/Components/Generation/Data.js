@@ -2,15 +2,118 @@ import moment from 'moment/min/moment-with-locales';
 
 import {
   GenIcon,
-  Fe,
-  Eco2E,
   AutoConsumo,
   Inyeccion,
 } from '../../Assets/Svg/Variables/index';
 
 import {n, date, mes} from '../../Assets/constants';
 
-export function chartData(data, caption) {
+// Total of Generation, Self Consumption and Network Injection
+export function summatory(access, body) {
+  let valor = fetch(
+    `http://api.ienergybook.com/api/Meters/generationReadings?access_token=${access}`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    },
+  )
+    .then(res => {
+      let statusCode = res.status;
+      const data = res.json();
+      return Promise.all([statusCode, data]);
+    })
+    .then(json => {
+      console.log(json);
+      let total = 0.0;
+      for (var i in json[1]) {
+        total += json[1][i].value;
+      }
+      return total;
+    })
+    .catch(err => {
+      console.log('no  se pudo');
+    });
+
+  return valor;
+}
+// Gets json chart data and returns fixed array for the rendered chart.
+export function jsonChartData(access, body, caption) {
+  let finalChart = fetch(
+    `http://api.ienergybook.com/api/Meters/generationReadings?access_token=${access}`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    },
+  )
+    .then(res => {
+      let statusCode = res.status;
+      const data = res.json();
+      return Promise.all([statusCode, data]);
+    })
+    .then(json => {
+      let data = chartData(json[1], caption);
+      return body.filter == 4 ? data.perMonth : data.newData;
+    })
+    .catch(err => {
+      this.setState({
+        indicator: false,
+      });
+      console.log('no  se pudo');
+    });
+
+  return finalChart;
+}
+
+// Data for generation cards
+export function jsonCardData(
+  adminComp,
+  normalComp,
+  boolServ,
+  boolDev,
+  service,
+  device,
+  access,
+) {
+  const url = `http://api.ienergybook.com/api/DesignatedMeters/generation?company_id=${
+    adminComp != '' ? adminComp : normalComp
+  }&${boolServ ? 'service' : 'device'}_name=${
+    boolDev ? device : service.replace(' ', '%20')
+  }&access_token=${access}`;
+  console.log(url);
+
+  let cards = fetch(url, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(res => {
+      let statusCode = res.status;
+      const data = res.json();
+      return Promise.all([statusCode, data]);
+    })
+    .then(json => {
+      console.log(json);
+
+      return json[1].response;
+    })
+    .catch(err => {
+      console.log('no  se pudo');
+    });
+  return cards;
+}
+
+// Applies format to json chart data.
+function chartData(data, caption) {
   var newData = [];
   for (var i in data) {
     var mes = moment(
@@ -32,7 +135,7 @@ export function chartData(data, caption) {
     var hour = `${data[i].date.substr(8, 2)}:${data[i].date.substr(10, 2)}`;
     var wholeDate = `${date.charAt(0).toUpperCase() + date.slice(1)},${hour}`;
 
-    // MI CHART DATA INICIAL (POR HORA)
+    //Chart array by hour
     newData.push({
       mes: upperCaseMonth,
       label: wholeDate,
@@ -43,7 +146,8 @@ export function chartData(data, caption) {
       ].value.toFixed(2)} kWh</td></tr></table></div>`,
     });
   }
-  //POR MES
+  //Chart array by month
+  //Separates the array by month
   let group = newData.reduce((r, a) => {
     r[a.mes] = [...(r[a.mes] || []), a];
     return r;
@@ -55,9 +159,6 @@ export function chartData(data, caption) {
   for (i in group) {
     group2.data.push(group[i]);
   }
-  console.log('GROUP 2');
-  console.log(group2.data);
-
   var perMonth = [];
   group2.data.forEach(element => {
     let total_mes = 0.0;
@@ -76,7 +177,8 @@ export function chartData(data, caption) {
   return {newData, perMonth};
 }
 
-export function cardData(data) {
+// Returns
+export function cardData(data, network, self, generation) {
   var values = [
     {
       fecha: date + ' ' + n + ' ' + 'de' + ' ' + mes,
@@ -90,7 +192,10 @@ export function cardData(data) {
         {
           Icon: AutoConsumo,
           title: 'Autoconsumo',
-          value: data.selfConsumption.toFixed(2),
+          value:
+            Math.sign(data.selfConsumption) == -1
+              ? 0
+              : data.selfConsumption.toFixed(2),
           unidad: 'kWh',
         },
         {
@@ -114,7 +219,10 @@ export function cardData(data) {
           Icon: AutoConsumo,
           title: 'Autoconsumo',
           value: '$',
-          unidad: data.selfConsumptionValue.toFixed(2),
+          unidad:
+            Math.sign(data.selfConsumptionValue) == -1
+              ? 0
+              : data.selfConsumptionValue.toFixed(2),
         },
         {
           Icon: Inyeccion,
@@ -128,6 +236,32 @@ export function cardData(data) {
       fecha: mes,
       data: [
         {
+          Icon: GenIcon,
+          title: 'Generación',
+          unidad: 'kWh',
+          value: generation,
+        },
+        {
+          Icon: AutoConsumo,
+          title: 'Autoconsumo',
+          unidad: 'kWh',
+          value: Math.sign(self) == -1 ? 0 : self,
+        },
+        {
+          Icon: Inyeccion,
+          title: 'Inyección a la red',
+          unidad: 'kWh',
+          value: network,
+        },
+      ],
+    },
+  ];
+  return values;
+}
+
+/*
+ data: [
+        {
           Icon: Eco2E,
           title: 'Eco2E',
           value: data.co2e.toFixed(2),
@@ -140,7 +274,4 @@ export function cardData(data) {
           unidad: ' ',
         },
       ],
-    },
-  ];
-  return values;
-}
+*/

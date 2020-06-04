@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, Platform} from 'react-native';
 import PickeriOS from './PickeriOS';
 import PickerAndroid from './PickerAndroid';
+import {estados} from '../../Assets/constants';
 
 class RegisterPicker extends Component {
   constructor(props) {
@@ -11,6 +12,12 @@ class RegisterPicker extends Component {
 
   render() {
     const data = [
+      {
+        type: 'estado',
+        caption: this.props.stateCaption,
+        title: 'Estado',
+        FILTERS: estados,
+      },
       {
         type: 'giro',
         caption: this.props.businessCaption,

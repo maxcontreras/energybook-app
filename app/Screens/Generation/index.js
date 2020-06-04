@@ -9,9 +9,8 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
-import {alert} from '../../Assets/Functions/setAlert';
 import {isPortrait, screenHeight, screenWidth} from '../../Assets/constants';
-import {chartData} from '../../Components/Generation/Data';
+import {jsonChartData, jsonCardData} from '../../Components/Generation/Data';
 import {
   CardView,
   VariableView,
@@ -50,11 +49,11 @@ class Generation extends Component {
       caption: 'Generación',
       pickerValue: 'Servicio 1',
       pickerFValue: 'Hoy',
+      responseChart: [],
     };
     this.setFilter = this.setFilter.bind(this);
     this.setVariabe = this.setVariabe.bind(this);
     this.Calendario = this.Calendario.bind(this);
-
     Dimensions.addEventListener('change', () => {
       this.setState({
         orientation: isPortrait() ? 'portrait' : 'landscape',
@@ -76,69 +75,48 @@ class Generation extends Component {
             values: JSON.parse(value),
           },
           () => {
-            this.getChartData();
+            this.chartAxisData();
           },
         );
       }
     } catch (error) {}
   };
-  getCardsData() {
-    this.setState({
-      indicator: true,
-      cards: false,
-    });
-    const url = `http://api.ienergybook.com/api/DesignatedMeters/generation?company_id=${
-      this.props.adminIds.company_id != ''
-        ? this.props.adminIds.company_id
-        : this.state.values.companyId
-    }&${this.state.cService ? 'service' : 'device'}_name=${
-      this.state.cDevice
-        ? this.state.cardDevice
-        : this.state.cardService.replace(' ', '%20')
-    }&access_token=${this.state.values.accesToken}`;
-    console.log(url);
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => {
-        this.state.statusCode = res.status;
-        const data = res.json();
-        return Promise.all([this.state.statusCode, data]);
-      })
-      .then(json => {
-        console.log(json);
-        this.setState({
-          response: json[1].response,
-          indicator: false,
-          cards: true,
-        });
-      })
-      .catch(err => {
-        console.log('no  se pudo');
-        this.setState({
-          cards: true,
-        });
-      });
-  }
-  getChartData() {
+  getCardsData = async () => {
     this.setState({
       indicator: true,
     });
-    fetch(
-      `http://api.ienergybook.com/api/Meters/generationReadings?access_token=${
-        this.state.values.accesToken
-      }`,
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+    try {
+      const card = await jsonCardData(
+        this.props.adminIds.company_id,
+        this.state.values.companyId,
+        this.state.cService,
+        this.state.cDevice,
+        this.state.cardService,
+        this.state.cardDevice,
+        this.state.values.accesToken,
+      );
+      if (card != null) {
+        this.setState(
+          {
+            response: card,
+            indicator: false,
+            cards: true,
+          },
+          () => {
+            console.log(this.state.response);
+          },
+        );
+      }
+    } catch (error) {}
+  };
+  chartAxisData = async () => {
+    this.setState({
+      indicator: true,
+    });
+    try {
+      const chart = await jsonChartData(
+        this.state.values.accesToken,
+        {
           id:
             this.props.adminIds.meter_id != ''
               ? this.props.adminIds.meter_id
@@ -149,38 +127,22 @@ class Generation extends Component {
           interval: this.state.interval,
           variable: this.state.variable,
           custom_dates: this.state.customdates,
-        }),
-      },
-    )
-      .then(res => {
-        this.state.statusCode = res.status;
-        const data = res.json();
-        return Promise.all([this.state.statusCode, data]);
-      })
-      .then(json => {
-        console.log(json);
-        if (this.state.statusCode == 504) {
-          alert('Hubo un error al obtener los datos del medidor.');
-        }
-        let data = chartData(json[1], this.state.caption);
+        },
+        this.state.caption,
+      );
+      if (chart != null) {
         this.setState(
           {
-            arrayWithData:
-              this.state.filter == 4 ? data.perMonth : data.newData,
+            arrayWithData: chart,
             indicator: false,
           },
           () => {
             this.getCardsData();
           },
         );
-      })
-      .catch(err => {
-        this.setState({
-          indicator: false,
-        });
-        console.log('no  se pudo');
-      });
-  }
+      }
+    } catch (error) {}
+  };
   setDates(calendar, initial, end, custom, filter) {
     this.setState(
       {
@@ -191,7 +153,7 @@ class Generation extends Component {
         filter: filter,
       },
       () => {
-        this.getChartData();
+        this.chartAxisData();
       },
     );
   }
@@ -218,7 +180,7 @@ class Generation extends Component {
         device: device,
       },
       () => {
-        this.getChartData();
+        this.chartAxisData();
       },
     );
   }
@@ -233,7 +195,7 @@ class Generation extends Component {
       },
       () => {
         if (filtro != -1) {
-          this.getChartData();
+          this.chartAxisData();
         }
       },
     );
@@ -245,7 +207,7 @@ class Generation extends Component {
         caption: texto,
       },
       () => {
-        this.getChartData();
+        this.chartAxisData();
       },
     );
   }
@@ -293,7 +255,16 @@ class Generation extends Component {
               numSteps={this.state.numSteps}
             />
             {this.state.cards && !this.state.indicator && (
-              <CardView response={this.state.response} />
+              <CardView
+                response={this.state.response}
+                id={
+                  this.props.adminIds.meter_id != ''
+                    ? this.props.adminIds.meter_id
+                    : this.props.readings.meterId
+                }
+                device={this.state.device}
+                service={this.state.service}
+              />
             )}
           </View>
         </ScrollView>

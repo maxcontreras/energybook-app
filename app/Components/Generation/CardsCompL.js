@@ -11,7 +11,12 @@ export default class CardsCompL extends Component {
     this.state = {};
   }
   render() {
-    let values = cardData(this.props.response);
+    let values = cardData(
+      this.props.response,
+      this.props.network,
+      this.props.selfconsumption,
+      this.props.generation,
+    );
     return (
       <View style={styles.container}>
         {values.map((datos, index) => (

@@ -39,8 +39,12 @@ export default class CardsCompP extends Component {
     return false;
   }
   render() {
-    var Fecha = date + ' ' + n + ' ' + 'de' + ' ' + mes;
-    let values = cardData(this.props.response);
+    let values = cardData(
+      this.props.response,
+      this.props.network,
+      this.props.selfconsumption,
+      this.props.generation,
+    );
     return (
       <View style={styles.container}>
         {values && (

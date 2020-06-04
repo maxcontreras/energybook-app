@@ -1,12 +1,10 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {Formik} from 'formik';
-import {
-  validationSchema,
-  StyledInput,
-} from '../../Components/PasswordChange/index';
+import {StyledInput} from '../../Components/PasswordChange/index';
 import {alert, alertPassword} from '../../Assets/Functions/setAlert';
 import AsyncStorage from '@react-native-community/async-storage';
+import {validationSchema} from '../../Components/PasswordChange/PasswordSchema';
 
 export default class VerifiedInput extends Component {
   constructor(props) {

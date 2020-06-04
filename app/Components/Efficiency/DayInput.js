@@ -8,11 +8,9 @@ export default class DayInput extends Component {
       valorProduccion: this.props.valueDayProd
         ? this.props.valueDayProd.toString()
         : '0',
-      formula1: 0.0,
     };
   }
   render() {
-    var key = 0;
     return (
       <View style={styles.inputView}>
         <TextInput

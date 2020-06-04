@@ -5,16 +5,13 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   Dimensions,
   SafeAreaView,
-  Platform,
-  KeyboardAvoidingView,
 } from 'react-native';
 import {Formik} from 'formik';
-import {AlertSVG} from '../../Assets/Svg/Design/index';
+import {StyledInput} from '../../Components/PasswordChange/index';
 import {Overlay} from 'react-native-elements';
 import axios from 'axios';
 import {
@@ -27,9 +24,9 @@ import {
   NoticeOfPrivacy,
   BackGround,
   RegisterPicker,
-  validationSchema,
   AvisoDePrivacidad,
 } from '../../Components/Register/index';
+import {validationSchema} from '../../Components/Register/ValidationSchema';
 import {alertRegister, alert} from '../../Assets/Functions/setAlert';
 
 class Register extends Component {
@@ -41,6 +38,7 @@ class Register extends Component {
       checked: false,
       aviso: false,
       businessCaption: 'Manufactura',
+      stateCaption: 'Aguascalientes',
       sizeCaption: '2-10',
       realEmail: false,
     };
@@ -59,6 +57,7 @@ class Register extends Component {
   };
 
   goForAxios = email => {
+    //Checks if the email is real
     axios
       .get(
         `https://emailverification.whoisxmlapi.com/api/v1?apiKey=at_MTLMWalq44cfd7nhWV4xrpo41yOHn&emailAddress=${email}`,
@@ -78,12 +77,13 @@ class Register extends Component {
   };
 
   Registrarse(values) {
+    //Register function
     this.goForAxios(values.email);
     const contactData = {
       full_name: `${values.name} ${values.lastname}`,
       company_name: values.company,
       business_line: this.state.businessCaption,
-      state: values.state,
+      state: this.state.stateCaption,
       size: this.state.sizeCaption,
       phone: values.phone,
     };
@@ -94,15 +94,14 @@ class Register extends Component {
       password: values.confirmPassword,
       phone: values.phone,
     };
-
-    console.log({contactData, newUser});
-
+    //Alert validations
     if (this.state.checked == false) {
       alert('Favor de aceptar el aviso de privacidad.');
     }
     if (!this.state.realEmail) {
       alert('Favor de ingresar una cuenta de correo real.');
     }
+    //If the validations are correct
     if (this.state.checked == true && this.state.realEmail) {
       fetch('http://api.ienergybook.com/api/Companies/register', {
         method: 'POST',
@@ -130,33 +129,34 @@ class Register extends Component {
     }
   }
   prueba(value, tipo) {
+    //Changes pickers values (size,state,business)
+    //Triggered by RegisterPicker.js
     tipo == 'size'
       ? this.setState({
           sizeCaption: value,
+        })
+      : tipo == 'estado'
+      ? this.setState({
+          stateCaption: value,
         })
       : this.setState({
           businessCaption: value,
         });
   }
-
-  setAviso(value) {
-    this.setState({
-      aviso: value,
-    });
-  }
-
-  setAviso2() {
+  setAviso() {
+    //Boolean, (Triggered by AvisoDePrivacidad.js
+    //and NoticeOfPrivacy.js)
     this.setState({
       aviso: !this.state.aviso,
     });
   }
-
   setChecked(value) {
+    //Boolean, (Triggered by CheckView.js )
     this.setState({checked: value});
   }
 
   render() {
-    var registerValues = {
+    const registerValues = {
       name: '',
       lastname: '',
       email: '',
@@ -164,7 +164,6 @@ class Register extends Component {
       confirmPassword: '',
       company: '',
       phone: '',
-      state: '',
     };
 
     return (
@@ -184,26 +183,13 @@ class Register extends Component {
                   <React.Fragment>
                     {inputsRegister.map((text, index) => (
                       <View key={index} style={styles.inputField}>
-                        <TextInput
-                          style={[styles.input2]}
+                        <StyledInput
+                          label={text.placeholder}
+                          formikProps={formikProps}
+                          formikKey={text.key}
                           placeholder={text.placeholder}
-                          placeHolderTextColor="black"
-                          onChangeText={formikProps.handleChange(text.key)}
-                          onBlur={formikProps.handleBlur(text.key)}
-                          autoCapitalize={text.cap}
-                          returnKeyType="done"
                           secureTextEntry={text.secure}
                         />
-                        {formikProps.touched[text.key] &&
-                          formikProps.values[text.key] == '' && (
-                            <View style={styles.alertV}>
-                              <Text style={styles.alert}>
-                                {formikProps.touched[text.key] &&
-                                  formikProps.errors[text.key]}
-                              </Text>
-                              <AlertSVG />
-                            </View>
-                          )}
                       </View>
                     ))}
                     <View style={styles.container2}>
@@ -211,6 +197,7 @@ class Register extends Component {
                         function={this.prueba.bind(this)}
                         businessCaption={this.state.businessCaption}
                         sizeCaption={this.state.sizeCaption}
+                        stateCaption={this.state.stateCaption}
                       />
                     </View>
                     <View style={styles.btnRegV}>
@@ -238,7 +225,7 @@ class Register extends Component {
             <Overlay
               isVisible={this.state.aviso}
               onBackdropPress={() => this.setState({aviso: false})}>
-              <AvisoDePrivacidad function={this.setAviso2.bind(this)} />
+              <AvisoDePrivacidad function={this.setAviso.bind(this)} />
             </Overlay>
           </View>
         </ScrollView>

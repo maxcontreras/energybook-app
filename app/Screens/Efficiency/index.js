@@ -87,17 +87,6 @@ class Efficiency2 extends Component {
     this.setMonthCalendar = this.setMonthCalendar.bind(this);
     this.setDayDates = this.setDayDates.bind(this);
   }
-  allFunctions() {
-    this.setState({
-      isConsumption: false,
-      isDP: false,
-      isEPimp: false,
-      isProd: false,
-    });
-    this.getChartData();
-    this.getDP();
-    this.recieveMensualProd();
-  }
   _retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem('@MySuperStore:key');
@@ -113,10 +102,23 @@ class Efficiency2 extends Component {
       }
     } catch (error) {}
   };
+  allFunctions() {
+    //All flags to false.
+    this.setState({
+      isConsumption: false,
+      isDP: false,
+      isEPimp: false,
+      isProd: false,
+    });
+    this.getChartData();
+    this.getDP();
+    this.recieveMensualProd();
+  }
   componentWillUnmount() {
     Dimensions.removeEventListener('change');
   }
   setDayDates(custom, dayfecha, mesesito, año, mesnum) {
+    //Set day chosen by the user (Controlled by DailyDates.js)
     this.setState(
       {
         customdates: custom,
@@ -126,11 +128,13 @@ class Efficiency2 extends Component {
         mesNum: mesnum,
       },
       () => {
+        //All functions to perform.
         this.allFunctions();
       },
     );
   }
   getChartData() {
+    //For monthly and consumption cost.
     this.setState({
       indicator: true,
       indicatorCards: true,
@@ -168,9 +172,8 @@ class Efficiency2 extends Component {
         return Promise.all([this.state.statusCode, data]);
       })
       .then(json => {
-        let data = jsonChartData(json[1]);
-        console.log(json);
         if (json[0] != 200) {
+          //In case of bad request
           alert('Hubo un error al obtener los datos del medidor.');
           this.setState({
             indicator: false,
@@ -181,6 +184,7 @@ class Efficiency2 extends Component {
             isEPimp: true,
           });
         }
+        let data = jsonChartData(json[1]);
         this.setState({
           isConsumption: true,
           error: false,
@@ -205,6 +209,7 @@ class Efficiency2 extends Component {
       });
   }
   getDP() {
+    //Monthly demand.
     this.setState({
       readingDemanda: 0,
     });
@@ -253,6 +258,7 @@ class Efficiency2 extends Component {
       });
   }
   recieveMensualProd() {
+    //Total of production of the chosen month
     this.setState({
       valorProduccion: 0,
     });
@@ -299,11 +305,13 @@ class Efficiency2 extends Component {
       });
   }
   setMonthCalendar(value) {
+    //Sets boolean for the calendar (controlled by MensualDates.js)
     this.setState({
       monthCalendar: value,
     });
   }
   changeValue(newdate, newdateend, año, custom, mes, mesnum) {
+    //Sets month chosen by the user (controlleb by MonthSlector.js)
     this.setState({
       newDate: newdate,
       newdateEnd: newdateend,
@@ -342,7 +350,7 @@ class Efficiency2 extends Component {
                 cardData={cardData}
                 mesesito={this.state.mesesito}
                 ref={this.myRef}
-                valorProduccion={this.state.valorProduccion}
+                monthProd={this.state.valorProduccion}
               />
             )}
           <View style={[styles.chart]}>

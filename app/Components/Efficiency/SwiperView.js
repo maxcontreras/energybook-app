@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {EffSwiperOptions} from '../../Assets/constants';
 import Swiper from 'react-native-web-swiper';
-import {CardChida} from './index';
+import {CardChida, MensualCard} from './index';
 import moment from 'moment/min/moment-with-locales';
 
 export default class SwiperView extends Component {
@@ -48,17 +48,16 @@ export default class SwiperView extends Component {
               data={this.props.cardData}
               mes={this.props.mesesito}
               ref={this.props.myRef}
-              valorProduccion={this.props.valorProduccion}
             />
           </View>
           <View>
-            <CardChida
+            <MensualCard
               type={'mensual'}
               setCalendar={this.props.setMonthCalendar}
               data={this.props.cardData}
               mes={this.props.mesesito}
               fecha={this.props.dayFecha}
-              valorProduccion={this.props.valorProduccion}
+              monthProd={this.props.monthProd}
             />
           </View>
         </Swiper>
