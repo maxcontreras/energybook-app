@@ -26,7 +26,11 @@ export default class ChartView extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          {height: this.props.indicator ? 'auto' : 500},
+        ]}>
         {this.props.error && (
           <Text>Error al obtener los datos del medidor</Text>
         )}
@@ -35,7 +39,7 @@ export default class ChartView extends Component {
           <FusionCharts
             type={'column2d'}
             width={'100%'}
-            height={500}
+            height={520}
             dataFormat={'json'}
             dataSource={this.props.dataSource}
             libraryPath={this.libraryPath}
@@ -51,7 +55,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    height: 'auto',
     padding: 10,
+    height: 500,
+    paddingTop: 20,
+    overflow: 'hidden',
   },
 });

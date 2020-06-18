@@ -1,7 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {StyleSheet, View, SafeAreaView, Text} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import {createStackNavigator} from '@react-navigation/stack';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 const Tab = createMaterialTopTabNavigator();
 
@@ -65,13 +64,12 @@ export default class TopTabNavigator extends Component {
   };
 
   render() {
-    console.log('PROPS HERE');
-    console.log(this.props);
-    //this.props.params.screen
     return (
       <SafeAreaView style={{flex: 1}}>
         <Tab.Navigator
           initialRouteName={this.props.route.params.screen}
+          swipeEnabled={false}
+          lazy={true}
           tabBarOptions={{
             activeColor: '#B8BABF',
             inactiveColor: '#000000',

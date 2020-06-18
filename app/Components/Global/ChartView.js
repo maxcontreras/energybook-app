@@ -3,14 +3,11 @@ import {StyleSheet, View, Dimensions, Platform} from 'react-native';
 import FusionCharts from 'react-native-fusioncharts';
 import {Load} from './index';
 import DatesPicker from '../Pickers/DatePicker';
-import {screenHeight, screenWidth, isPortrait} from '../../Assets/constants';
 
 export default class ChartView extends Component {
   constructor(props) {
-    isPortrait();
     super(props);
     this.state = {
-      orientation: isPortrait() ? 'portrait' : 'landscape',
       calendar: false,
       initialDate: '',
       endDate: '',
@@ -19,14 +16,6 @@ export default class ChartView extends Component {
       ios: require('../../../assets/fusioncharts.html'),
       android: {uri: 'file:///android_asset/fusioncharts.html'},
     });
-    Dimensions.addEventListener('change', () => {
-      this.setState({
-        orientation: isPortrait() ? 'portrait' : 'landscape',
-      });
-    });
-  }
-  componentWillUnmount() {
-    Dimensions.removeEventListener('change');
   }
   setInitial(date) {
     this.setState({
@@ -43,11 +32,7 @@ export default class ChartView extends Component {
   }
   render() {
     return (
-      <View
-        style={[
-          styles.container,
-          this.props.indicator ? {height: 500} : {height: 'auto'},
-        ]}>
+      <View style={[styles.container]}>
         {this.props.calendar && (
           <DatesPicker
             initialDate={this.props.initialDate}
@@ -61,7 +46,7 @@ export default class ChartView extends Component {
           <FusionCharts
             type={this.props.type}
             width={'100%'}
-            height={500}
+            height={520}
             dataFormat={'json'}
             dataSource={{
               chart: {
@@ -94,5 +79,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     padding: 10,
+    paddingTop: 20,
+    height: 500,
+    overflow: 'hidden',
   },
 });

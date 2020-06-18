@@ -12,10 +12,15 @@ import {
 import MonthPicker from '../../Components/RecordC/MonthPicker.js';
 import {CCPicker, Load} from '../../Components/Global/index';
 import RecordCard from '../../Components/RecordC/RecordCard.js';
-import {alert} from '../../Assets/Functions/setAlert';
 import {connect} from 'react-redux';
 import moment from 'moment';
 import AsyncStorage from '@react-native-community/async-storage';
+import {
+  getEPEXP,
+  getEPIMP,
+  getHISTORY,
+  setValues,
+} from '../../Components/RecordC/allData';
 import 'moment/min/moment-with-locales';
 const mapStateToProps = state => ({
   userData: state.initialValues,
@@ -35,110 +40,118 @@ class Record extends Component {
       values: [],
       indicator: false,
       meterId: '',
-      consumptionPrice: 0.0,
+      EPexp: 0.0,
+      EPimp: 0.0,
+      history: [],
+      cardData: setValues(),
     };
   }
 
   UNSAFE_componentWillMount() {
     this._retrieveData();
   }
-  confirmar() {
-    this.setState({
-      indicator: true,
-    });
-    fetch(
-      `http://api.ienergybook.com/api/Services/monthlyHistory?access_token=${
-        this.state.values.accesToken
-      }`,
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          service: this.state.pickerValue,
-          companyId:
-            this.props.adminIds.company_id != ''
-              ? this.props.adminIds.company_id
-              : this.state.values.companyId,
-          period: this.state.newDate,
-        }),
-      },
-    )
-      .then(res => {
-        this.state.statusCode = res.status;
-        const data = res.json();
-        return Promise.all([this.state.statusCode, data]);
-      })
-      .then(json => {
-        console.log(json);
-        this.setState({
-          cardData: json[1].data,
-          indicator: false,
-        });
-        this.getPrices();
-      })
-      .catch(err => {
-        this.setState({
-          indicator: false,
-        });
-        alert('Error', 'Hubo un error al obtener los datos.');
-      });
-  }
-  getPrices() {
-    fetch(
-      `http://api.ienergybook.com/api/Meters/getConsumptionCostsByFilter?access_token=${
-        this.state.values.accesToken
-      }`,
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id:
-            this.props.adminIds.meter_id != ''
-              ? this.props.adminIds.meter_id
-              : this.state.meterId,
-          service: this.state.pickerValue,
-          filter: -1,
-          interval: 86400,
-          custom_dates: {
-            from: `${moment(this.state.newDate).format('YYYY-MM-DD')}`,
-            until: `${moment(this.state.newDate)
-              .endOf('month')
-              .format('YYYY-MM-DD')}`,
-          },
-        }),
-      },
-    )
-      .then(res => {
-        let statusCode = res.status;
-        const data = res.json();
-        return Promise.all([statusCode, data]);
-      })
-      .then(json => {
-        var jsonResponse = json[1];
-        var response = 0.0;
-        for (var i = 0; i < jsonResponse.length; i++) {
-          response += jsonResponse[i].cost;
-        }
-        this.setState({
-          consumptionPrice: response
-            .toFixed(2)
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ','),
-        });
-      })
-      .catch(err => {
-        console.log('no se pudo');
-      });
-  }
-
   componentWillUnmount() {
     Dimensions.removeEventListener('change');
   }
+  epexp_value = async () => {
+    let meterID =
+      this.props.adminIds.meter_id != ''
+        ? this.props.adminIds.meter_id
+        : this.state.meterId;
+    let companyID =
+      this.props.adminIds.company_id != ''
+        ? this.props.adminIds.company_id
+        : this.state.values.companyId;
+    this.setState({
+      indicator: true,
+    });
+    try {
+      const epexp = await getEPEXP(
+        this.state.values.accesToken,
+        meterID,
+        this.state.pickerValue,
+        this.state.newDate,
+      );
+      if (epexp != null) {
+        this.setState(
+          {
+            EPexp: epexp,
+          },
+          () => {
+            this.epimp_value(meterID, companyID);
+          },
+        );
+      } else {
+        this.setState({
+          cardData: setValues(),
+          indicator: false,
+        });
+      }
+    } catch (error) {}
+  };
+  epimp_value = async (meterID, companyID) => {
+    try {
+      const epimp = await getEPIMP(
+        this.state.values.accesToken,
+        meterID,
+        this.state.pickerValue,
+        this.state.newDate,
+      );
+      if (epimp != null) {
+        this.setState(
+          {
+            EPimp: epimp,
+          },
+          () => {
+            this.history_value(companyID);
+          },
+        );
+      } else {
+        this.setState({
+          cardData: setValues(),
+          indicator: false,
+        });
+      }
+    } catch (error) {}
+  };
+  history_value = async companyID => {
+    try {
+      const history = await getHISTORY(
+        this.state.values.accesToken,
+        companyID,
+        this.state.newDate,
+        this.state.pickerValue,
+      );
+      if (history != null) {
+        this.setState(
+          {
+            history: history,
+            indicator: false,
+          },
+          () => {
+            this.set_values();
+          },
+        );
+      } else {
+        this.setState({
+          cardData: setValues(),
+          indicator: false,
+        });
+      }
+    } catch (error) {}
+  };
+  set_values() {
+    let all = setValues(
+      this.state.EPexp,
+      this.state.EPimp,
+      this.state.history,
+      this.props.prices,
+    );
+    this.setState({
+      cardData: all,
+    });
+  }
+
   setService(itemValue) {
     this.setState({
       pickerValue: itemValue,
@@ -153,14 +166,9 @@ class Record extends Component {
       .add(months, 'month')
       .add(years, 'year')
       .format();
-    this.setState(
-      {
-        newDate: moment(newDate).isAfter(oldDate) ? oldDate : newDate,
-      },
-      () => {
-        console.log(this.state.newDate);
-      },
-    );
+    this.setState({
+      newDate: moment(newDate).isAfter(oldDate) ? oldDate : newDate,
+    });
   }
   _retrieveData = async () => {
     try {
@@ -206,7 +214,7 @@ class Record extends Component {
                   />
                   <MonthPicker function={this.changeValue.bind(this)} />
                   <TouchableOpacity
-                    onPress={() => this.confirmar()}
+                    onPress={() => this.epexp_value()}
                     style={styles.btn}>
                     <Text style={styles.btnTxt}>Confirmar</Text>
                   </TouchableOpacity>
@@ -214,10 +222,7 @@ class Record extends Component {
                 <View style={styles.cardView}>
                   {this.state.indicator && <Load />}
                   {!this.state.indicator && (
-                    <RecordCard
-                      cardData={this.state.cardData}
-                      consumptionPrice={this.state.consumptionPrice}
-                    />
+                    <RecordCard cardData={this.state.cardData} />
                   )}
                 </View>
               </View>

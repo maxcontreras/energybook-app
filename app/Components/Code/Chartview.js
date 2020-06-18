@@ -24,11 +24,7 @@ export default class ChartView extends Component {
   }
   render() {
     return (
-      <View
-        style={[
-          styles.container,
-          this.props.indicator ? {height: 500} : {height: 'auto'},
-        ]}>
+      <View style={[styles.container]}>
         {this.props.calendar && (
           <DatesPicker
             initialDate={this.props.initialDate}
@@ -45,7 +41,7 @@ export default class ChartView extends Component {
             dataSource={this.props.dataSource}
             libraryPath={this.props.libraryPath}
             width={'100%'}
-            height={500}
+            height={520}
           />
         )}
       </View>
@@ -60,5 +56,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 'auto',
     padding: 10,
+    height: 500,
+    paddingTop: 20,
+    overflow: 'hidden',
+    marginBottom: 5,
   },
 });

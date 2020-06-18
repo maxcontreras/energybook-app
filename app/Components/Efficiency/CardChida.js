@@ -4,7 +4,6 @@ import {Card} from 'react-native-elements';
 import {connect} from 'react-redux';
 import moment from 'moment/min/moment-with-locales';
 import AsyncStorage from '@react-native-community/async-storage';
-import {alert} from '../../Assets/Functions/setAlert';
 import {jsonChartData, jsonDP, returnArrayD} from './Data';
 import {BottomCard, RowText, DailyDates} from './index';
 import {isPortrait, screenHeight, screenWidth} from '../../Assets/constants';
@@ -82,29 +81,21 @@ class CardChida extends Component {
         isProd: false,
       },
       () => {
-        this.getDP();
         this.getChartData();
         this.mostrarProduction();
       },
     );
   }
-  getChartData() {
-    //For daily consumption and price
+  getChartData = async () => {
     this.setState({
       totalConsumo: 0,
       readingConsumo: 0,
     });
-    fetch(
-      `http://api.ienergybook.com/api/Meters/getConsumptionCostsByFilter?access_token=${
-        this.state.values.accesToken
-      }`,
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+    try {
+      //Gets chart data and consumption values
+      const data = await jsonChartData(
+        this.state.values.accesToken,
+        {
           id:
             this.props.adminIds.meter_id != ''
               ? this.props.adminIds.meter_id
@@ -114,85 +105,29 @@ class CardChida extends Component {
           filter: this.state.filter,
           interval: this.state.interval,
           custom_dates: this.state.customdates,
-        }),
-      },
-    )
-      .then(res => {
-        this.state.statusCode = res.status;
-        const data = res.json();
-        return Promise.all([this.state.statusCode, data]);
-      })
-      .then(json => {
-        console.log(json);
-        if (this.state.statusCode == 504) {
-          alert('Hubo un error al obtener los datos del medidor.');
-        }
-        let data = jsonChartData(json[1]);
+        },
+        'diaria',
+      );
+      if (data != null) {
         this.setState({
-          totalConsumo: `$${data.finalCost}`,
-          totalDemanda: `$ 0`,
-          readingConsumo: `${data.finalConsumption} kWh`,
-          isEPIMP: true,
+          readingConsumo: data.readingConsumo,
+          isEPimp: data.isEPimp,
+          totalConsumo: data.totalConsumo,
+          totalDemanda: data.totalDemanda,
+          readingDemanda: data.readingDemanda,
+          isDP: data.isDP,
         });
-      })
-      .catch(err => {
-        console.log('No se pudo');
+      } else {
         this.setState({
           totalConsumo: zeroPrice,
           readingConsumo: zeroVal,
           isEPIMP: true,
-        });
-      });
-  }
-  getDP() {
-    //For daily demand
-    this.setState({
-      readingDemanda: 0,
-    });
-    fetch(
-      `http://api.ienergybook.com/api/Meters/standardReadings?access_token=${
-        this.state.values.accesToken
-      }`,
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id:
-            this.props.adminIds.meter_id != ''
-              ? this.props.adminIds.meter_id
-              : this.props.readings.meterId,
-          device: '',
-          service: 'Servicio 1',
-          variable: 'DP',
-          filter: this.state.filter,
-          interval: this.state.interval,
-          custom_dates: this.state.customdates,
-        }),
-      },
-    )
-      .then(res => {
-        this.state.statusCode = res.status;
-        const data = res.json();
-        return Promise.all([this.state.statusCode, data]);
-      })
-      .then(json => {
-        let data = jsonDP(json[1]);
-        this.setState({
-          readingDemanda: `${data} kW`,
-          isDP: true,
-        });
-      })
-      .catch(err => {
-        console.log('no se pudo');
-        this.setState({
           readingDemanda: zeroValD,
           isDP: true,
         });
-      });
-  }
+      }
+    } catch (error) {}
+  };
   changeInput(text) {
     //Changes inputProduction (controlled by DayInput.js)
     this.setState({
@@ -225,6 +160,9 @@ class CardChida extends Component {
         return Promise.all([this.state.statusCode, data]);
       })
       .then(json => {
+        console.log('AQUI LOS VALORES');
+        console.log(json);
+
         let value = 0;
         for (i in json[1]) {
           //If there is a matching day and user Id

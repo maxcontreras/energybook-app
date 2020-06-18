@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import {getFontSize, screenHeight, screenWidth} from '../../Assets/constants';
 import {Card as CardElement} from 'react-native-elements';
-import {CardTitle, DeleteButton} from './index';
+import {CardTitle, DeleteButton, OpenButton} from './index';
 
 let fontSize = getFontSize('mid');
 export default class Card extends Component {
@@ -14,25 +14,37 @@ export default class Card extends Component {
   render() {
     let device = this.props.device;
     return (
-      <CardElement
-        title={<CardTitle type={device.intervalo} variable={device.tipo} />}
-        containerStyle={[styles.notificationView]}
-        wrapperStyle={{borderRadius: 10, height: '100%'}}>
+      <View style={[styles.notificationView]}>
+        <CardTitle type={device.intervalo} variable={device.tipo} />
         <View style={[styles.notificationBotView]}>
           <View style={styles.description}>
             <Text style={styles.text2}>{device.Descripcion}</Text>
             <Text style={[styles.text2]}>{device.Fecha.substr(0, 10)}</Text>
           </View>
           <View style={styles.services}>
-            {device.Servicios.map((mensaje, index) => (
-              <Text key={index} style={styles.text1}>
-                {mensaje}
-              </Text>
-            ))}
-            <DeleteButton id={device.id} afterDelete={this.props.afterDelete} />
+            <View style={{flex: 2}}>
+              {device.Servicios.map((mensaje, index) => (
+                <Text key={index} style={styles.text1}>
+                  {mensaje}
+                </Text>
+              ))}
+            </View>
+            <View style={styles.iconView}>
+              <OpenButton
+                id={device.id}
+                devices={device.Dispositivos}
+                afterDelete={this.props.afterDelete}
+                intervalo={device.intervalo}
+                services={device.Servicios}
+              />
+              <DeleteButton
+                id={device.id}
+                afterDelete={this.props.afterDelete}
+              />
+            </View>
           </View>
         </View>
-      </CardElement>
+      </View>
     );
   }
 }
@@ -40,10 +52,10 @@ const styles = StyleSheet.create({
   notificationView: {
     width: Math.min(screenWidth, screenHeight) - 20,
     alignItems: 'flex-end',
-    height: 160,
+    height: 'auto',
     justifyContent: 'center',
     backgroundColor: 'white',
-    padding: 0,
+    margin: 10,
     borderRadius: 10,
     ...Platform.select({
       ios: {
@@ -63,6 +75,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'bottom',
     paddingHorizontal: 5,
     paddingVertical: 2.5,
+    textAlign: 'justify',
   },
   notificationBotView: {
     flex: 1,
@@ -77,6 +90,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: 5,
+    paddingHorizontal: 50,
   },
   logo: {width: 50, height: 50},
   services: {
@@ -88,7 +102,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     justifyContent: 'space-between',
   },
-  text1: {fontSize: fontSize.normal, paddingVertical: 2.5},
+  text1: {
+    fontSize: fontSize.normal,
+    paddingVertical: 2.5,
+    textAlign: 'justify',
+  },
   titleStyle: {
     color: 'black',
     fontWeight: 'normal',
@@ -96,5 +114,10 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     height: 'auto',
     justifyContent: 'center',
+  },
+  iconView: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
 });

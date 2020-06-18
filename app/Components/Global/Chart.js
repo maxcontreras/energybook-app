@@ -15,7 +15,7 @@ export default class Chart extends Component {
     };
     this.libraryPath = Platform.select({
       ios: require('../../../assets/fusioncharts.html'),
-      android: {uri: 'file:///android_asset/fusioncharts.html'},
+      android: {uri: '../../../assets/fusioncharts.html'},
     });
     Dimensions.addEventListener('change', () => {
       this.setState({

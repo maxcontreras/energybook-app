@@ -1,2 +1,7 @@
-<?xml version="1.0"?>
-<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 16 16" width="24px"><g><path d="m8 0c-4.41113 0-8 3.58887-8 8s3.58887 8 8 8 8-3.58887 8-8-3.58887-8-8-8zm1.41455 10.8286-2.41455-2.41455v-4.41406h2v3.58594l1.82861 1.82861z" data-original="#000000" class="active-path" data-old_color="#000000" fill="#525252"/></g> </svg>
+<svg id="Capa_1" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 62 62">
+    <title>
+        Clock selec
+    </title>
+    <path d="M32,62A30,30,0,1,1,62,32,30,30,0,0,1,32,62Zm0,0" transform="translate(-1 -1)" style="stroke:#1d1d1b;stroke-miterlimit:10;fill:none;stroke-width:2px"/>
+    <path d="M34.14,10.57H29.86V32.89L43.34,46.37l3-3L34.14,31.11Zm0,0" transform="translate(-1 -1)" style="fill:#1d1d1b;stroke:#1d1d1b;stroke-miterlimit:10"/>
+</svg>

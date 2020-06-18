@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Dimensions, Platform} from 'react-native';
 import {Card} from 'react-native-elements';
 import {connect} from 'react-redux';
-import AsyncStorage from '@react-native-community/async-storage';
 import {returnArrayM} from './Data';
 import {BottomCard, MensualDates} from './index';
 import {isPortrait, screenHeight, screenWidth} from '../../Assets/constants';
@@ -19,31 +18,30 @@ class MensualCard extends Component {
   constructor(props) {
     super(props);
     isPortrait();
-    this.state = {
-      values: [],
-    };
+    this.state = {};
     Dimensions.addEventListener('change', () => {
       this.setState({
         orientation: isPortrait() ? 'portrait' : 'landscape',
       });
     });
   }
-  UNSAFE_componentWillMount() {
-    this._retrieveData();
-  }
-  _retrieveData = async date => {
-    try {
-      const value = await AsyncStorage.getItem('@MySuperStore:key');
-      if (value !== null) {
-        this.setState({
-          values: JSON.parse(value),
-        });
-      }
-    } catch (error) {}
-  };
-
   render() {
     let dataMensual = returnArrayM(this.props.data);
+    //consumo total del mes / produccion total del mes
+    let formula1 = (
+      parseFloat(this.props.data.readingEPimp) /
+      parseFloat(this.props.monthProd)
+    ).toFixed(2);
+    // precio de consumo
+    let epimp = this.props.data.priceEPimp.split('$');
+    // $consumo + $distribucion + $capacidad / podcuccion mensual
+    let formula2 =
+      (parseFloat(epimp[1]) +
+        parseFloat(this.props.data.priceCapacity) +
+        parseFloat(this.props.data.priceDistribution)) /
+      parseFloat(this.props.monthProd);
+    console.log(this.props.data.priceEPimp.split('$'));
+
     return (
       <View style={styles.extrenalView}>
         <Card
@@ -66,7 +64,8 @@ class MensualCard extends Component {
               />
               <BottomCard
                 type={this.props.type}
-                formula1={this.props.formula1}
+                formula1={formula1}
+                formula2={formula2}
               />
             </View>
           </View>

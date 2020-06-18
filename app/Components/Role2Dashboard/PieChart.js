@@ -65,8 +65,6 @@ class PieChart extends Component {
     } catch (error) {}
   };
   _getdata = async () => {
-    console.log('SI ENTRO A LA FUNCION');
-
     let array = [];
     let PieChart = [];
     for (var i = 1; i < this.props.devices.length; i++) {
@@ -164,6 +162,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
+    overflow: 'hidden',
+    paddingTop: 10,
   },
   cardStyle: {
     padding: 0,

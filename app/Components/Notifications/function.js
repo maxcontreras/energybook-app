@@ -32,7 +32,7 @@ export function divider(array, category) {
       case 'Código de red':
         notifications.network.push(array[i]);
         break;
-      case 'horarios':
+      case 'Cambio de horario':
         notifications.schedule.push(array[i]);
         break;
       case 'generacion':
@@ -60,9 +60,9 @@ export function divider(array, category) {
       return notifications.generation;
     case 'Desconexión de equipos':
       return notifications.hardware;
-    case 'Cambio de Horario':
+    case 'Cambio de horario':
       return notifications.schedule;
-    case 'Inyección a la red':
+    case 'Código de red':
       return notifications.network;
     default:
       return notifications.nomatch;

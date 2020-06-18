@@ -12,6 +12,7 @@ import Maximum from './Maximum.svg';
 import Minimum from './Minimum.svg';
 import Average from './Average.svg';
 import Delete from './delete.svg';
+import Eye from './Eye.svg';
 export {
   AlertSVG,
   CalendarIcon,
@@ -27,4 +28,5 @@ export {
   Minimum,
   Average,
   Delete,
+  Eye,
 };

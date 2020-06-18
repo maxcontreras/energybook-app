@@ -10,8 +10,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import {connect} from 'react-redux';
 import moment from 'moment/min/moment-with-locales';
-import {jsonChartData, jsonDP} from '../../Components/Efficiency/Data';
-import {alert} from '../../Assets/Functions/setAlert';
+import {jsonChartData} from '../../Components/Efficiency/Data';
 import {
   isPortrait,
   screenHeight,
@@ -23,6 +22,7 @@ import {
   MonthSelector,
   SwiperView,
 } from '../../Components/Efficiency/index';
+import {getHISTORY} from '../../Components/RecordC/allData';
 const mapStateToProps = state => ({
   userData: state.initialValues,
   readings: state.dailyReducer,
@@ -42,6 +42,7 @@ class Efficiency2 extends Component {
       isEPimp: false,
       isProd: false,
       monthCalendar: false,
+      isPriceDP: false,
       mesesito: mes,
       añito: moment().format('YYYY'),
       mesNum: moment().format('MM'),
@@ -65,6 +66,8 @@ class Efficiency2 extends Component {
       readingDemanda: zeroValD,
       inputProduccion: '0',
       valorProduccion: '0',
+      priceCap: 0.0,
+      priceDist: 0.0,
       filter: -1,
       interval: 3600,
       customdates: {
@@ -76,6 +79,7 @@ class Efficiency2 extends Component {
           .format('YYYY-MM-DD')}`,
       },
       values: [],
+      history: [],
       orientation: isPortrait() ? 'portrait' : 'landscape',
     };
     this._retrieveData();
@@ -111,7 +115,7 @@ class Efficiency2 extends Component {
       isProd: false,
     });
     this.getChartData();
-    this.getDP();
+    this.history_value();
     this.recieveMensualProd();
   }
   componentWillUnmount() {
@@ -133,8 +137,43 @@ class Efficiency2 extends Component {
       },
     );
   }
-  getChartData() {
-    //For monthly and consumption cost.
+  history_value = async () => {
+    try {
+      //getHISTORY : (mensual data)
+      const history = await getHISTORY(
+        this.state.values.accesToken,
+        this.props.adminIds.company_id != ''
+          ? this.props.adminIds.company_id
+          : this.state.values.companyId,
+        moment(this.state.customdates.from)
+          .startOf('month')
+          .format(),
+        'Servicio 1',
+      );
+      if (history != null) {
+        // $dp = $consumption + $capacity
+        let price =
+          history.capacity * this.props.prices.prices.capacityPrice +
+          history.distribution * this.props.prices.prices.distributionPrice;
+        this.setState({
+          totalDemanda: `$${price
+            .toFixed(2)
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`,
+          isPriceDP: true,
+          priceCap: history.capacity * this.props.prices.prices.capacityPrice,
+          priceDist:
+            history.distribution * this.props.prices.prices.distributionPrice,
+        });
+      } else {
+        this.setState({
+          isPriceDP: true,
+          totalDemanda: zeroPrice,
+        });
+      }
+    } catch (error) {}
+  };
+
+  getChartData = async () => {
     this.setState({
       indicator: true,
       indicatorCards: true,
@@ -143,17 +182,11 @@ class Efficiency2 extends Component {
       totalConsumo: zeroPrice,
       readingConsumo: 0,
     });
-    fetch(
-      `http://api.ienergybook.com/api/Meters/getConsumptionCostsByFilter?access_token=${
-        this.state.values.accesToken
-      }`,
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+    try {
+      //Gets chart data and consumption values
+      const data = await jsonChartData(
+        this.state.values.accesToken,
+        {
           id:
             this.props.adminIds.meter_id != ''
               ? this.props.adminIds.meter_id
@@ -163,100 +196,35 @@ class Efficiency2 extends Component {
           filter: this.state.filter,
           interval: this.state.interval,
           custom_dates: this.state.customdates,
-        }),
-      },
-    )
-      .then(res => {
-        this.state.statusCode = res.status;
-        const data = res.json();
-        return Promise.all([this.state.statusCode, data]);
-      })
-      .then(json => {
-        if (json[0] != 200) {
-          //In case of bad request
-          alert('Hubo un error al obtener los datos del medidor.');
-          this.setState({
-            indicator: false,
-            error: true,
-            totalConsumo: zeroPrice,
-            isConsumption: true,
-            readingConsumo: zeroVal,
-            isEPimp: true,
-          });
-        }
-        let data = jsonChartData(json[1]);
+        },
+        'mensual',
+      );
+      if (data != null) {
         this.setState({
-          isConsumption: true,
-          error: false,
-          readingConsumo: `${data.finalConsumption} kWh`,
-          isEPimp: true,
+          isConsumption: data.isConsumption,
+          error: data.error,
+          readingConsumo: data.readingConsumo,
+          isEPimp: data.isEPimp,
           dataSource: data.chart,
-          totalConsumo: `$${data.finalCost}`,
-          totalDemanda: `$ 0`,
-          indicator: false,
+          totalConsumo: data.totalConsumo,
+          readingDemanda: data.readingDemanda,
+          indicator: data.indicator,
+          isDP: data.isDP,
         });
-      })
-      .catch(err => {
-        console.log('No se pudo');
+      } else {
         this.setState({
           indicator: false,
           error: true,
           totalConsumo: zeroPrice,
           isConsumption: true,
           readingConsumo: zeroVal,
-          isEPimp: true,
-        });
-      });
-  }
-  getDP() {
-    //Monthly demand.
-    this.setState({
-      readingDemanda: 0,
-    });
-    fetch(
-      `http://api.ienergybook.com/api/Meters/standardReadings?access_token=${
-        this.state.values.accesToken
-      }`,
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id:
-            this.props.adminIds.meter_id != ''
-              ? this.props.adminIds.meter_id
-              : this.props.readings.meterId,
-          device: '',
-          service: 'Servicio 1',
-          variable: 'DP',
-          filter: this.state.filter,
-          interval: this.state.interval,
-          custom_dates: this.state.customdates,
-        }),
-      },
-    )
-      .then(res => {
-        this.state.statusCode = res.status;
-        const data = res.json();
-        return Promise.all([this.state.statusCode, data]);
-      })
-      .then(json => {
-        let data = jsonDP(json[1]);
-        this.setState({
-          readingDemanda: `${data} kW`,
-          isDP: true,
-        });
-      })
-      .catch(err => {
-        console.log('no se pudo');
-        this.setState({
           readingDemanda: zeroValD,
+          isEPimp: true,
           isDP: true,
         });
-      });
-  }
+      }
+    } catch (error) {}
+  };
   recieveMensualProd() {
     //Total of production of the chosen month
     this.setState({
@@ -327,12 +295,15 @@ class Efficiency2 extends Component {
       readingDP: this.state.readingDemanda,
       priceEPimp: this.state.totalConsumo,
       priceDP: this.state.totalDemanda,
+      priceCapacity: this.state.priceCap,
+      priceDistribution: this.state.priceDist,
     };
     return (
       <ScrollView style={{backgroundColor: 'white'}}>
         <View style={[styles.container]}>
           {(!this.state.isConsumption ||
             !this.state.isDP ||
+            !this.state.isPriceDP ||
             !this.state.isEPimp ||
             !this.state.isProd) && (
             <View style={styles.cargando}>
@@ -342,6 +313,7 @@ class Efficiency2 extends Component {
           {this.state.isConsumption &&
             this.state.isDP &&
             this.state.isEPimp &&
+            this.state.isPriceDP &&
             this.state.isProd && (
               <SwiperView
                 functionDayDates={this.setDayDates}

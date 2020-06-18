@@ -1,2 +1,3 @@
 <svg width="24px" height="24px" id="Capa_1" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <path fill="none" stroke="#525252" stroke-miterlimit="10" stroke-width="5px"  d="M3.52,55.29H44.13V4.53H3.52V55.29Zm0,40.61H44.13V65.44H3.52V95.9Zm50.76,0H94.89V45.14H54.28V95.9Zm0-91.37V35H94.89V4.53H54.28Z"/></svg>
+  <path style="fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:2" d="M3.52,55.29H44.13V4.53H3.52V55.29Zm0,40.61H44.13V65.44H3.52V95.9Zm50.76,0H94.89V45.14H54.28V95.9Zm0-91.37V35H94.89V4.53H54.28Z"/>
+</svg>

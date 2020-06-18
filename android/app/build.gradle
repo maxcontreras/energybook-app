@@ -146,8 +146,8 @@ android {
         applicationId "com.ienergybook"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 8
-        versionName "1.0.7"
+        versionCode 9
+        versionName "1.0.8"
  
       manifestPlaceholders = [
           onesignal_app_id: 'e31f477a-2f06-4f77-b051-376694227a4c',

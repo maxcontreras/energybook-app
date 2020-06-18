@@ -1,42 +1,19 @@
-<?xml version="1.0"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512.001 512.001" style="enable-background:new 0 0 512.001 512.001;" xml:space="preserve" width="24px" height="24px"><g><g>
-	<g>
-		<polygon points="318.116,243.333 193.884,243.333 190.152,350 321.848,350   " data-original="#000000" class="active-path" data-old_color="#000000" fill="#525252"/>
-	</g>
-</g><g>
-	<g>
-		<polygon points="20.737,136.667 12.69,213.333 164.915,213.333 167.597,136.667   " data-original="#000000" class="active-path" data-old_color="#000000" fill="#525252"/>
-	</g>
-</g><g>
-	<g>
-		<polygon points="309.602,0 202.398,0 198.666,106.667 313.334,106.667   " data-original="#000000" class="active-path" data-old_color="#000000" fill="#525252"/>
-	</g>
-</g><g>
-	<g>
-		<polygon points="314.384,136.667 197.616,136.667 194.934,213.333 317.066,213.333   " data-original="#000000" class="active-path" data-old_color="#000000" fill="#525252"/>
-	</g>
-</g><g>
-	<g>
-		<path d="M9.541,243.333l-9.458,90.102C-0.846,342.293,6.11,350,15.001,350h145.132l3.732-106.667H9.541z" data-original="#000000" class="active-path" data-old_color="#000000" fill="#525252"/>
-	</g>
-</g><g>
-	<g>
-		<path d="M511.917,333.435l-9.458-90.102H348.135L351.867,350h145.131C505.905,350,512.844,342.277,511.917,333.435z" data-original="#000000" class="active-path" data-old_color="#000000" fill="#525252"/>
-	</g>
-</g><g>
-	<g>
-		<path d="M48.59,0c-7.678,0-14.116,5.798-14.918,13.435l-9.786,93.232h144.761L172.379,0H48.59z" data-original="#000000" class="active-path" data-old_color="#000000" fill="#525252"/>
-	</g>
-</g><g>
-	<g>
-		<path d="M478.328,13.435C477.526,5.798,471.088,0,463.41,0H339.621l3.732,106.667h144.761L478.328,13.435z" data-original="#000000" class="active-path" data-old_color="#000000" fill="#525252"/>
-	</g>
-</g><g>
-	<g>
-		<polygon points="491.263,136.667 344.403,136.667 347.086,213.333 499.31,213.333   " data-original="#000000" class="active-path" data-old_color="#000000" fill="#525252"/>
-	</g>
-</g><g>
-	<g>
-		<path d="M329,439.169h-58V380h-30v59.169h-58c-8.284,0-15,6.716-15,15V497c0,8.284,6.716,15,15,15h146c8.284,0,15-6.716,15-15    v-42.831C344,445.885,337.284,439.169,329,439.169z" data-original="#000000" class="active-path" data-old_color="#000000" fill="#525252"/>
-	</g>
-</g></g> </svg>
+<svg id="Capa_1" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 61 61">
+    <defs>
+        <style>
+        </style>
+    </defs>
+    <title>
+        panel selec
+    </title>
+    <polygon style="stroke:#000;fill:#1b1b1b;stroke-miterlimit:10" points="37.78 29.02 23.22 29.02 22.78 41.52 38.22 41.52 37.78 29.02"/>
+    <polygon style="stroke:#000;fill:#1b1b1b;stroke-miterlimit:10" points="1.99 25.5 19.83 25.5 20.14 16.52 2.93 16.52 1.99 25.5"/>
+    <polygon style="stroke:#000;fill:#1b1b1b;stroke-miterlimit:10" points="36.78 0.5 24.22 0.5 23.78 13 37.22 13 36.78 0.5"/>
+    <polygon style="stroke:#000;fill:#1b1b1b;stroke-miterlimit:10" points="37.34 16.52 23.66 16.52 23.34 25.5 37.66 25.5 37.34 16.52"/>
+    <path style="stroke:#000;fill:#1b1b1b;stroke-miterlimit:10" d="M3,41.07a1.77,1.77,0,0,0,1.75,2h17l.43-12.5H4.12Z" transform="translate(-2.5 -1.5)"/>
+    <path style="stroke:#000;fill:#1b1b1b;stroke-miterlimit:10" d="M63,41.07,61.88,30.52H43.8L44.23,43h17A1.76,1.76,0,0,0,63,41.07Z" transform="translate(-2.5 -1.5)"/>
+    <path style="stroke:#000;fill:#1b1b1b;stroke-miterlimit:10" d="M23.2,2H8.69A1.75,1.75,0,0,0,7,3.57L5.8,14.5h17Z" transform="translate(-2.5 -1.5)"/>
+    <path style="stroke:#000;fill:#1b1b1b;stroke-miterlimit:10" d="M60.2,14.5,59.05,3.57A1.75,1.75,0,0,0,57.31,2H42.8l.44,12.5Z" transform="translate(-2.5 -1.5)"/>
+    <polygon style="stroke:#000;fill:#1b1b1b;stroke-miterlimit:10" points="58.07 16.52 40.86 16.52 41.17 25.5 59.01 25.5 58.07 16.52"/>
+    <path style="stroke:#000;fill:#1b1b1b;stroke-miterlimit:10" d="M41.55,53.47H34.76V46.53H31.24v6.94H24.45a1.75,1.75,0,0,0-1.76,1.75v5A1.76,1.76,0,0,0,24.45,62h17.1a1.76,1.76,0,0,0,1.76-1.76v-5A1.75,1.75,0,0,0,41.55,53.47Z" transform="translate(-2.5 -1.5)"/>
+</svg>

@@ -8,7 +8,7 @@ const opciones = [
   'Costos',
   'Generación',
   'Desconexión de equipos',
-  'Inyección a la red',
+  'Código de red',
   'Cambio de horario',
 ];
 

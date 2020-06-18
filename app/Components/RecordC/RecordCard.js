@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View, Dimensions, Platform} from 'react-native';
 import {connect} from 'react-redux';
 import {Card} from 'react-native-elements';
-import AsyncStorage from '@react-native-community/async-storage';
-import {cardData} from './data';
 const mapStateToProps = state => ({
   readings: state.dailyReducer,
   meterId: state.dailyReducer.meterId,
@@ -31,35 +29,6 @@ class RecordCard extends Component {
       });
     });
   }
-  UNSAFE_componentWillMount() {
-    this._retrieveData();
-  }
-
-  _retrieveData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@MySuperStore:key');
-      if (value !== null) {
-        this.setState(
-          {
-            values: JSON.parse(value),
-          },
-          () => {
-            this.setValues();
-          },
-        );
-      }
-    } catch (error) {}
-  };
-
-  setValues() {
-    this.setState({
-      data: cardData(
-        this.props.prices,
-        this.props.cardData,
-        this.props.consumptionPrice,
-      ),
-    });
-  }
 
   componentWillUnmount() {
     Dimensions.removeEventListener('change');
@@ -75,7 +44,7 @@ class RecordCard extends Component {
           ]}
           wrapperStyle={styles.wrapper}>
           <View style={styles.innerCard}>
-            {this.state.data.map((datos, index) => (
+            {this.props.cardData.map((datos, index) => (
               <View key={index} style={styles.parte}>
                 <View style={styles.iconView}>
                   <datos.Icono style={styles.icon} />

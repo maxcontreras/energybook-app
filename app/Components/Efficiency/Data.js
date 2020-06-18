@@ -1,10 +1,93 @@
 import moment from 'moment/min/moment-with-locales';
 import {Platform} from 'react-native';
 
-export function jsonChartData(data) {
-  console.log('FUNCTION DATA');
-  console.log(data);
+export function jsonChartData(access, body, tipo) {
+  //Get consumption data
+  let value = fetch(
+    `http://api.ienergybook.com/api/Meters/getConsumptionCostsByFilter?access_token=${access}`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    },
+  )
+    .then(res => {
+      let statusCode = res.status;
+      const data = res.json();
+      return Promise.all([statusCode, data]);
+    })
+    .then(json => {
+      let data = {
+        readingConsumo: `0.0 kWh`,
+        readingDemanda: `0.0 kW`,
+        totalConsumo: `$00.00`,
+        totalDemanda: `$ 0`,
+        error: false,
+        isConsumption: true,
+        indicator: false,
+        isEPimp: true,
+        isDP: true,
+        chart: [],
+      };
+      if (json[0] != 200) {
+        //In case of bad request
+        data.error = true;
+      } else {
+        // sets the chart for consumption values
+        console.log('AQUI ESTE PEDO ');
 
+        let values = setChart(json[1]);
+        if (tipo == 'mensual') {
+          console.log(values.finalConsumption);
+        }
+
+        let finalDP =
+          tipo == 'mensual'
+            ? (
+                parseFloat(values.finalConsumption) /
+                (24 *
+                  moment(body.custom_dates.from, 'YYYY-MM-DD').daysInMonth() *
+                  0.57)
+              ).toFixed(2)
+            : (parseFloat(values.finalConsumption) / (24 * 1 * 0.57)).toFixed(
+                2,
+              );
+
+        data.readingConsumo = `${values.finalConsumption
+          .toFixed(2)
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} kWh`;
+        data.totalConsumo = `$${values.finalCost}`;
+        data.totalDemanda = `$ 0`;
+        data.readingDemanda = `${finalDP} kW`;
+        data.chart = values.chart;
+      }
+
+      return data;
+    })
+    .catch(err => {
+      console.log('No se pudo');
+      let data = {
+        readingConsumo: `0.0 kWh`,
+        totalConsumo: `$00.00`,
+        totalDemanda: `$ 0`,
+        error: true,
+        isConsumption: true,
+        indicator: false,
+        isEPimp: true,
+        isDP: true,
+        chart: [],
+      };
+      return data;
+    });
+
+  return value;
+}
+
+function setChart(data) {
+  // returns chart consumption price values
   var newData = [];
   var justCosts = 0.0;
   var justValues = 0.0;
@@ -47,10 +130,7 @@ export function jsonChartData(data) {
 
   let finalCost = justCosts.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-  let finalConsumption = justValues
-    .toFixed(2)
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
+  let finalConsumption = justValues;
   let group = newData.reduce((r, a) => {
     r[a.dia] = [...(r[a.dia] || []), a];
     return r;
@@ -111,16 +191,6 @@ export function jsonChartData(data) {
   };
 
   return {finalCost, finalConsumption, chart};
-}
-//----------------------------------------------------------------------------------------------
-export function jsonDP(data) {
-  let values = 0.0;
-  for (var i = 0; i < data.length; i++) {
-    values += data[i].value;
-  }
-  var totalDP = values.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-  return totalDP;
 }
 
 //----------------------------------------------------------------------------------------------

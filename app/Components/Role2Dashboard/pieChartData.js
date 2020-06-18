@@ -5,12 +5,12 @@ export function pieData(data) {
   const dataSource = {
     type: 'pie2d',
     width: cardWidth - 10,
-    height: 300,
+    height: 330,
     dataFormat: 'json',
     chart: {
       plottooltext: '$label : $value',
       showlegend: '1',
-      legendposition: 'bottom',
+      legendposition: 'top',
       legendItemFontSize: '10',
       theme: Platform.OS == 'ios' ? 'ocean' : 'fusion',
       valueFontSize: '10',

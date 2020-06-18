@@ -15,6 +15,7 @@ import {
   PeriodPicker,
 } from '../../Components/Notifications/index';
 import {divider} from '../../Components/Notifications/function';
+import {Load} from '../../Components/Global/index';
 
 export default class Notifications extends Component {
   constructor(props) {
@@ -26,6 +27,7 @@ export default class Notifications extends Component {
       new_notifications: [],
       old_notifications: [],
       statusCode: null,
+      isLoaded: false,
       category: 'Mostrar todas',
     };
     OneSignal.init('e31f477a-2f06-4f77-b051-376694227a4c');
@@ -49,6 +51,7 @@ export default class Notifications extends Component {
   };
 
   getNotifications() {
+    this.setState({isLoaded: false});
     fetch(`http://api.ienergybook.com/api/notificaciones/VerNotificaciones`, {
       method: 'POST',
       headers: {
@@ -66,16 +69,20 @@ export default class Notifications extends Component {
         return Promise.all([this.state.statusCode, data]);
       })
       .then(json => {
-        console.log('SI SE ESTA HACIENDO');
-
         let not_new = divider(json[1].Resultado[0], this.state.category);
         let not_old = divider(json[1].Resultado[1], this.state.category);
+
         this.setState({
           new_notifications: not_new,
           old_notifications: not_old,
+          isLoaded: true,
         });
       })
-      .catch(err => {});
+      .catch(err => {
+        this.setState({
+          isLoaded: true,
+        });
+      });
   }
 
   UNSAFE_componentWillMount() {
@@ -113,24 +120,37 @@ export default class Notifications extends Component {
               />
               <View style={styles.cardContainer}>
                 <Bar text={'Nuevas notificaciones!'} />
-                {this.state.new_notifications.length == 0 && <MessageBox />}
-                {this.state.new_notifications.map((device, index) => (
-                  <Card
-                    key={index}
-                    device={device}
-                    afterDelete={this.getNotifications.bind(this)}
-                  />
-                ))}
+                {this.state.new_notifications.length == 0 &&
+                  this.state.isLoaded && <MessageBox />}
+                {!this.state.isLoaded && <Load />}
+                {this.state.isLoaded && (
+                  <View>
+                    {this.state.new_notifications.map((device, index) => (
+                      <Card
+                        key={index}
+                        device={device}
+                        afterDelete={this.getNotifications.bind(this)}
+                      />
+                    ))}
+                  </View>
+                )}
               </View>
               <View style={styles.cardContainer}>
                 <Bar text={'Notificaciones Pasadas'} />
-                {this.state.old_notifications.map((device, index) => (
-                  <Card
-                    key={index}
-                    device={device}
-                    afterDelete={this.getNotifications.bind(this)}
-                  />
-                ))}
+                {this.state.old_notifications.length == 0 &&
+                  this.state.isLoaded && <MessageBox />}
+                {!this.state.isLoaded && <Load />}
+                {this.state.isLoaded && (
+                  <View>
+                    {this.state.old_notifications.map((device, index) => (
+                      <Card
+                        key={index}
+                        device={device}
+                        afterDelete={this.getNotifications.bind(this)}
+                      />
+                    ))}
+                  </View>
+                )}
               </View>
             </View>
           </KeyboardAvoidingView>

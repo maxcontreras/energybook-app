@@ -98,7 +98,6 @@ export default class BottomCard extends Component {
         this.setState({
           inputProduccion: null,
         });
-
         //Triggers father function to re-render and show changes.
         this.props.showDayProd();
       })
@@ -118,7 +117,7 @@ export default class BottomCard extends Component {
       <View style={styles.mensualResult}>
         <View style={styles.resultView}>
           <Text style={styles.resultText}>{this.props.formula1} kWh/ u</Text>
-          <Text style={styles.resultText}>00.00 $/ u</Text>
+          <Text style={styles.resultText}>{this.props.formula1} $/ u</Text>
         </View>
         <View style={styles.manufactura}>
           <Manufactura style={{width: 50, height: 50}} />

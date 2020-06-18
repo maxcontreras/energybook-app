@@ -12,7 +12,7 @@ export default class MessageBox extends Component {
     return (
       <View style={styles.noNotifications}>
         <Text style={{fontSize: 10, textAlign: 'center'}}>
-          No hay nuevas notificaciones por el momento
+          No hay notificaciones por el momento
         </Text>
       </View>
     );

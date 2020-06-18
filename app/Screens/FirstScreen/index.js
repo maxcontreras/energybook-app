@@ -14,7 +14,7 @@ export default class FirstScreen extends Component {
     const userToken = await AsyncStorage.getItem('@MySuperStore:key');
     setTimeout(() => {
       this.props.navigation.navigate(userToken ? 'BottomTab' : 'Home');
-    }, 1500);
+    }, 1000);
   };
   render() {
     return (

@@ -280,6 +280,7 @@ const styles = StyleSheet.create({
     height: 'auto',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: 20,
   },
   chart: {
     justifyContent: 'center',
