@@ -11,7 +11,7 @@ import {
   getCardWidth,
   isPortrait,
 } from '../../Assets/constants';
-import {pieData} from './pieChartData';
+import {pieData} from '../../Assets/Functions/role2';
 import {Load} from '../Global/index';
 const mapStateToProps = state => ({
   readings: state.dailyReducer.devices,

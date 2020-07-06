@@ -9,7 +9,7 @@ import {
   screenWidth,
   getFontSize,
 } from '../../Assets/constants';
-import {cardData} from './Data';
+import {cardData} from '../../Assets/Functions/carbon';
 let fontSize = getFontSize('small');
 
 export default class CardsCompL extends Component {

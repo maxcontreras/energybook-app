@@ -1,12 +1,8 @@
 import moment from 'moment/min/moment-with-locales';
 
-import {
-  GenIcon,
-  AutoConsumo,
-  Inyeccion,
-} from '../../Assets/Svg/Variables/index';
+import {GenIcon, AutoConsumo, Inyeccion} from '../Svg/Variables/index';
 
-import {n, date, mes} from '../../Assets/constants';
+import {n, date, mes} from '../constants';
 
 // Total of Generation, Self Consumption and Network Injection
 export function summatory(access, body) {

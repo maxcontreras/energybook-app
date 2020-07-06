@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-
 import {
   Animated,
   View,
@@ -10,12 +9,9 @@ import {
   Platform,
 } from 'react-native';
 import PropTypes from 'prop-types';
-
 import {Card} from 'react-native-elements';
 import {connect} from 'react-redux';
-
 import {screenHeight, screenWidth, getCardWidth} from '../../Assets/constants';
-
 const cardWidth = getCardWidth(2.2);
 
 const mapStateToProps = state => ({

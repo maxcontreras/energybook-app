@@ -20,7 +20,7 @@ import {
   getEPIMP,
   getHISTORY,
   setValues,
-} from '../../Components/RecordC/allData';
+} from '../../Assets/Functions/record';
 import 'moment/min/moment-with-locales';
 const mapStateToProps = state => ({
   userData: state.initialValues,

@@ -10,7 +10,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import {connect} from 'react-redux';
 import moment from 'moment/min/moment-with-locales';
-import {jsonChartData} from '../../Components/Efficiency/Data';
+import {jsonChartData} from '../../Assets/Functions/efficiency';
 import {
   isPortrait,
   screenHeight,
@@ -22,7 +22,7 @@ import {
   MonthSelector,
   SwiperView,
 } from '../../Components/Efficiency/index';
-import {getHISTORY} from '../../Components/RecordC/allData';
+import {getHISTORY} from '../../Assets/Functions/record';
 const mapStateToProps = state => ({
   userData: state.initialValues,
   readings: state.dailyReducer,

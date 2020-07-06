@@ -14,7 +14,7 @@ import {
   Part1,
   Colors,
 } from '../../Components/Cost/index';
-import {jsonResponse} from '../../Components/Cost/chartData';
+import {jsonResponse} from '../../Assets/Functions/costs';
 import {isPortrait, filtersCharts} from '../../Assets/constants';
 import {ChartView} from '../../Components/Global/index';
 import AsyncStorage from '@react-native-community/async-storage';

@@ -10,7 +10,7 @@ import {
 import {alert} from '../../Assets/Functions/setAlert';
 import AsyncStorage from '@react-native-community/async-storage';
 import {connect} from 'react-redux';
-import {jsonResponse} from '../../Components/Code/chartData';
+import {jsonResponse} from '../../Assets/Functions/code';
 import {isPortrait} from '../../Assets/constants';
 import {
   TopPickers,

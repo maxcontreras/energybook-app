@@ -12,7 +12,7 @@ import {
   getFontSize,
   isPortrait,
 } from '../../Assets/constants';
-import {cardData} from './Data';
+import {cardData} from '../../Assets/Functions/carbon';
 let fontSize = getFontSize('small');
 export default class CardsCompP extends Component {
   constructor(props) {

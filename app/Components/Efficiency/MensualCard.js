@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Dimensions, Platform} from 'react-native';
 import {Card} from 'react-native-elements';
 import {connect} from 'react-redux';
-import {returnArrayM} from './Data';
+import {returnArrayM} from '../../Assets/Functions/efficiency';
 import {BottomCard, MensualDates} from './index';
 import {isPortrait, screenHeight, screenWidth} from '../../Assets/constants';
 import {RowText} from './index';

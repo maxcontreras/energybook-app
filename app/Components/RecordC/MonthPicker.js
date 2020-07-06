@@ -77,14 +77,14 @@ export default class MonthPicker extends Component {
           if (this.state.indexM == -1) {
             this.setState({
               indexM: 11,
-              indexA: this.state.indexA - 1,
+              indexA: parseInt(this.state.indexA) - 1,
             });
           }
         },
       );
     } else if (valor == 'año') {
       this.setState({
-        indexA: this.state.indexA + years,
+        indexA: parseInt(this.state.indexA) + years,
       });
     }
     this.props.function(months, years, mesesito[this.state.indexM]);

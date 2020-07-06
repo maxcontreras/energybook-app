@@ -3,8 +3,8 @@ import {StyleSheet, Text, View, Dimensions, Platform} from 'react-native';
 import {connect} from 'react-redux';
 import {Card} from 'react-native-elements';
 import {MonthCardTitle, MonthTextCard} from './index';
-import {monthlyData, getJson} from './data';
-import {getEPEXP} from '../../Components/RecordC/allData';
+import {monthlyData, getJson} from '../../Assets/Functions/role2';
+import {getEPEXP} from '../../Assets/Functions/record';
 import AsyncStorage from '@react-native-community/async-storage';
 import {
   getCardWidth,
@@ -49,9 +49,6 @@ class Monthly extends Component {
     this._retrieveData();
   }
   _retrieveData = async () => {
-    console.log('ENTRO A RETRIEVE');
-    console.log(this.state.indicator);
-
     try {
       const value = await AsyncStorage.getItem('@MySuperStore:key');
 
@@ -106,6 +103,15 @@ class Monthly extends Component {
             this.getData();
           },
         );
+      } else {
+        this.setState(
+          {
+            EPexp: 0.0,
+          },
+          () => {
+            this.getData();
+          },
+        );
       }
     } catch (error) {}
   };
@@ -138,10 +144,25 @@ class Monthly extends Component {
           },
         );
       } else {
-        this.setState({
-          monthlyTCC: 0,
-          indicator: false,
-        });
+        this.setState(
+          {
+            monthlyTCC: 0,
+            indicator: false,
+          },
+          () => {
+            setTimeout(() => {
+              //Gets the array of data for the month card.
+              this.setState({
+                monthlyData: monthlyData(
+                  this.props.prices,
+                  this.props.readings,
+                  this.state.monthlyTCC,
+                  this.state.EPexp,
+                ),
+              });
+            }, 1000);
+          },
+        );
       }
     } catch (error) {}
   };

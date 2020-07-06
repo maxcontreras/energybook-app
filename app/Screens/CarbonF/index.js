@@ -12,7 +12,7 @@ import {
   PickersView,
   FiltersView,
 } from '../../Components/Carbon/index';
-import {chartData, buttonsData} from '../../Components/Carbon/Data';
+import {chartData, buttonsData} from '../../Assets/Functions/carbon';
 import AsyncStorage from '@react-native-community/async-storage';
 import {isPortrait, screenHeight, screenWidth} from '../../Assets/constants';
 import {alert} from '../../Assets/Functions/setAlert';

@@ -11,7 +11,7 @@ import {ChartView} from '../../Components/Global/index';
 import AsyncStorage from '@react-native-community/async-storage';
 import {connect} from 'react-redux';
 import {isPortrait} from '../../Assets/constants';
-import {jsonResponse} from '../../Components/Charts/chartData';
+import {jsonResponse} from '../../Assets/Functions/charts';
 import {alert} from '../../Assets/Functions/setAlert';
 import {TopView1, TopView2, Cards} from '../../Components/Charts/index.js';
 const mapStateToProps = state => ({

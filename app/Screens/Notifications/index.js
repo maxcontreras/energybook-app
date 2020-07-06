@@ -14,7 +14,7 @@ import {
   Bar,
   PeriodPicker,
 } from '../../Components/Notifications/index';
-import {divider} from '../../Components/Notifications/function';
+import {divider} from '../../Assets/Functions/notifications';
 import {Load} from '../../Components/Global/index';
 
 export default class Notifications extends Component {

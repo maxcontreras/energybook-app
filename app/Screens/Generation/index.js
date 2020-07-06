@@ -10,7 +10,7 @@ import {
 import {connect} from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
 import {isPortrait, screenHeight, screenWidth} from '../../Assets/constants';
-import {jsonChartData, jsonCardData} from '../../Components/Generation/Data';
+import {jsonChartData, jsonCardData} from '../../Assets/Functions/generation';
 import {
   CardView,
   VariableView,

@@ -4,8 +4,38 @@ import {
   ConsumoIcon,
   Fp,
   Inyeccion,
-} from '../../Assets/Svg/Variables/index';
-import {headers} from '../../Assets/constants';
+} from '../Svg/Variables/index';
+import {Platform} from 'react-native';
+import {headers} from '../constants';
+import {getCardWidth} from '../constants';
+const cardWidth = getCardWidth(2.2);
+
+// Pie chart data source
+export function pieData(data) {
+  const dataSource = {
+    type: 'pie2d',
+    width: cardWidth - 10,
+    height: 330,
+    dataFormat: 'json',
+    chart: {
+      plottooltext: '$label : $value',
+      showlegend: '1',
+      legendposition: 'top',
+      legendItemFontSize: '10',
+      theme: Platform.OS == 'ios' ? 'ocean' : 'fusion',
+      valueFontSize: '10',
+      showNames: '0',
+      pieRadius: '0',
+      showZeroPies: '0',
+      showPercentValues: '0',
+      showPercentInToolTip: '0',
+      showLabels: '0',
+      labelDistance: '10',
+    },
+    data: data,
+  };
+  return dataSource;
+}
 
 // Total consumption cost for the month.
 export function getJson(access, id) {
@@ -148,7 +178,7 @@ export function dailyData(prices, readings, response) {
   return data;
 }
 
-//Returns  prices accordint to the tariff in the company
+//Returns  prices according to the tariff in the company
 export function cfeValues(tarifa, prices) {
   let tarifaa = [];
   if (tarifa == 'GDMTH') {

@@ -1,7 +1,6 @@
 import moment from 'moment/min/moment-with-locales';
 import {Platform} from 'react-native';
-import {variablesNC} from '../../Assets/constants';
-import {validateYupSchema} from 'formik';
+import {variablesNC} from '../constants';
 export function jsonResponse(data, caption, steps, cardVariable) {
   var group2 = {
     data: [],

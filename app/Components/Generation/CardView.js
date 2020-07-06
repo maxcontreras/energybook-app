@@ -3,7 +3,7 @@ import {View, Text, Dimensions, StyleSheet, Platform} from 'react-native';
 import {CardsCompL, CardsCompP} from './index';
 import {isPortrait} from '../../Assets/constants';
 import AsyncStorage from '@react-native-community/async-storage';
-import {summatory} from './Data';
+import {summatory} from '../../Assets/Functions/generation';
 export default class CardView extends Component {
   constructor(props) {
     isPortrait();

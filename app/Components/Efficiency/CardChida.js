@@ -4,7 +4,7 @@ import {Card} from 'react-native-elements';
 import {connect} from 'react-redux';
 import moment from 'moment/min/moment-with-locales';
 import AsyncStorage from '@react-native-community/async-storage';
-import {jsonChartData, jsonDP, returnArrayD} from './Data';
+import {jsonChartData, returnArrayD} from '../../Assets/Functions/efficiency';
 import {BottomCard, RowText, DailyDates} from './index';
 import {isPortrait, screenHeight, screenWidth} from '../../Assets/constants';
 const mapStateToProps = state => ({

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Card} from 'react-native-elements';
 import {screenHeight, screenWidth, getFontSize} from '../../Assets/constants';
-import {cardData} from './Data';
+import {cardData} from '../../Assets/Functions/generation';
 let fontSize = getFontSize('small');
 
 export default class CardsCompL extends Component {

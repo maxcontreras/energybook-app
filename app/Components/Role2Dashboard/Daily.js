@@ -8,7 +8,7 @@ import {connect} from 'react-redux';
 import {getDailyReadings, getPrices} from '../../../Actions/Actions.js';
 import Swiper from 'react-native-web-swiper';
 import {isPortrait, swiperDaily} from '../../Assets/constants';
-import {dailyData} from './data';
+import {dailyData} from '../../Assets/Functions/role2';
 
 const mapStateToProps = state => ({
   readings: state.dailyReducer,
@@ -175,7 +175,8 @@ class Daily extends Component {
       })
       .catch(err => {
         console.log('no se pudo');
-        this.setState({swiper: true});
+        let data = dailyData(this.props.prices, this.props.readings, 0);
+        this.setState({swiper: true, data: data});
       });
   }
   _storeData = async () => {

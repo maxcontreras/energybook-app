@@ -48,6 +48,9 @@ export default class SecondDaily extends Component {
       var Icono = Fp;
     }
 
+    console.log('AQUI DATOS EN SECOND DAILY');
+    console.log(this.props);
+
     return (
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <Card

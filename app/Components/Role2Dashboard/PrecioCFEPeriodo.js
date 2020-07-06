@@ -10,7 +10,7 @@ import {
   screenHeight,
   screenWidth,
 } from '../../Assets/constants';
-import {cfeValues} from './data';
+import {cfeValues} from '../../Assets/Functions/role2';
 const cardWidth = getCardWidth(2.2);
 const fontSize = getFontSize('small');
 const mapStateToProps = state => ({

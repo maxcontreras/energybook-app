@@ -6,7 +6,7 @@ import {
   ConsumoIcon,
   TotalIcon,
   LimiteIcon,
-} from '../../Assets/Svg/Variables/index';
+} from '../Svg/Variables/index';
 
 export function chartData(data) {
   var newData = [];
