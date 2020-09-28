@@ -1,3 +1,4 @@
+//VIEW FOR PRODUCTION INPUT IN DAILY CARD
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, TextInput} from 'react-native';
 export default class DayInput extends Component {

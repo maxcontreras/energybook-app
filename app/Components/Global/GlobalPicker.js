@@ -1,3 +1,4 @@
+//RETURNS STYLED PICKER FOR IOS OR PICKER FOR ANDROID
 import React, {Component} from 'react';
 import {View, Platform} from 'react-native';
 import {PickerIos, PickerAndroid} from './index';

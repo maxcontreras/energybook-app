@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "240680344606",
+    "firebase_url": "https://ienergybook-d07fb.firebaseio.com",
+    "project_id": "ienergybook-d07fb",
+    "storage_bucket": "ienergybook-d07fb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:240680344606:android:0a4a8970ee364c72c1620f",
+        "android_client_info": {
+          "package_name": "com.ienergybook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "240680344606-urterv119uatldbjlm9lbs8u88vsl12k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ienergybook",
+            "certificate_hash": "12242d34d41145f10552c9b92fed2662907485db"
+          }
+        },
+        {
+          "client_id": "240680344606-mvrjumaffu4j212uispnvdmqbca775mp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAW7W0BTPfyOzu-6JNgieUEEOpWb4j3f6E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "240680344606-mvrjumaffu4j212uispnvdmqbca775mp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "240680344606-3g3nn2ghne1j11315sj1a9hue84t05pc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.Ienergybook",
+                "app_store_id": "1495606309"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,3 +1,4 @@
+//LANDSCAPE VIEW FOR BOTTOM CARDS IN CARBON FOOTPRINT
 import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Card} from 'react-native-elements';
@@ -19,6 +20,7 @@ export default class CardsCompL extends Component {
   }
   render() {
     var Fecha = date + ' ' + n + ' ' + 'de' + ' ' + mes;
+    //Returns formatted array of data
     let values = cardData(this.props.response);
     return (
       <View style={styles.container}>

@@ -1,3 +1,4 @@
+// VIEW FOR COLOR INDICATORS FOR THE CHART INSIDE COSTS
 import React, {Component} from 'react';
 import {View, Text, Dimensions, StyleSheet} from 'react-native';
 
@@ -25,11 +26,13 @@ export default class Colors extends Component {
   }
 
   render() {
+    //COLORS FOR CHART PER HOUR
     const datos1 = [
       {titulo: 'Base', color: '#EDDC44'},
       {titulo: 'Intermedia', color: '#25CEBC'},
       {titulo: 'Punta', color: '#DE3E10'},
     ];
+    //COLORS FOR CHART PER DAY
     const datos2 = [
       {
         titulo: 'Diario',

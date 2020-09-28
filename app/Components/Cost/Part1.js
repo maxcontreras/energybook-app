@@ -1,3 +1,5 @@
+//VIEW FOR DEVICE PICKER AND HOUR/DAY BUTTONS (PORTRAIT)
+// VIEW FOR DEVICE PICKER ONLY (LANDSCAPE)
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {CSButtons, CCPicker} from '../../Components/Global/index';
@@ -25,6 +27,7 @@ export default class Part1 extends Component {
     var arrayDescriptionDevices = [];
     var arrayNameDevices = [];
     for (var j = 1; j < this.props.devices.length; j++) {
+      // the first device in the array is not taken
       arrayNameDevices[j - 1] = this.props.devices[j].name;
       arrayDescriptionDevices[j - 1] = this.props.devices[j].description;
     }
@@ -34,7 +37,10 @@ export default class Part1 extends Component {
       },
       () => {
         if (this.props.pickerValue.substr(0, 8) !== 'Servicio') {
+          //takes the index in device description array
           var getIndex = arrayDescriptionDevices.indexOf(itemValue);
+
+          //sends the name of the device matching the description
           this.props.functionDevice(itemValue, '', arrayNameDevices[getIndex]);
         } else {
           this.props.functionDevice(itemValue, this.props.pickerValue, '');

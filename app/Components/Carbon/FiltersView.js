@@ -21,6 +21,7 @@ export default class FiltersView extends Component {
 
   setFilter(value, texto) {
     var steps = this.props.numSteps;
+    // steps are for the number of labels inside the chart
     if (value == 'Calendario' || texto == 'Calendario') {
       var filtro = -1;
       steps = steps;

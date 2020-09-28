@@ -9,6 +9,7 @@ export default class DeleteButton extends Component {
   }
 
   delete() {
+    //deletes notification from screen
     fetch(`http://api.ienergybook.com/api/notificaciones/${this.props.id}`, {
       method: 'DELETE',
       headers: {

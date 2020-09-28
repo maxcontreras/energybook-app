@@ -1,3 +1,4 @@
+//STYLED BUTTON FOR THE SCREENS INSIDE THE APP
 import React, {Component, PropTypes} from 'react';
 import {Text, StyleSheet, Dimensions, TouchableOpacity} from 'react-native';
 class CSButtons extends Component {

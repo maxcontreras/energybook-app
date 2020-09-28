@@ -1,3 +1,4 @@
+// VIEW FOR TEXT DATA ROWS INSIDE EFFICIENCY CARDS
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
 import {getFontSize} from '../../Assets/constants';

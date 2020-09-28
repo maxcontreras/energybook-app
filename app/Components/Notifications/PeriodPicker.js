@@ -12,6 +12,8 @@ const opciones = [
   'Cambio de horario',
 ];
 
+const adminOptions = ['Desconexión de equipos'];
+
 export default class PeriodPicker extends Component {
   constructor(props) {
     super(props);
@@ -25,14 +27,18 @@ export default class PeriodPicker extends Component {
           <PickerIos
             selectedValue={this.props.selected}
             function={this.props.change}
-            pickerArrayIos={opciones.concat('Cancelar')}
+            pickerArrayIos={
+              this.props.role == 1
+                ? adminOptions.concat('Cancelar')
+                : opciones.concat('Cancelar')
+            }
           />
         )}
         {Platform.OS == 'android' && (
           <PickerAndroid
             function={this.props.change}
             selectedValue={this.props.selected}
-            pickerItems={opciones}
+            pickerItems={this.props.role == 1 ? adminOptions : opciones}
           />
         )}
       </View>

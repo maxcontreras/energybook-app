@@ -36,11 +36,11 @@ class IntervalPicker extends Component {
   iosFunction(FILTERS, VARIABLES) {
     ActionSheetIOS.showActionSheetWithOptions(
       {
-        options: FILTERS.concat('Cancelar'),
+        options: FILTERS,
         cancelButtonIndex: FILTERS.length,
       },
       buttonIndex => {
-        if (buttonIndex != FILTERS.indexOf('Cancelar')) {
+        if (FILTERS.indexOf('Cancelar') != buttonIndex) {
           this.props.function(VARIABLES[buttonIndex], FILTERS[buttonIndex]);
         }
       },
@@ -62,7 +62,9 @@ class IntervalPicker extends Component {
         {Platform.OS == 'ios' && (
           <View>
             <TouchableOpacity
-              onPress={() => this.iosFunction(FILTERS, VARIABLES)}
+              onPress={() =>
+                this.iosFunction(FILTERS.concat('Cancelar'), VARIABLES)
+              }
               style={[styles.PickerIos]}>
               <Text style={[styles.unselectedButtonText]}>
                 {this.props.selectedValue}

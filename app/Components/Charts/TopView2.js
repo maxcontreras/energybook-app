@@ -1,3 +1,5 @@
+//VIEW FOR VARIABLE BUTTONS AND FILTER PICKER (PORTRAIT)
+//VIEW FOR VARIABLE BUTTONS AND FILTER BUTTONS (LANDSCAPE)
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {CSButtons} from '../../Components/Global/index';
@@ -34,6 +36,7 @@ export default class TopView2 extends Component {
   }
 
   setFilter(value, texto) {
+    // steps are for the number of labels inside the chart
     var steps = this.state.numSteps;
     if (value == 'Calendario' || texto == 'Calendario') {
       var filtro = -1;
@@ -67,9 +70,6 @@ export default class TopView2 extends Component {
         }
       }
     }
-    console.log('AQUI TOPVIEW2');
-    console.log(texto);
-
     this.props.functionFilter(
       filtro,
       null,

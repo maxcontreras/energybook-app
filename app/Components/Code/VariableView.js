@@ -1,3 +1,5 @@
+//VIEW FOR VARIABLE PICKER (PORTRAIT)
+//VIEW FOR VARIABLE BUTTONS (LANDSCAPE)
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {CSButtons} from '../../Components/Global/index';
@@ -29,9 +31,6 @@ export default class VariableView extends Component {
   }
 
   setVariabe(value, texto) {
-    console.log('TEXTO');
-    console.log(texto);
-
     let vari = '';
     if (texto == 'Voltaje') {
       vari = 'V';

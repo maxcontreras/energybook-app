@@ -1,3 +1,4 @@
+// THIS VIEW WRAPS THE MONTHE PICKER FOR THE MENSUAL CARD
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {MonthPickerEF} from './index';
@@ -12,6 +13,7 @@ export default class MonthSelector extends Component {
   }
 
   changeValue(months, years, mess) {
+    //validations to select the correct month
     const oldDate = moment()
       .startOf('month')
       .format('YYYY-MM-DD');

@@ -1,3 +1,5 @@
+//GETS MONTHLY DATA FOR MONTH CARD IN DASHBOARD
+
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Dimensions, Platform} from 'react-native';
 import {connect} from 'react-redux';

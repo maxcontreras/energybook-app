@@ -1,3 +1,4 @@
+//RETURNS SWIPER OR CARDS DEPENDING ON ORIENTATION
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {CardsCompL, CardsCompP} from '../../Components/Charts/index.js';

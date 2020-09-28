@@ -1,3 +1,4 @@
+//BUTTON TO ACCEPT THE NOTICE OF PRIVACY
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 

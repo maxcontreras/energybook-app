@@ -1,3 +1,4 @@
+//VIEW FOR MENSUAL CARD IN EFFICIENCY SCREEN
 import React, {Component} from 'react';
 import {View, StyleSheet, Dimensions, Platform} from 'react-native';
 import {Card} from 'react-native-elements';

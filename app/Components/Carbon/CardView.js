@@ -1,3 +1,4 @@
+//RETURNS SWIPER OR CARDS DEPENDING ON ORIENTATION
 import React, {Component} from 'react';
 import {View, Text, Dimensions} from 'react-native';
 import {CardsCompL, CardsCompP} from '../../Components/Carbon/index';

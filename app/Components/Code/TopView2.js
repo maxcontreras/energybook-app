@@ -1,3 +1,5 @@
+//VIEW FOR VARIABLES (PORTRAIT)
+// VIEW FOR FILTER BUTTONS (LANDSCAPE)
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {CSButtons} from '../../Components/Global/index';
@@ -29,7 +31,9 @@ export default class TopView2 extends Component {
   }
 
   setFilter(value, texto) {
+    // steps are for the number of labels inside the chart
     var steps = this.props.numSteps;
+    //array of number of steps per interval
     var numSteps = [
       {interval: 300, steps1: '12', steps2: '288'},
       {interval: 900, steps1: '4', steps2: '96'},

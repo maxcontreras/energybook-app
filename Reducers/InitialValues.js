@@ -37,7 +37,6 @@ const initialValues = (state = initialState, action) => {
     case GET_USER_INFO:
       newState.accesToken = action.json[1].id;
       newState.userId = action.json[1].userId;
-
       break;
 
     case GET_COMPANY_DATA:

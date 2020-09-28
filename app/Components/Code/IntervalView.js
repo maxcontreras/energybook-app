@@ -1,3 +1,4 @@
+// VIEW FOR INTERVAL BUTTONS IN NETWORK CODE
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {CSButtons} from '../../Components/Global/index';
@@ -27,7 +28,9 @@ export default class IntervalView extends Component {
   }
 
   setInterval(value) {
+    // steps are for the number of labels inside the chart
     var steps = this.props.numSteps;
+    //array of number of steps per filter
     var numSteps = [
       {
         filter: -1,

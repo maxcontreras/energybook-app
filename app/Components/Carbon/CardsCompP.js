@@ -1,3 +1,4 @@
+//PORTRAIT VIEW FOR BOTTOM CARDS IN CARBON FOOTPRINT
 import Swiper from 'react-native-web-swiper';
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
@@ -35,16 +36,19 @@ export default class CardsCompP extends Component {
     Dimensions.removeEventListener('change');
   }
 
-  aver() {
+  lockSwiperGestures() {
     return false;
   }
   render() {
     var Fecha = date + ' ' + n + ' ' + 'de' + ' ' + mes;
+    //Returns formatted array of data
     let values = cardData(this.props.response);
     return (
       <View style={styles.container}>
         {values && (
-          <Swiper gesturesEnabled={this.aver} controlsProps={EffSwiperOptions}>
+          <Swiper
+            gesturesEnabled={this.lockSwiperGestures}
+            controlsProps={EffSwiperOptions}>
             {values.map((datos, index) => (
               <Card
                 key={index}

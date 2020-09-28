@@ -1,3 +1,4 @@
+// VIEW FOR DATE PICKER AND CHART
 import React, {Component} from 'react';
 import {StyleSheet, View, Dimensions, Platform} from 'react-native';
 import FusionCharts from 'react-native-fusioncharts';
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 10,
     paddingTop: 20,
-    height: 500,
+    height: 'auto',
     overflow: 'hidden',
   },
 });

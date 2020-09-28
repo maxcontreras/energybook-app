@@ -1,3 +1,4 @@
+// LOGIN FORM FOR HOME
 import React, {Component} from 'react';
 import {
   View,
@@ -28,6 +29,7 @@ class Input extends Component {
   }
 
   setValue(text, value) {
+    //CHANGES STATE FOR USER AND PASSWORD
     value == 'USUARIO'
       ? this.setState({
           user: text,
@@ -38,12 +40,14 @@ class Input extends Component {
   }
 
   setHideButton() {
+    //ENCRYPTS AND SHOW PASSWORD
     this.setState({
       passwordHide: !this.state.passwordHide,
     });
   }
 
   postLogin() {
+    //logs user into platform
     fetch('http://api.ienergybook.com/api/eUsers/login', {
       method: 'POST',
       headers: {
@@ -61,9 +65,11 @@ class Input extends Component {
         return Promise.all([this.state.statusCode, data]);
       })
       .then(json => {
-        console.log(json);
+        //saves user login data into store
         this.props.dispatch(getUserInfo(json));
+        //is the login is successful
         if (this.state.statusCode == 200) {
+          //gets user company info from props
           this.props.company();
         } else {
           alert('Usuario o Contraseña incorrectos.');

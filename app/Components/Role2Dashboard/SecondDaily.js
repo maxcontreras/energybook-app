@@ -1,3 +1,4 @@
+//ONLY SHOWS DAILY DATA IN THE CARD
 import React, {Component, PropTypes} from 'react';
 import {View, Text, StyleSheet, Dimensions, Platform} from 'react-native';
 import {date, n, mes} from '../../Assets/constants';
@@ -47,9 +48,6 @@ export default class SecondDaily extends Component {
     } else {
       var Icono = Fp;
     }
-
-    console.log('AQUI DATOS EN SECOND DAILY');
-    console.log(this.props);
 
     return (
       <View style={{justifyContent: 'center', alignItems: 'center'}}>

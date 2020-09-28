@@ -44,6 +44,7 @@ export default class NotVerifiedInput extends Component {
   };
 
   verifyEmail() {
+    //Takes all users from api
     fetch(
       `http://api.ienergybook.com/api/eUsers/?access_token=${
         this.state.values
@@ -79,10 +80,11 @@ export default class NotVerifiedInput extends Component {
 
   email() {
     let contador = 0;
+    // looks for the email given by the user in this.state.emails
     for (var i = 0; i < this.state.emails.length; i++) {
       console.log(this.state.emails[i]);
+      //if theres a match
       if (this.state.emails[i].email == this.state.email) {
-        console.log('hay un match');
         contador++;
         this.setState({
           id: this.state.emails[i].id,
@@ -90,6 +92,7 @@ export default class NotVerifiedInput extends Component {
       }
     }
     if (contador == 0) {
+      //if the email doesnt exists
       this.setWarning();
     }
     this.setState(
@@ -97,8 +100,6 @@ export default class NotVerifiedInput extends Component {
         isVerified: contador == 0 ? false : true,
       },
       () => {
-        console.log(this.state.id);
-
         this.props.sendEmail(
           this.state.isVerified,
           this.state.email,

@@ -1,3 +1,4 @@
+//ROW OF INFORMATION AND ICON INSIDE MONTHLY CARD IN DASHBOARD
 import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {getFontSize} from '../../Assets/constants';

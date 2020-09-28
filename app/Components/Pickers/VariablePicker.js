@@ -33,7 +33,8 @@ class VariablePicker extends Component {
     Dimensions.removeEventListener('change');
   }
   render() {
-    var FILTERS = ['Voltaje', 'Amperaje', 'THD', 'Desbalance', 'kVA', 'FP'];
+    var fill = ['Voltaje', 'Amperaje', 'THD', 'Desbalance', 'kVA', 'FP'];
+    var FILTERS = Platform.OS == 'ios' ? fill.concat('Cancelar') : fill;
     var VARIABLES = [
       ['Vab', 'Vbc', 'Vca'],
       ['Ia', 'Ib', 'Ic'],
@@ -43,6 +44,7 @@ class VariablePicker extends Component {
       ['FPa', 'FPb', 'FPc'],
     ];
     let nextKey = 0;
+
     return (
       <View>
         {Platform.OS == 'ios' && (
@@ -51,8 +53,8 @@ class VariablePicker extends Component {
               onPress={() =>
                 ActionSheetIOS.showActionSheetWithOptions(
                   {
-                    options: FILTERS.concat('Cancelar'),
-                    cancelButtonIndex: FILTERS.length,
+                    options: FILTERS,
+                    cancelButtonIndex: fill.length,
                   },
                   buttonIndex => {
                     if (buttonIndex != FILTERS.indexOf('Cancelar')) {

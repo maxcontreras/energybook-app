@@ -1,3 +1,4 @@
+//VIEW FOR INTERVAL BUTTONS
 import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {CSButtons} from '../../Components/Global/index';

@@ -1,17 +1,17 @@
 //modifies the state and returns a new state
-import { GET_WEATHER, SET_FT_COORDS } from "../Actions/ActionTypes.js";
+import {GET_WEATHER, SET_FT_COORDS} from '../Actions/ActionTypes.js';
 
 const initialState = {
-  datos: "",
-  temp: "",
-  lugar: "",
-  clima: "",
-  icon: "",
-  ftcoords: []
+  datos: '',
+  temp: '',
+  lugar: '',
+  clima: '',
+  icon: '',
+  ftcoords: [],
 };
 
 const weatherReducer = (state = initialState, action) => {
-  const newState = { ...state };
+  const newState = {...state};
   switch (action.type) {
     case GET_WEATHER:
       newState.datos = action.json[1].results.main;

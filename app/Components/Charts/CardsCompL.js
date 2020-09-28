@@ -1,3 +1,5 @@
+//LANDSCAPE VIEW FOR BOTTOM CARDS IN CHARTS
+
 import React, {Component} from 'react';
 import {View, Text, Dimensions, Platform, StyleSheet} from 'react-native';
 import {Card} from 'react-native-elements';

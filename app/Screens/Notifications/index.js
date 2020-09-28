@@ -43,6 +43,9 @@ export default class Notifications extends Component {
             values: JSON.parse(value),
           },
           () => {
+            this.state.values.role_id == 1
+              ? this.setState({category: 'Desconexión de equipos'})
+              : this.setState({category: this.state.category});
             this.getNotifications();
           },
         );
@@ -117,6 +120,7 @@ export default class Notifications extends Component {
               <PeriodPicker
                 change={this.changeCategory.bind(this)}
                 selected={this.state.category}
+                role={this.state.values.role_id}
               />
               <View style={styles.cardContainer}>
                 <Bar text={'Nuevas notificaciones!'} />

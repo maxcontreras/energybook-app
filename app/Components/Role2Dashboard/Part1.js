@@ -1,3 +1,4 @@
+//DAILY CARD AND MONTHLY CARD FOR DASHBOARD
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {Daily, Monthly, PrecioCFEPeriodo} from './index';

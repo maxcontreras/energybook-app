@@ -1,3 +1,4 @@
+//VIEW FOR HEADER IN MENSUAL CARD
 import React, {Component} from 'react';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {getFontSize} from '../../Assets/constants';

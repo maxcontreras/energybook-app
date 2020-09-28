@@ -1,3 +1,4 @@
+//RETURNS CARD HEADERS (DAILY, MONTHLY)
 import React, {Component} from 'react';
 import {View, Text} from 'react-native';
 import {DailyDates, MensualDates} from './index';

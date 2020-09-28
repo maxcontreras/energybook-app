@@ -1,3 +1,4 @@
+//GETS DAILY DATA FOR DAY CARD IN DASHBOARD
 import React, {Component, PropTypes} from 'react';
 import {View, StyleSheet, Dimensions} from 'react-native';
 import {SecondDaily} from './index';
@@ -56,6 +57,7 @@ class Daily extends Component {
             readings: this.props.readings,
           },
           () => {
+            //gets daily readings for the company
             fetch(
               `http://api.ienergybook.com/api/DesignatedMeters/?filter={"include":["services"],"where":{"company_id":"${
                 this.props.companyId != ''
@@ -76,6 +78,7 @@ class Daily extends Component {
                 return Promise.all([this.state.statusCode, data]);
               })
               .then(json => {
+                //saves the data into store
                 this.props.dispatch(getDailyReadings(json));
                 this.getData();
               })
@@ -90,6 +93,7 @@ class Daily extends Component {
     this._retrieveData();
   }
   getData() {
+    //gets the prices for distribution, capacity and consumption according to the tariff
     var newDate = `${moment()
       .startOf('month')
       .format('YYYY-MM-DD')}T00:00:00.000Z`;
@@ -119,6 +123,7 @@ class Daily extends Component {
       })
       .then(json => {
         console.log(json);
+        //saves those prices into store
         this.props.dispatch(
           getPrices(
             this.state.values.tipoTarifa == 'GDMTH'
@@ -133,6 +138,7 @@ class Daily extends Component {
       });
   }
   getDCP() {
+    //gets daily consumption costs
     this._storeData();
     fetch(
       `http://api.ienergybook.com/api/Meters/getConsumptionCostsByFilter?access_token=${

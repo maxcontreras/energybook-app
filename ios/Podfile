@@ -52,7 +52,11 @@ target 'iEnergybook' do
 
 pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
-
+# add the Firebase pod for Google Analytics
+  pod 'Firebase/Analytics'
+pod 'Firebase'
+# add pods for any other desired Firebase products
+# https://firebase.google.com/docs/ios/setup#available-pods
 
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'

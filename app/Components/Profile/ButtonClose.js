@@ -27,6 +27,7 @@ export default class ButtonClose extends Component {
   };
 
   _signOutAsync = async () => {
+    //deletes OneSignal tag to stop notifications from being sent to the user when logout
     OneSignal.getTags(receivedTags => {
       console.log(receivedTags);
     });
@@ -37,10 +38,14 @@ export default class ButtonClose extends Component {
       },
       async () => {
         this.logOut();
+        //clears all data storaged in app
         await AsyncStorage.clear();
         try {
+          //saves "inCaseKey" so the user can be able to change its password when logout
           await AsyncStorage.setItem('inCaseKey', this.state.inCaseKey, () => {
+            //restarts the app (it clears everything)
             RNRestart.Restart();
+            //navigates home
             this.props.navigation.navigate('Home');
           });
         } catch (error) {}
@@ -49,6 +54,7 @@ export default class ButtonClose extends Component {
   };
 
   logOut() {
+    //logs out from the api
     fetch(
       `http://api.ienergybook.com/api/eUsers/logout?access_token=${
         this.state.values.accesToken

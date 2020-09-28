@@ -54,8 +54,7 @@ class AdminDashboard extends Component {
             values: JSON.parse(value),
           },
           () => {
-            console.log(this.state.values);
-
+            //gets the companies a user is administrating
             fetch(
               `http://api.ienergybook.com/api/Companies?filter={"where":{"id":"${
                 this.state.values.companyId
@@ -77,8 +76,10 @@ class AdminDashboard extends Component {
                 console.log(json);
                 if (json[1][0].Administrando != null) {
                   console.log('si lo agarra');
+                  //Administrando is and array of company ids
                   for (var j in json[1][0].Administrando) {
                     console.log(json[1][0].Administrando[j]);
+                    //get the information for each company that is administrated
                     this.getOtherCompanies(json[1][0].Administrando[j]);
                   }
                 }
@@ -141,6 +142,7 @@ class AdminDashboard extends Component {
     Dimensions.removeEventListener('change');
   }
   navigate(company_id, company_name, city, tipoTarif) {
+    //navigates to dashboard but with the information of the company that was selected
     fetch(
       `http://api.ienergybook.com/api/DesignatedMeters/?filter={"include":["services"],"where":{"company_id":"${company_id}"}}`,
       {
@@ -167,6 +169,7 @@ class AdminDashboard extends Component {
             tipoTarif: tipoTarif,
           },
         ];
+        //saves the information needed in store
         this.props.dispatch(setAdminIds(array));
         this.props.navigation.navigate('Role2Dashboard');
       })

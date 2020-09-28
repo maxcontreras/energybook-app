@@ -51,19 +51,19 @@ export function divider(array, category) {
             .reverse()
         : notifications.all.reverse();
     case 'Consumo':
-      return notifications.consumption;
+      return notifications.consumption.reverse();
     case 'Demanda':
-      return notifications.demand;
+      return notifications.demand.reverse();
     case 'Costos':
-      return notifications.cost;
+      return notifications.cost.reverse();
     case 'Generación':
-      return notifications.generation;
+      return notifications.generation.reverse();
     case 'Desconexión de equipos':
-      return notifications.hardware;
+      return notifications.hardware.reverse();
     case 'Cambio de horario':
-      return notifications.schedule;
+      return notifications.schedule.reverse();
     case 'Código de red':
-      return notifications.network;
+      return notifications.network.reverse();
     default:
       return notifications.nomatch;
   }

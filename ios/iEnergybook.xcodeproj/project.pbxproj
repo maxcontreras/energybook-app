@@ -38,6 +38,7 @@
 		915191862432729600D17458 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 915191852432729600D17458 /* QuartzCore.framework */; };
 		915191882432729D00D17458 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 915191872432729D00D17458 /* SystemConfiguration.framework */; };
 		9151918A243272A700D17458 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91519189243272A700D17458 /* UIKit.framework */; };
+		91B7F48B24E1E39700E3E9F3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 91B7F48A24E1E39700E3E9F3 /* GoogleService-Info.plist */; };
 		91E6DB9F242F0C15006B99E4 /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E6DB9E242F0C15006B99E4 /* NotificationService.m */; };
 		91E6DBA3242F0C15006B99E4 /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 91E6DB9B242F0C15006B99E4 /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		91E6DBB8242F1B46006B99E4 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91E6DBA8242F1B45006B99E4 /* FontAwesome5_Brands.ttf */; };
@@ -151,6 +152,7 @@
 		915191852432729600D17458 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		915191872432729D00D17458 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		91519189243272A700D17458 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		91B7F48A24E1E39700E3E9F3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		91E6DB96242F0BA7006B99E4 /* iEnergybook.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = iEnergybook.entitlements; path = iEnergybook/iEnergybook.entitlements; sourceTree = "<group>"; };
 		91E6DB9B242F0C15006B99E4 /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		91E6DB9D242F0C15006B99E4 /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
@@ -272,6 +274,7 @@
 		13B07FAE1A68108700A75B9A /* iEnergybook */ = {
 			isa = PBXGroup;
 			children = (
+				91B7F48A24E1E39700E3E9F3 /* GoogleService-Info.plist */,
 				91E6DB96242F0BA7006B99E4 /* iEnergybook.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -592,6 +595,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				914F0D8024353E8B008DAEC5 /* AirGoogleMaps in Resources */,
+				91B7F48B24E1E39700E3E9F3 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 			);
@@ -1042,7 +1046,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = iEnergybook/iEnergybook.entitlements;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = PN753U527V;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1051,7 +1055,7 @@
 				);
 				INFOPLIST_FILE = iEnergybook/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.8;
+				MARKETING_VERSION = 2.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1072,7 +1076,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = iEnergybook/iEnergybook.entitlements;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = PN753U527V;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -1081,7 +1085,7 @@
 				);
 				INFOPLIST_FILE = iEnergybook/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.8;
+				MARKETING_VERSION = 2.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1328,14 +1332,14 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 10;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = PN753U527V;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 1.8;
+				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.Ienergybook.OneSignalNotificationServiceExtension;
@@ -1357,14 +1361,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 10;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = PN753U527V;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 1.8;
+				MARKETING_VERSION = 2.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.Ienergybook.OneSignalNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";

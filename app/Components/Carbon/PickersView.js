@@ -25,6 +25,7 @@ export default class PickersView extends Component {
     var arrayDescriptionDevices = [];
     var arrayNameDevices = [];
     for (var j = 1; j < this.props.devices.length; j++) {
+      // the first device in the array is not taken
       arrayNameDevices[j - 1] = this.props.devices[j].name;
       arrayDescriptionDevices[j - 1] = this.props.devices[j].description;
     }
@@ -33,8 +34,11 @@ export default class PickersView extends Component {
         pickerValue: itemValue,
       },
       () => {
+        //IF its a device and not a service
         if (this.props.selectedDevice.substr(0, 8) !== 'Servicio') {
+          //takes the index in device description array
           var getIndex = arrayDescriptionDevices.indexOf(itemValue);
+          //sends the name of the device matching the description
           this.props.functionDevice(
             itemValue,
             arrayNameDevices[getIndex],
@@ -58,6 +62,7 @@ export default class PickersView extends Component {
   }
   setFilter(value, texto) {
     var steps = this.props.numSteps;
+    // steps are for the number of labels inside the chart
     if (value == 'Calendario' || texto == 'Calendario') {
       var filtro = -1;
       steps = steps;

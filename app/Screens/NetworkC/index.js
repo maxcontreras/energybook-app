@@ -331,4 +331,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 20,
   },
+  calendarView: {
+    width: '100%',
+  },
 });

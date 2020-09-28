@@ -1,3 +1,5 @@
+//VIEW FOR DEVICE PICKER AND INTERVAL PICKER (PORTRAIT)
+// VIEW FOR DEVICE PICKER AND INTERVAL BUTTONS (LANDSCAPE)
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {
@@ -32,6 +34,7 @@ export default class TopView1 extends Component {
     var arrayDescriptionDevices = [];
     var arrayNameDevices = [];
     for (var j = 1; j < this.props.devices.length; j++) {
+      // the first device in the array is not taken
       arrayNameDevices[j - 1] = this.props.devices[j].name;
       arrayDescriptionDevices[j - 1] = this.props.devices[j].description;
     }
@@ -41,7 +44,9 @@ export default class TopView1 extends Component {
       },
       () => {
         if (this.props.selectedService.substr(0, 8) !== 'Servicio') {
+          //takes the index in device description array
           var getIndex = arrayDescriptionDevices.indexOf(itemValue);
+          //sends the name of the device matching the description
           this.props.functionDevice(itemValue, '', arrayNameDevices[getIndex]);
         } else {
           this.props.functionDevice(itemValue, this.props.selectedService, '');
@@ -52,6 +57,7 @@ export default class TopView1 extends Component {
 
   setInterval(value, texto) {
     var steps = this.state.numSteps;
+    //Array of the number of steps for the labels inside the chart per filter
     var numSteps = [
       {
         filter: -1,
@@ -66,6 +72,7 @@ export default class TopView1 extends Component {
       {filter: 3, min5: '288', min15: '96', min30: '48', hr: '24'},
     ];
     if (value == '15 minutos' || texto == '15 minutos') {
+      //interval in seconds for 15 minutes
       var intervalo = 900;
       for (var i in numSteps) {
         if (this.props.filter == numSteps[i].filter) {
@@ -73,6 +80,7 @@ export default class TopView1 extends Component {
         }
       }
     } else if (value == '30 minutos' || texto == '30 minutos') {
+      //interval in seconds for 30 minutes
       var intervalo = 1800;
       for (var i in numSteps) {
         if (this.props.filter == numSteps[i].filter) {
@@ -80,6 +88,7 @@ export default class TopView1 extends Component {
         }
       }
     } else if (value == '1 hora' || texto == '1 hora') {
+      //interval in seconds for 1 hour
       var intervalo = 3600;
       for (var i in numSteps) {
         if (this.props.filter == numSteps[i].filter) {
@@ -87,6 +96,7 @@ export default class TopView1 extends Component {
         }
       }
     } else if (value == '5 minutos' || texto == '5 minutos') {
+      //interval in seconds for 5 minutes
       var intervalo = 300;
       for (var i in numSteps) {
         if (this.props.filter == numSteps[i].filter) {

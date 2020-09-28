@@ -1,3 +1,5 @@
+//VIEW FOR CALENDAR PICKER AND SCREEN CHART IN NETWORK CODE
+
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {Load} from '../../Components/Global/index';
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 'auto',
     padding: 10,
-    height: 500,
+    minHeight: 500,
     paddingTop: 20,
     overflow: 'hidden',
     marginBottom: 5,

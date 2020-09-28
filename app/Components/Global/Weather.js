@@ -39,9 +39,9 @@ class Weather extends Component {
     }
   };
 
-  componentWillUnmount() {}
   UNSAFE_componentWillMount() {
     this._retrieveData();
+    //gets user location
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 15000,
@@ -53,6 +53,7 @@ class Weather extends Component {
             location: location,
           },
           () => {
+            //get weather data with user coordinates
             fetch(
               `http://api.ienergybook.com/api/DesignatedMeters/getWeather`,
               {
@@ -73,7 +74,9 @@ class Weather extends Component {
                 return Promise.all([this.state.statusCode, data]);
               })
               .then(json => {
+                //saves weather data into store
                 this.props.dispatch(getWeather(json));
+                //saves user coordinates into store
                 this.props.dispatch(
                   setFTcoords(
                     this.state.location.latitude,

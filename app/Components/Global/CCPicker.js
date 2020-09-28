@@ -1,3 +1,4 @@
+//DEVICE PICKER FOR ALL SCREENS
 import React, {Component} from 'react';
 import {View, Dimensions, Platform} from 'react-native';
 import {connect} from 'react-redux';
@@ -16,9 +17,6 @@ class CCPicker extends Component {
     };
     this.state = {
       numberOfServices: this.props.readings.numberOfServices,
-      arrayNameDevices: [],
-      arrayDescriptionDevices: [],
-      numberOfServices: this.props.readings.numberOfServices,
       orientation: isPortrait() ? 'portrait' : 'landscape',
     };
     Dimensions.addEventListener('change', () => {
@@ -29,21 +27,6 @@ class CCPicker extends Component {
   }
   componentWillUnmount() {
     Dimensions.removeEventListener('change');
-  }
-
-  UNSAFE_componentWillMount() {
-    var arrayNameDevices = [];
-    var arrayDescriptionDevices = [];
-    for (var j = 1; j < this.props.readings.devices.length; j++) {
-      arrayNameDevices[j - 1] = this.props.readings.devices[j].name;
-      arrayDescriptionDevices[j - 1] = this.props.readings.devices[
-        j
-      ].description;
-    }
-    this.setState({
-      arrayNameDevices: arrayNameDevices,
-      arrayDescriptionDevices: arrayDescriptionDevices,
-    });
   }
 
   render() {

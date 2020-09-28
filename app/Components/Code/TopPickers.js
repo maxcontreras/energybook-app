@@ -1,3 +1,5 @@
+// VIEW FOR DEVICE PICKER AND FILTER PICKER (PORTRAIT)
+//VIEW FOR DEVICE PICKER ONLY (LANDSCAPE)
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {CCPicker} from '../../Components/Global/index';
@@ -24,7 +26,9 @@ export default class TopPickers extends Component {
   }
 
   setFilter(value, texto) {
+    // steps are for the number of labels inside the chart
     var steps = this.props.numSteps;
+    //array of number of steps per filter
     var numSteps = [
       {interval: 300, steps1: '12', steps2: '288'},
       {interval: 900, steps1: '4', steps2: '96'},
@@ -64,11 +68,13 @@ export default class TopPickers extends Component {
     var arrayDescriptionDevices = [];
     var arrayNameDevices = [];
     for (var j = 1; j < this.props.devices.length; j++) {
+      // the first device in the array is not taken
       arrayNameDevices[j - 1] = this.props.devices[j].name;
       arrayDescriptionDevices[j - 1] = this.props.devices[j].description;
     }
+    //takes the index in device description array
     var getIndex = arrayDescriptionDevices.indexOf(itemValue);
-
+    //sends the name of the device matching the description
     this.props.functionDevice(arrayNameDevices[getIndex], itemValue);
   }
 

@@ -1,5 +1,5 @@
+//VIEW FOR FILTER BUTTONS
 import React, {Component} from 'react';
-
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {CSButtons} from '../../Components/Global/index';
 import {screenHeight, screenWidth, isPortrait} from '../../Assets/constants';

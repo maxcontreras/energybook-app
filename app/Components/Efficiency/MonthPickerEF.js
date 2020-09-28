@@ -1,4 +1,4 @@
-/* @flow */
+// MONTHE SELECTOR FOR MENSUAL CARD
 
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Platform} from 'react-native';

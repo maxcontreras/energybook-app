@@ -1,3 +1,5 @@
+//PORTRAIT VIEW FOR BOTTOM CARDS IN CHARTS
+
 import React, {Component} from 'react';
 import {View, Text, Dimensions, Platform, StyleSheet} from 'react-native';
 import Swiper from 'react-native-web-swiper';

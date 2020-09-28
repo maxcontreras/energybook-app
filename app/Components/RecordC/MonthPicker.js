@@ -19,27 +19,36 @@ export default class MonthPicker extends Component {
   }
 
   increase(valor, months, years) {
+    //validations to increase month
     if (valor == 'mes') {
       this.setState(
         {
+          //sets the value in state and validates it after
           indexM: this.state.indexM + months,
         },
         () => {
+          // if month is bigger than december
           if (this.state.indexM == 12) {
+            // and if year is lower than the actual year - 1
             if (this.state.indexA < moment().format('YYYY') - 1) {
+              // month will be set to 0 (january)
+              //the year will be increased
               this.setState({
                 indexM: 0,
                 indexA: this.state.indexA + 1,
               });
             }
+            //same here
             this.setState({
               indexM: 0,
               indexA: this.state.indexA + 1,
             });
+            // if month is equal to the actual month - 1 and the year is equal to the actual year
           } else if (
             this.state.indexM == new Date().getMonth() - 1 &&
             this.state.indexA == moment().format('YYYY')
           ) {
+            //month can no longer be increased
             this.setState({
               indexM: new Date().getMonth() - 1,
             });
@@ -47,6 +56,7 @@ export default class MonthPicker extends Component {
         },
       );
     } else if (valor == 'año') {
+      //if actual month is january  and year is equal to actual year - 1
       if (
         new Date().getMonth() == 0 &&
         this.state.indexA == moment().format('YYYY') - 1
